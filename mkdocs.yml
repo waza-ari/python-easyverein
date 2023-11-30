@@ -1,0 +1,12 @@
+site_name: Python Easyverein Documentation
+theme:
+  name: "material"
+
+plugins:
+  - search
+  - mkdocstrings
+
+nav:
+  - index.md
+  - usage.md
+  - api.md
