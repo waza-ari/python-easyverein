@@ -1,6 +1,8 @@
 """
 Invoice Item model
 """
+from __future__ import annotations
+
 from typing import Annotated
 
 from pydantic import BaseModel, PositiveInt, StringConstraints
@@ -15,8 +17,9 @@ class InvoiceItem(BaseModel):
     """
 
     id: PositiveInt | None = None
+    # TODO: Add reference to Organization once implemented
     org: EasyVereinReference | None = None
-    relatedInvoice: EasyVereinReference | None = None
+    relatedInvoice: Invoice | EasyVereinReference | None = None
     quantity: PositiveInt | None = None
     unitPrice: float | None = None
     totalPrice: float | None = None
@@ -25,6 +28,7 @@ class InvoiceItem(BaseModel):
     taxRate: float | None = None
     gross: bool | None = None
     taxName: str | None = None
+    # TODO: Add reference to BillingAccount once implemented
     billingAccount: EasyVereinReference | None = None
     costCentre: Annotated[str, StringConstraints(max_length=8)] | None = None
 
@@ -40,3 +44,13 @@ class InvoiceItemCreate(
     this item is being attached to, otherwise invoice generation (setting
     `isDraft` to `False`) will fail on EV API side.
     """
+
+
+class InvoiceItemUpdate(InvoiceItem):
+    """
+    Pydantic model used to patch an InvoiceItem
+    """
+
+
+from .invoice import Invoice  # noqa: E402
+Invoice.model_rebuild()

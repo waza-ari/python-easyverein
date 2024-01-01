@@ -1,5 +1,7 @@
 import logging
-from typing import Protocol, TypeVar
+from typing import Protocol, Type, TypeVar
+
+from pydantic import BaseModel
 
 from .client import EasyvereinClient
 
@@ -20,4 +22,8 @@ class IsEVClientProtocol(Protocol):
 
     @property
     def model_class(self) -> TypeVar:
+        ...
+
+    @property
+    def return_type(self) -> Type[BaseModel]:
         ...

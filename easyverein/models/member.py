@@ -1,10 +1,13 @@
 """
 Member related models
 """
+from __future__ import annotations
+
 from typing import Literal
 
 from pydantic import BaseModel, PositiveInt
 
+from .mixins.required_attributes import required_mixin
 from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 
 
@@ -15,6 +18,7 @@ class Member(BaseModel):
 
     id: PositiveInt | None = None
     org: EasyVereinReference | None = None
+    # TODO: Add reference to Organization once implemented
     _deleteAfterDate: Date | None = None
     _deletedBy: str | None = None
     _profilePicture: AnyHttpURL | None = None
@@ -38,8 +42,21 @@ class Member(BaseModel):
     _applicationDate: Date | None = None
     _applicationWasAcceptedAt: Date | None = None
     signatureText: str | None = None
-    _relatedMember: EasyVereinReference | None = None
+    _relatedMember: Member | EasyVereinReference | None = None
     _editableByRelatedMembers: bool | None = None
     sepaMandateFile: AnyHttpURL | None = None
     # TODO: exact type is not specified in API docs
     integrationDosbSport: list | None = None
+
+
+class MemberCreate(Member, required_mixin(["contactDetails"])):
+    """
+    Pydantic model for creating a new member
+    """
+
+
+class MemberUpdate(Member):
+    """
+    Pydantic model used to update a member
+    """
+    pass

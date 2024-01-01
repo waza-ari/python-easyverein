@@ -32,11 +32,30 @@ class EasyvereinClient:
         """
         return {"Authorization": "Bearer " + self.api_key}
 
-    def get_url(self, path):
+    def get_url(self, path: str, url_params: dict = None) -> str:
         """
-        Constructs a URL for the API request
+        Constructs a URL for the API request.
+
+        :param path: Base path of the request
+        :param url_params: additional path parameters to append
         """
-        return f"{self.base_url}{self.api_version}{path}"
+        url = f"{self.base_url}{self.api_version}{path}"
+
+        self.logger.debug(f"Base URL is {url}")
+
+        if url_params:
+            for key, value in url_params.items():
+                if not value:
+                    continue
+                self.logger.debug(f"Adding {key}={value} path parameter to URL")
+                if "?" not in url:
+                    url += f"?{key}={value}"
+                else:
+                    url += f"&{key}={value}"
+
+        self.logger.debug(f"Final constructed URL is {url}")
+
+        return url
 
     def _do_request(  # noqa: PLR0913
         self, method, url, data=None, headers=None, files=None
@@ -80,8 +99,8 @@ class EasyvereinClient:
             raise EasyvereinAPIException("Requested resource not found")
 
         # In some cases (for example on 204 delete) the response is empty
-        if res == b"":
-            return None
+        if res.content == b"":
+            return res.status_code, None
 
         # Try to parse response as JSON and return it for further processing
         try:
