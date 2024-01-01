@@ -113,7 +113,6 @@ class EasyvereinClient:
         Only supports GET endpoints
         """
         res = self._do_request("get", url)
-        print(res)
         return self._handle_response(res, model, 200)
 
     def fetch_paginated(self, url, model: Type[T] = None, limit=100) -> list[T]:
@@ -157,7 +156,7 @@ class EasyvereinClient:
 
     @staticmethod
     def _handle_response(
-        res: tuple[int, list], model: Type[T] = None, expected_status_code=200
+        res: tuple[int, list | dict], model: Type[T] = None, expected_status_code=200
     ) -> T | list[T]:
         """
         Helper method that handles API responses
@@ -176,6 +175,10 @@ class EasyvereinClient:
         if isinstance(data, list):
             objects = []
             for obj in data:
+                objects.append(model.model_validate(obj))
+        elif isinstance(data, dict) and "results" in data:
+            objects = []
+            for obj in data["results"]:
                 objects.append(model.model_validate(obj))
         else:
             # Handle the case when data is not a list
