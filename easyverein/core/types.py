@@ -4,11 +4,24 @@ Custom types used for model validation
 import datetime
 from typing import Annotated
 
-from pydantic import Field, PlainSerializer, UrlConstraints
+from pydantic import BeforeValidator, Field, PlainSerializer, UrlConstraints
 from pydantic_core import Url
 
-AnyHttpUrl = Annotated[Url, UrlConstraints(allowed_schemes=["http", "https"])]
+from .validators import empty_string_to_none
+
+AnyHttpURL = Annotated[
+    Url,
+    UrlConstraints(allowed_schemes=["http", "https"]),
+    PlainSerializer(lambda x: str(x), return_type=str),
+]
+EasyVereinReference = Annotated[
+    int | AnyHttpURL | None, BeforeValidator(empty_string_to_none)
+]
 PositiveIntWithZero = Annotated[int, Field(ge=0)]
 Date = Annotated[
     datetime.date, PlainSerializer(lambda x: x.strftime("%Y-%m-%d"), return_type=str)
+]
+DateTime = Annotated[
+    datetime.datetime,
+    PlainSerializer(lambda x: x.strftime("%Y-%m-%dT%H:%M:%S"), return_type=str),
 ]

@@ -30,7 +30,7 @@ class EasyvereinClient:
         """
         Constructs a header for the API request
         """
-        return {"Authorization": "Token " + self.api_key}
+        return {"Authorization": "Bearer " + self.api_key}
 
     def get_url(self, path):
         """
@@ -46,9 +46,15 @@ class EasyvereinClient:
         fetching the most common errors
         """
         self.logger.debug("Performing %s request to %s", method, url)
+        if data:
+            self.logger.debug("Request data: %s", data)
+        if headers:
+            self.logger.debug("Provided request headers: %s", headers)
 
         # Merge auth header with custom headers
         final_headers = self._get_header() | (headers or {})
+
+        self.logger.debug("Final request headers: %s", final_headers)
 
         func = getattr(requests, method)
         if data:
@@ -73,9 +79,16 @@ class EasyvereinClient:
             self.logger.warning("Request returned status code 404, resource not found")
             raise EasyvereinAPIException("Requested resource not found")
 
+        # In some cases (for example on 204 delete) the response is empty
+        if res == b"":
+            return None
+
+        # Try to parse response as JSON and return it for further processing
         try:
             content = res.json()
         except ValueError:
+            self.logger.error("Unable to parse response content as JSON")
+            self.logger.debug("Response content: %s", res.content)
             content = None
 
         return res.status_code, content
@@ -106,6 +119,22 @@ class EasyvereinClient:
             self._do_request("delete", url), expected_status_code=status_code
         )
 
+    def update(
+        self, url, data: BaseModel = None, model: Type[T] = None, status_code: int = 200
+    ) -> T:
+        """
+        Method to update an object in the API
+        """
+        return self._handle_response(
+            self._do_request(
+                "patch",
+                url,
+                data=data.model_dump(exclude_none=True, exclude_unset=True),
+            ),
+            model,
+            expected_status_code=status_code,
+        )
+
     def fetch(self, url, model: Type[T] = None) -> list[T]:
         """
         Helper method that fetches a result from an API call
@@ -114,6 +143,20 @@ class EasyvereinClient:
         """
         res = self._do_request("get", url)
         return self._handle_response(res, model, 200)
+
+    def fetch_one(self, url, model: Type[T] = None) -> T | None:
+        """
+        Helper method that fetches a result from an API call
+
+        Only supports GET endpoints
+        """
+        reply = self.fetch(url, model)
+        if len(reply) == 0:
+            return None
+        try:
+            return reply[0]
+        except IndexError:
+            raise EasyvereinAPIException("Could not fetch resource from API")
 
     def fetch_paginated(self, url, model: Type[T] = None, limit=100) -> list[T]:
         """
@@ -154,9 +197,11 @@ class EasyvereinClient:
 
         return self._handle_response((status_code, resources), model, 200)
 
-    @staticmethod
     def _handle_response(
-        res: tuple[int, list | dict], model: Type[T] = None, expected_status_code=200
+        self,
+        res: tuple[int, list | dict],
+        model: Type[T] = None,
+        expected_status_code=200,
     ) -> T | list[T]:
         """
         Helper method that handles API responses
@@ -166,10 +211,15 @@ class EasyvereinClient:
             raise EasyvereinAPIException(
                 f"API returned status code {status_code}. API response: {data}"
             )
+        else:
+            self.logger.debug("API returned status code %d", status_code)
 
         # if no data is expected return raw data (usually None)
         if not model:
+            self.logger.debug("No model provided. Returning raw data: %s", data)
             return data
+
+        self.logger.debug("Received raw data: %s", data)
 
         # if data is a list, parse each entry
         if isinstance(data, list):

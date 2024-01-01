@@ -5,9 +5,11 @@ import logging
 
 from .core.client import EasyvereinClient
 from .modules.invoice import InvoiceMixin
+from .modules.invoice_item import InvoiceItemMixin
+from .modules.member import MemberMixin
 
 
-class EasyvereinAPI(InvoiceMixin):
+class EasyvereinAPI:
     """
     API Client to work wth the EasyVerein API. All methods
     are available directly as methods of this class
@@ -17,20 +19,24 @@ class EasyvereinAPI(InvoiceMixin):
     ```python
     from easyverein import EasyvereinAPI
     api = EasyvereinAPI(api_key="your_api_key")
-    invoices = api.get_invoices()
+    invoices = api.invoices.get()
     ```
     """
+
+    invoice: InvoiceMixin
 
     def __init__(
         self,
         api_key,
-        api_version="v1.6",
-        base_url: str = "https://easyverein.com/api/",
+        api_version="v1.7",
+        base_url: str = "https://hexa.easyverein.com/api/",
         logger: logging.Logger = None,
     ):
         """
         Constructor setting API key and logger. Test
         """
+
+        super().__init__()
 
         if logger:
             self.logger = logger
@@ -38,3 +44,8 @@ class EasyvereinAPI(InvoiceMixin):
             self.logger = logging.getLogger("easyverein")
 
         self.c = EasyvereinClient(api_key, api_version, base_url, self.logger)
+
+        # Add methods
+        self.invoice = InvoiceMixin(self.c, self.logger)
+        self.invoice_item = InvoiceItemMixin(self.c, self.logger)
+        self.member = MemberMixin(self.c, self.logger)

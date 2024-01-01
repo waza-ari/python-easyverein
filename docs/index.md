@@ -41,7 +41,7 @@ ev_client = EasyvereinAPI(
     api_version=api_version
 )
 
-print(ev_client.get_invoices())
+print(ev_client.invoice.get())
 ```
 
 The result will be a list of invoice objects. All returned objects are [Pydantic](https://pydantic.dev) models under
@@ -66,7 +66,7 @@ In this case, this library will simply return the same URL as model attribute. T
 syntax to select the fields you want to return. It also allows you to specify nested fields like this:
 
 ```python
-invoices = ev_client.get_invoices(
+invoices = ev_client.invoice.get(
     query="{id,date,dateItHappend,receiver,relatedAddress{id,street,zip}}"
 )
 ```

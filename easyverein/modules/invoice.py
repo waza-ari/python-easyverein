@@ -1,14 +1,13 @@
 """
 All methods related to invoices
 """
-from typing import Union
+import logging
 
-from ..core.protocol import IsEVClientProtocol
-from ..models.invoice import Invoice, InvoiceCreate
+from ..core.client import EasyvereinClient
+from ..models.invoice import Invoice, InvoiceCreate, InvoiceUpdate
 from .mixins.recycle_bin import recycle_bin_mixin
 
-recycle_mixin = recycle_bin_mixin("invoice", Invoice)
-self_protocol = Union[recycle_mixin, IsEVClientProtocol]
+recycle_mixin = recycle_bin_mixin(Invoice)
 
 
 class InvoiceMixin(recycle_mixin):
@@ -16,11 +15,12 @@ class InvoiceMixin(recycle_mixin):
     All methods related to invoices
     """
 
-    endpoint_name = "invoice"
+    def __init__(self, client: EasyvereinClient, logger: logging.Logger):
+        self.endpoint_name = "invoice"
+        self.c = client
+        self.logger = logger
 
-    def get_invoices(
-        self: self_protocol, query: str = None, limit: int = 100
-    ) -> list[Invoice]:
+    def get(self, query: str = None, limit: int = 100) -> list[Invoice]:
         """
         Fetches all invoices from the API
 
@@ -36,21 +36,48 @@ class InvoiceMixin(recycle_mixin):
 
         return self.c.fetch_paginated(url, Invoice, limit)
 
-    def create_invoice(self: self_protocol, invoice: InvoiceCreate) -> Invoice:
+    def get_by_id(self, invoice_id: int) -> Invoice:
+        """
+        Fetches an invoice from the API
+
+        Args:
+            invoice_id (int): ID of the invoice
+        """
+        self.logger.info("Fetching invoice %s from API", invoice_id)
+
+        url = self.c.get_url(f"/{self.endpoint_name}/{invoice_id}")
+
+        return self.c.fetch_one(url, Invoice)
+
+    def create(self, invoice: InvoiceCreate) -> Invoice:
         """
         Creates an invoice
 
         Args:
             invoice (Invoice): Invoice to create
         """
-        self.logger.info("Creating invoice %s", invoice.id)
+        self.logger.info("Creating invoice %s", invoice.invNumber)
 
         url = self.c.get_url(f"/{self.endpoint_name}/")
 
         return self.c.create(url, invoice, Invoice)
 
-    def delete_invoice(
-        self: self_protocol,
+    def update(self, invoice_id: int, invoice: InvoiceUpdate) -> Invoice:
+        """
+        Updates an invoice
+
+        Args:
+            invoice_id (int): ID of the invoice to update
+            invoice (InvoiceUpdate): Update model
+        """
+        self.logger.info("Updating invoice %s", invoice_id)
+
+        url = self.c.get_url(f"/{self.endpoint_name}/{invoice_id}")
+
+        return self.c.update(url, invoice, Invoice)
+
+    def delete(
+        self,
         invoice: Invoice,
         delete_from_recycle_bin: bool = False,
     ):
@@ -64,10 +91,10 @@ class InvoiceMixin(recycle_mixin):
         """
         self.logger.info("Deleting invoice %s", invoice.id)
 
-        url = self.c.get_url(f"/{self.endpoint_name}/{invoice.id}/")
+        url = self.c.get_url(f"/{self.endpoint_name}/{invoice.id}")
 
         self.c.delete(url)
 
         if delete_from_recycle_bin:
             self.logger.info("Deleting invoice %s from wastebasket", invoice.id)
-            self.purge_invoice(invoice.id)
+            self.purge(invoice.id)

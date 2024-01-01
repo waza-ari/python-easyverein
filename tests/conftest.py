@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 import pytest
 
@@ -12,3 +14,10 @@ def ev_connection():
     api_key = os.getenv("EV_API_KEY", "")
 
     return EasyvereinAPI(api_key, base_url=api_url, api_version=api_version)
+
+
+@pytest.fixture(scope="function")
+def random_string():
+    return "".join(
+        random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
+    )
