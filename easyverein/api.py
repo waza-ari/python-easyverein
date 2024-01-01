@@ -9,7 +9,16 @@ from .modules.invoice import InvoiceMixin
 
 class EasyvereinAPI(InvoiceMixin):
     """
-    Main EasyVerein API class
+    API Client to work wth the EasyVerein API. All methods
+    are available directly as methods of this class
+
+    Usage:
+
+    ```python
+    from easyverein import EasyvereinAPI
+    api = EasyvereinAPI(api_key="your_api_key")
+    invoices = api.get_invoices()
+    ```
     """
 
     def __init__(
@@ -20,7 +29,7 @@ class EasyvereinAPI(InvoiceMixin):
         logger: logging.Logger = None,
     ):
         """
-        Constructor setting API key and logger
+        Constructor setting API key and logger. Test
         """
 
         if logger:

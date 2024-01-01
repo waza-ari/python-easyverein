@@ -5,6 +5,7 @@ import logging
 from typing import Type, TypeVar
 
 import requests
+from pydantic import BaseModel
 
 from .exceptions import EasyvereinAPIException, EasyvereinAPITooManyRetriesException
 
@@ -37,7 +38,7 @@ class EasyvereinClient:
         """
         return f"{self.base_url}{self.api_version}{path}"
 
-    def do_request(  # noqa: PLR0913
+    def _do_request(  # noqa: PLR0913
         self, method, url, data=None, headers=None, files=None
     ):
         """
@@ -79,7 +80,43 @@ class EasyvereinClient:
 
         return res.status_code, content
 
-    def fetch_api_paginated(self, url, limit=100):
+    def create(
+        self,
+        url,
+        data: BaseModel = None,
+        return_model: Type[T] = None,
+        status_code: int = 201,
+    ) -> T:
+        """
+        Method to create an object in the API
+        """
+        return self._handle_response(
+            self._do_request(
+                "post", url, data=data.model_dump(exclude_none=True, exclude_unset=True)
+            ),
+            return_model,
+            status_code,
+        )
+
+    def delete(self, url, status_code: int = 204):
+        """
+        Method to delete an object in the API
+        """
+        return self._handle_response(
+            self._do_request("delete", url), expected_status_code=status_code
+        )
+
+    def fetch(self, url, model: Type[T] = None) -> list[T]:
+        """
+        Helper method that fetches a result from an API call
+
+        Only supports GET endpoints
+        """
+        res = self._do_request("get", url)
+        print(res)
+        return self._handle_response(res, model, 200)
+
+    def fetch_paginated(self, url, model: Type[T] = None, limit=100) -> list[T]:
         """
         Helper method that fetches all pages of a paginated API call
 
@@ -95,12 +132,12 @@ class EasyvereinClient:
             url += f"&limit={limit}"
 
         resources = []
-        status_code = None
+        status_code: int = 0
 
         while url is not None:
             self.logger.debug("Fetching page of paginated API call %s", url)
 
-            status_code, result = self.do_request("get", url)
+            status_code, result = self._do_request("get", url)
             self.logger.debug("Request returned status code %d", status_code)
 
             if not status_code == 200:
@@ -116,10 +153,11 @@ class EasyvereinClient:
             resources.extend(result["results"])
             url = result["next"]
 
-        return status_code, resources
+        return self._handle_response((status_code, resources), model, 200)
 
-    def handle_response(
-        self, res: tuple[int | dict], model: Type[T] = None, expected_status_code=200
+    @staticmethod
+    def _handle_response(
+        res: tuple[int, list], model: Type[T] = None, expected_status_code=200
     ) -> T | list[T]:
         """
         Helper method that handles API responses

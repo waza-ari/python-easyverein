@@ -10,19 +10,19 @@ def recycle_bin_mixin(endpoint_name: str, model_class):
 
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/")
 
-        return self.c.handle_response(self.c.fetch_api_paginated(url), model_class)
+        return self.c.fetch(url, model_class)
 
-    def restore(self: IsEVClientProtocol, item_id: int):
-        """
-        Restores a given item from the recycle bin
-        """
-        self.logger.info("Restoring item from recycle bin")
-
-        url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}/")
-
-        return self.c.handle_response(
-            self.c.do_request("patch", url), expected_status_code=200
-        )
+    # def restore(self: IsEVClientProtocol, item_id: int):
+    #     """
+    #     Restores a given item from the recycle bin
+    #     """
+    #     self.logger.info("Restoring item from recycle bin")
+    #
+    #     url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}/")
+    #
+    #     return self.c.handle_response(
+    #         self.c.do_request("patch", url), expected_status_code=200
+    #     )
 
     def purge(self: IsEVClientProtocol, item_id: int):
         """
@@ -32,15 +32,13 @@ def recycle_bin_mixin(endpoint_name: str, model_class):
 
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}/")
 
-        return self.c.handle_response(
-            self.c.do_request("delete", url), expected_status_code=204
-        )
+        return self.c.delete(url)
 
     class RecycleBinMixin:
         pass
 
     setattr(RecycleBinMixin, f"get_deleted_{endpoint_name}s", get_deleted)
-    setattr(RecycleBinMixin, f"restore_{endpoint_name}", restore)
+    # setattr(RecycleBinMixin, f"restore_{endpoint_name}", restore)
     setattr(RecycleBinMixin, f"purge_{endpoint_name}", purge)
 
     return RecycleBinMixin

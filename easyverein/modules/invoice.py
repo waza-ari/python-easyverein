@@ -28,13 +28,13 @@ class InvoiceMixin(recycle_mixin):
             query (str, optional): Query to use with API. Defaults to None.
             limit (int, optional): How many resources per request. Defaults to 100.
         """
-        self.logger.info("Fetching all members from API")
+        self.logger.info("Fetching all invoices from API")
 
         url = self.c.get_url(
             f"/{self.endpoint_name}/" + (("?query=" + query) if query else "")
         )
 
-        return self.c.handle_response(self.c.fetch_api_paginated(url, limit), Invoice)
+        return self.c.fetch_paginated(url, Invoice, limit)
 
     def create_invoice(self: self_protocol, invoice: InvoiceCreate) -> Invoice:
         """
@@ -47,15 +47,7 @@ class InvoiceMixin(recycle_mixin):
 
         url = self.c.get_url(f"/{self.endpoint_name}/")
 
-        return self.c.handle_response(
-            self.c.do_request(
-                "post",
-                url,
-                data=invoice.model_dump(exclude_none=True, exclude_unset=True),
-            ),
-            Invoice,
-            201,
-        )
+        return self.c.create(url, invoice, Invoice)
 
     def delete_invoice(
         self: self_protocol,
@@ -74,9 +66,7 @@ class InvoiceMixin(recycle_mixin):
 
         url = self.c.get_url(f"/{self.endpoint_name}/{invoice.id}/")
 
-        self.c.handle_response(
-            self.c.do_request("delete", url), expected_status_code=204
-        )
+        self.c.delete(url)
 
         if delete_from_recycle_bin:
             self.logger.info("Deleting invoice %s from wastebasket", invoice.id)
