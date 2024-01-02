@@ -4,6 +4,7 @@ Main EasyVerein API class
 from __future__ import annotations
 
 import logging
+from pathlib import Path
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import requests
@@ -165,6 +166,31 @@ class EasyvereinClient:
             ),
             model,
             expected_status_code=status_code,
+        )
+
+    def upload(self, url: str, field_name: str, file: Path, model: Type[T] = None, status_code: int = 200) -> T:
+        """
+        This method uploads a file to a certain endpoint.
+
+        Only tested with invoices so far
+        """
+        # Check that path is a file and it exists
+        if not file.exists() or not file.is_file():
+            self.logger.error("File does not exist or is not a file.")
+            raise FileNotFoundError("File does not exist")
+
+        files = {field_name: open(file, "rb")}
+        headers = {"Content-Disposition": f'name="file"; filename="{file.name}"'}
+
+        return self._handle_response(
+            self._do_request(
+                "patch",
+                url,
+                headers=headers,
+                files=files,
+            ),
+            model,
+            status_code
         )
 
     def fetch(self, url, model: Type[T] = None) -> list[T]:

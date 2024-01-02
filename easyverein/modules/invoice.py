@@ -2,6 +2,7 @@
 All methods related to invoices
 """
 import logging
+from pathlib import Path
 from typing import List
 
 from ..core.client import EasyvereinClient
@@ -25,6 +26,45 @@ class InvoiceMixin(
         self.return_type = Invoice
         self.c = client
         self.logger = logger
+
+    def upload_attachment(self, invoice_id: int, file: Path):
+        """
+        Uploads an attachment to an invoice
+        """
+        return self.c.upload(
+            url=self.c.get_url(f"/{self.endpoint_name}/{invoice_id}"),
+            field_name="path",
+            file=file,
+            model=Invoice,
+        )
+
+    def create_with_attachment(self, invoice: InvoiceCreate, attachment: Path, set_draft_state: bool = True):
+        """
+        Creates an invoice with an attachment. For invoices, the file must be a PDF.
+        """
+
+        if not set_draft_state and not invoice.isDraft:
+            raise EasyvereinAPIException(
+                "Creating an invoice with isDraft set to false is not supported when "
+                "we're also instructed not to modify the draft state."
+            )
+
+        # Ensure invoice draft state is set to True for now. We'll change it back later
+        old_draft_state = invoice.isDraft
+        invoice.isDraft = True
+
+        # Create invoice object
+        created_invoice = self.create(invoice)
+
+        # Upload the attachment
+        created_invoice = self.upload_attachment(created_invoice.id, attachment)
+
+        # Set draft state to False if desired
+        if set_draft_state:
+            self.update(created_invoice.id, InvoiceUpdate(isDraft=False))
+            created_invoice.isDraft = False
+
+        return created_invoice
 
     def create_with_items(
         self,
@@ -61,7 +101,7 @@ class InvoiceMixin(
             item.relatedInvoice = inv.id
             self.c.api_instance.invoice_item.create(item)
 
-        if not old_draft_state:
+        if set_draft_state:
             self.update(inv.id, InvoiceUpdate(isDraft=False))
             # We need to fetch new invoice details to obtain the path of the generated PDF
             inv = self.get_by_id(inv.id)

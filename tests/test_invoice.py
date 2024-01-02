@@ -1,7 +1,9 @@
 # content of test_sample.py
 import datetime
+from pathlib import Path
 
 import pytest
+from _pytest.fixtures import FixtureRequest
 from pydantic_core import Url
 
 from easyverein import EasyvereinAPI
@@ -183,6 +185,49 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
+        # Check that we're back to 5 invoices
+        invoices = ev_connection.invoice.get()
+        assert len(invoices) == 5
+
+    def test_create_invoice_with_attachment(
+        self, ev_connection: EasyvereinAPI, random_string: str, request: FixtureRequest
+    ):
+        # Get members
+        members = ev_connection.member.get()
+        assert len(members) > 0
+        member = members[1]
+
+        assert isinstance(member, Member)
+
+        # Create a minimal invoice
+        invoice_model = InvoiceCreate(
+            invNumber=random_string,
+            totalPrice=21.10,
+            date=datetime.date.today(),
+            dateItHappend=datetime.date.today()-datetime.timedelta(days=30),
+            isDraft=False,
+            gross=True,
+            description="Test Attachment Upload",
+            isRequest=True,
+            taxRate=0.00,
+            relatedAddress=member.contactDetails,
+            payedFromUser=member.id,
+        )
+
+        file = request.path.parent / "data" / "dummy.pdf"
+
+        invoice = ev_connection.invoice.create_with_attachment(
+            invoice_model, file, True
+        )
+
+        # Check if the response is an invoice
+        assert isinstance(invoice, Invoice)
+        assert invoice.invNumber == invoice_model.invNumber
+        assert invoice.isDraft is False
+        assert isinstance(invoice.path, Url)
+
+        # Delete invoice again
+        ev_connection.invoice.delete(invoice)
         # Check that we're back to 5 invoices
         invoices = ev_connection.invoice.get()
         assert len(invoices) == 5
