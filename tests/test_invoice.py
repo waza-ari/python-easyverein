@@ -2,6 +2,7 @@
 import datetime
 
 import pytest
+from pydantic_core import Url
 
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPIException
@@ -116,6 +117,69 @@ class TestInvoices:
         assert isinstance(updated_invoice, Invoice)
         assert updated_invoice.invNumber == invoice.invNumber
         assert updated_invoice.isDraft is False
+
+        # Delete invoice again
+        ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
+        # Check that we're back to 5 invoices
+        invoices = ev_connection.invoice.get_all()
+        assert len(invoices) == 5
+
+    def test_create_invoice_with_items_helper(
+        self, ev_connection: EasyvereinAPI, random_string: str
+    ):
+        # Get members
+        members = ev_connection.member.get()
+        assert len(members) > 0
+        member = members[1]
+
+        assert isinstance(member, Member)
+
+        # Create a minimal invoice
+        invoice_model = InvoiceCreate(
+            invNumber=random_string,
+            totalPrice=102.90,
+            date=datetime.date.today(),
+            dateItHappend=datetime.date.today(),
+            isDraft=False,
+            gross=True,
+            description="Test Description",
+            kind="revenue",
+            isTemplate=False,
+            isRequest=False,
+            paymentInformation="debit",
+            taxRate=0.00,
+            relatedAddress=member.contactDetails,
+            payedFromUser=member.id,
+            storedInS3=False,
+        )
+
+        # Create two invoice item
+        invoice_items = [
+            InvoiceItemCreate(
+                title="First Invoice Item",
+                quantity=5,
+                unitPrice=10.12,
+                taxRate=0,
+                gross=True,
+            ),
+            InvoiceItemCreate(
+                title="Second Invoice Item",
+                quantity=10,
+                unitPrice=5.23,
+                taxRate=0,
+                gross=True,
+            ),
+        ]
+
+        invoice = ev_connection.invoice.create_with_items(
+            invoice_model, invoice_items, True
+        )
+
+        # Check if the response is an invoice
+        assert isinstance(invoice, Invoice)
+        assert invoice.invNumber == invoice_model.invNumber
+        assert invoice.isDraft is False
+        assert isinstance(invoice.path, Url)
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
