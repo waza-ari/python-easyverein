@@ -16,9 +16,9 @@ Note that the way to change a value of custom field X on member Y depends on the
 """
 from __future__ import annotations
 
+from ..core.types import EasyVereinReference
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import EasyVereinReference
 
 
 class MemberCustomField(EasyVereinBase):
@@ -48,5 +48,5 @@ class MemberCustomFieldUpdate(MemberCustomField):
     pass
 
 
-from .member import Member  # noqa: E402
 from .custom_field import CustomField  # noqa: E402
+from .member import Member  # noqa: E402

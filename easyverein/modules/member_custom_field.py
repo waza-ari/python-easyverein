@@ -3,11 +3,11 @@ All methods related to invoices
 """
 import logging
 
-from .mixins.crud import CRUDMixin
-from .mixins.recycle_bin import RecycleBinMixin
 from ..core.client import EasyvereinClient
 from ..core.protocol import IsEVClientProtocol
 from ..models import MemberCustomField, MemberCustomFieldCreate, MemberCustomFieldUpdate
+from .mixins.crud import CRUDMixin
+from .mixins.recycle_bin import RecycleBinMixin
 
 
 class MemberCustomFieldMixin(

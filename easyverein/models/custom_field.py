@@ -7,14 +7,14 @@ from typing import Literal
 
 from pydantic import Field
 
-from .base import EasyVereinBase
-from .mixins.required_attributes import required_mixin
 from ..core.types import (
     EasyVereinReference,
     HexColor,
     OptionsField,
     PositiveIntWithZero,
 )
+from .base import EasyVereinBase
+from .mixins.required_attributes import required_mixin
 
 
 class CustomField(EasyVereinBase):

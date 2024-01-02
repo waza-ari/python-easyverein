@@ -5,7 +5,7 @@ import datetime
 import json
 from typing import Annotated
 
-from pydantic import BeforeValidator, Field, PlainSerializer, UrlConstraints, EmailStr
+from pydantic import BeforeValidator, EmailStr, Field, PlainSerializer, UrlConstraints
 from pydantic_core import Url
 
 from .validators import empty_string_to_none, parse_json_string

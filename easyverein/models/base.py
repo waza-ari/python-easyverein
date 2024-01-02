@@ -1,6 +1,6 @@
-from pydantic import BaseModel, PositiveInt, Field
+from pydantic import BaseModel, Field, PositiveInt
 
-from ..core.types import EasyVereinReference, DateTime
+from ..core.types import DateTime, EasyVereinReference
 
 
 class EasyVereinBase(BaseModel):

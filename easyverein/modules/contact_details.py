@@ -3,10 +3,10 @@ All methods related to contact details
 """
 import logging
 
-from .mixins.crud import CRUDMixin
-from .mixins.recycle_bin import RecycleBinMixin
 from ..core.client import EasyvereinClient
 from ..models import ContactDetails, ContactDetailsCreate, ContactDetailsUpdate
+from .mixins.crud import CRUDMixin
+from .mixins.recycle_bin import RecycleBinMixin
 
 
 class ContactDetailsMixin(

@@ -7,9 +7,9 @@ from typing import Annotated
 
 from pydantic import PositiveInt, StringConstraints
 
+from ..core.types import EasyVereinReference
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import EasyVereinReference
 
 
 class InvoiceItem(EasyVereinBase):

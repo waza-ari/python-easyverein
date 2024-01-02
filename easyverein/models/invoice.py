@@ -5,9 +5,9 @@ from __future__ import annotations
 
 from typing import Literal
 
+from ..core.types import Date, EasyVereinReference, PositiveIntWithZero
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import Date, EasyVereinReference, PositiveIntWithZero
 
 
 class Invoice(EasyVereinBase):

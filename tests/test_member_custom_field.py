@@ -2,8 +2,8 @@ import pytest
 
 from easyverein import EasyvereinAPI
 from easyverein.models import (
-    MemberCustomFieldCreate,
     MemberCustomField,
+    MemberCustomFieldCreate,
     MemberCustomFieldUpdate,
 )
 

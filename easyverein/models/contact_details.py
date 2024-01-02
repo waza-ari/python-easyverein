@@ -7,9 +7,9 @@ from typing import Any, Literal
 
 from pydantic import Field
 
+from ..core.types import Date, Email
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import Date, Email
 
 
 class ContactDetails(EasyVereinBase):
