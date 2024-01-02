@@ -1,6 +1,5 @@
 # content of test_sample.py
 import datetime
-from pathlib import Path
 
 import pytest
 from _pytest.fixtures import FixtureRequest
@@ -62,15 +61,8 @@ class TestInvoices:
         assert len(deleted_invoices) == 0
 
     def test_create_invoice_with_items(
-        self, ev_connection: EasyvereinAPI, random_string: str
+        self, ev_connection: EasyvereinAPI, random_string: str, example_member
     ):
-        # Get members
-        members = ev_connection.member.get()
-        assert len(members) > 0
-        member = members[1]
-
-        assert isinstance(member, Member)
-
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -85,8 +77,8 @@ class TestInvoices:
             isRequest=False,
             paymentInformation="debit",
             taxRate=0.00,
-            relatedAddress=member.contactDetails,
-            payedFromUser=member.id,
+            relatedAddress=example_member.contactDetails,
+            payedFromUser=example_member.id,
             storedInS3=False,
         )
 
@@ -127,15 +119,8 @@ class TestInvoices:
         assert len(invoices) == 5
 
     def test_create_invoice_with_items_helper(
-        self, ev_connection: EasyvereinAPI, random_string: str
+        self, ev_connection: EasyvereinAPI, random_string: str, example_member
     ):
-        # Get members
-        members = ev_connection.member.get()
-        assert len(members) > 0
-        member = members[1]
-
-        assert isinstance(member, Member)
-
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -150,8 +135,8 @@ class TestInvoices:
             isRequest=False,
             paymentInformation="debit",
             taxRate=0.00,
-            relatedAddress=member.contactDetails,
-            payedFromUser=member.id,
+            relatedAddress=example_member.contactDetails,
+            payedFromUser=example_member.id,
             storedInS3=False,
         )
 
