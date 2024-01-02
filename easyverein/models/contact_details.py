@@ -1,5 +1,5 @@
 """
-Member related models
+Contact Details related models
 """
 from __future__ import annotations
 
@@ -7,13 +7,16 @@ from typing import Literal, Any
 
 from pydantic import BaseModel, PositiveInt, Field, EmailStr
 
-from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
+from ..core.types import Date, EasyVereinReference
 from .mixins.required_attributes import required_mixin
 
 
 class ContactDetails(BaseModel):
     """
-    Pydantic model representing an Invoice
+    Pydantic model representing contact details
+
+    Note that contact details can be created standalone (independently of members), but members
+    are required to have a contact details linked.
     """
 
     id: PositiveInt | None = None

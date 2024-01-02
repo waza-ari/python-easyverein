@@ -13,7 +13,13 @@ from .mixins.required_attributes import required_mixin
 
 class Member(BaseModel):
     """
-    Pydantic model representing an Invoice
+    Pydantic model representing a Member
+
+    Note that members cannot exist standalone. They must always be linked to a contact details instance,
+    otherwise creation fails.
+
+    Setting `isApplication` on creation automatically creates a membership application, which must be
+    approved or denied in the portal.
     """
 
     id: PositiveInt | None = None
