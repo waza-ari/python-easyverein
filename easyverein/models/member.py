@@ -30,8 +30,7 @@ class Member(BaseModel):
     declarationOfResignation: AnyHttpURL | None = None
     declarationOfConsent: AnyHttpURL | None = None
     membershipNumber: str | None = None
-    # TODO: Add model once implemented
-    contactDetails: EasyVereinReference | None = None
+    contactDetails: ContactDetails | EasyVereinReference | None = None
     _paymentStartDate: Date | None = None
     paymentAmount: float | None = None
     paymentIntervallMonths: PositiveInt | None = None
@@ -61,3 +60,6 @@ class MemberUpdate(Member):
     """
 
     pass
+
+
+from .contact_details import ContactDetails  # noqa: E402
