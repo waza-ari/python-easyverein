@@ -2,7 +2,7 @@
 This module provides general CRUD operations for all endpoints.
 """
 
-from typing import Generic, Type, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
