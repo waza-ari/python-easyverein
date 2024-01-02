@@ -7,8 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, PositiveInt
 
-from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 from .mixins.required_attributes import required_mixin
+from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 
 
 class Member(BaseModel):
@@ -52,6 +52,7 @@ class Member(BaseModel):
     sepaMandateFile: AnyHttpURL | None = None
     # TODO: exact type is not specified in API docs
     integrationDosbSport: list | None = None
+    customFields: EasyVereinReference | list[MemberCustomField] | None = None
 
 
 class MemberCreate(Member, required_mixin(["contactDetails"])):
@@ -69,3 +70,4 @@ class MemberUpdate(Member):
 
 
 from .contact_details import ContactDetails  # noqa: E402
+from .member_custom_field import MemberCustomField  # noqa: E402

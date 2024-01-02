@@ -16,3 +16,8 @@ here so we can track them and remove when fixed on EV side
 ## Custom Fields
 
 - The API defines 14 possible values for `kind` when creating custom fields, but only 4 of them are properly described. These four match the four you can also create in the Portal, so no idea what the others are meant for.
+
+## Members
+
+- The API does not offer a simple way to ensure that a custom field is set to a certain value for member. You have to either create (POST) a member_custom_field if the member has no relation to a certain custom field yet, or modify an existing one (PATCH) if there is such a relation. Before modifying a value you therefore have to know if such a relation exists or not.
+- When deleting a custom field, the relation between the member and a custom field still stays intact, just with `customField` set to `None`. The tests therefore manually delete member custom field associations before deleting the actual custom field definition to not pollute the test tenant.

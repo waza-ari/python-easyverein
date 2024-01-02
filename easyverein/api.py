@@ -8,6 +8,7 @@ from .modules.custom_field import CustomFieldMixin
 from .modules.invoice import InvoiceMixin
 from .modules.invoice_item import InvoiceItemMixin
 from .modules.member import MemberMixin
+from .modules.member_custom_field import MemberCustomFieldMixin
 
 
 class EasyvereinAPI:
@@ -49,3 +50,4 @@ class EasyvereinAPI:
         self.invoice = InvoiceMixin(self.c, self.logger)
         self.invoice_item = InvoiceItemMixin(self.c, self.logger)
         self.member = MemberMixin(self.c, self.logger)
+        self.member_custom_field = MemberCustomFieldMixin(self.c, self.logger)
