@@ -1,13 +1,18 @@
 """
 Main EasyVerein API class
 """
+from __future__ import annotations
+
 import logging
-from typing import Type, TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
 
 import requests
 from pydantic import BaseModel
 
 from .exceptions import EasyvereinAPIException, EasyvereinAPITooManyRetriesException
+
+if TYPE_CHECKING:
+    from .. import EasyvereinAPI
 
 T = TypeVar("T")
 
@@ -17,7 +22,14 @@ class EasyvereinClient:
     Class encapsulating common function used by all API methods
     """
 
-    def __init__(self, api_key, api_version, base_url, logger: logging.Logger):
+    def __init__(
+        self,
+        api_key,
+        api_version,
+        base_url,
+        logger: logging.Logger,
+        instance: EasyvereinAPI,
+    ):
         """
         Constructor setting API key and logger
         """
@@ -25,6 +37,7 @@ class EasyvereinClient:
         self.base_url = base_url
         self.api_version = api_version
         self.logger = logger
+        self.api_instance = instance
 
     def _get_header(self):
         """
@@ -170,12 +183,17 @@ class EasyvereinClient:
         Only supports GET endpoints
         """
         reply = self.fetch(url, model)
-        if len(reply) == 0:
-            return None
-        try:
+        if isinstance(reply, list):
+            if len(reply) == 0:
+                return None
+
+            self.logger.warning(
+                "One object was requested, but multiple objects were returned. Returning first."
+            )
+            self.logger.debug(f"In total {len(reply)} objects where returned.")
             return reply[0]
-        except IndexError:
-            raise EasyvereinAPIException("Could not fetch resource from API")
+
+        return reply
 
     def fetch_paginated(self, url, model: Type[T] = None, limit=100) -> list[T]:
         """
@@ -241,6 +259,7 @@ class EasyvereinClient:
         self.logger.debug("Received raw data: %s", data)
 
         # if data is a list, parse each entry
+        # fetch_paginated returns a list of result entries instead of raw data, this is why this case is here.
         if isinstance(data, list):
             objects = []
             for obj in data:

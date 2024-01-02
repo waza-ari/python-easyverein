@@ -23,8 +23,6 @@ class EasyvereinAPI:
     ```
     """
 
-    invoice: InvoiceMixin
-
     def __init__(
         self,
         api_key,
@@ -43,7 +41,7 @@ class EasyvereinAPI:
         else:
             self.logger = logging.getLogger("easyverein")
 
-        self.c = EasyvereinClient(api_key, api_version, base_url, self.logger)
+        self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self)
 
         # Add methods
         self.invoice = InvoiceMixin(self.c, self.logger)
