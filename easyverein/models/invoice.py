@@ -5,22 +5,16 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, PositiveInt
-
-from ..core.types import Date, EasyVereinReference, PositiveIntWithZero
+from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
+from ..core.types import Date, EasyVereinReference, PositiveIntWithZero
 
 
-class Invoice(BaseModel):
+class Invoice(EasyVereinBase):
     """
     Pydantic model representing an Invoice
     """
 
-    id: PositiveInt | None = None
-    # TODO: Add reference to Organization once implemented
-    org: EasyVereinReference | None = None
-    _deleteAfterDate: Date | None = None
-    _deletedBy: str | None = None
     gross: bool | None = None
     canceledInvoice: str | None = None
     cancellationDescription: str | None = None

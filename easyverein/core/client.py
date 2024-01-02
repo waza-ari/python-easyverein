@@ -138,7 +138,11 @@ class EasyvereinClient:
         """
         return self._handle_response(
             self._do_request(
-                "post", url, data=data.model_dump(exclude_none=True, exclude_unset=True)
+                "post",
+                url,
+                data=data.model_dump(
+                    exclude_none=True, exclude_unset=True, by_alias=True
+                ),
             ),
             return_model,
             status_code,
@@ -162,7 +166,9 @@ class EasyvereinClient:
             self._do_request(
                 "patch",
                 url,
-                data=data.model_dump(exclude_none=True, exclude_unset=True),
+                data=data.model_dump(
+                    exclude_none=True, exclude_unset=True, by_alias=True
+                ),
             ),
             model,
             expected_status_code=status_code,

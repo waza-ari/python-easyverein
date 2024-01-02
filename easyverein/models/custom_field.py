@@ -5,28 +5,23 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import Field
 
+from .base import EasyVereinBase
+from .mixins.required_attributes import required_mixin
 from ..core.types import (
-    Date,
     EasyVereinReference,
     HexColor,
     OptionsField,
     PositiveIntWithZero,
 )
-from .mixins.required_attributes import required_mixin
 
 
-class CustomField(BaseModel):
+class CustomField(EasyVereinBase):
     """
     Pydantic model representing an Invoice
     """
 
-    id: PositiveInt | None = None
-    org: EasyVereinReference | None = None
-    # TODO: Add reference to Organization once implemented
-    _deleteAfterDate: Date | None = None
-    _deletedBy: str | None = None
     name: str | None = Field(default=None, max_length=200)
     color: HexColor = None
     short: str | None = Field(default=None, max_length=4)

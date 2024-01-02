@@ -5,13 +5,14 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, PositiveInt
+from pydantic import PositiveInt, Field
 
+from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 
 
-class Member(BaseModel):
+class Member(EasyVereinBase):
     """
     Pydantic model representing a Member
 
@@ -22,43 +23,40 @@ class Member(BaseModel):
     approved or denied in the portal.
     """
 
-    id: PositiveInt | None = None
-    org: EasyVereinReference | None = None
-    # TODO: Add reference to Organization once implemented
-    _deleteAfterDate: Date | None = None
-    _deletedBy: str | None = None
-    _profilePicture: AnyHttpURL | None = None
+    profilePicture: AnyHttpURL | None = Field(default=None, alias="_profilePicture")
     joinDate: DateTime | None = None
     resignationDate: Date | None = None
-    _isChairman: bool | None = None
-    _chairmanPermissionGroup: str | None
+    isChairman: bool | None = Field(default=None, alias="_isChairman")
+    chairmanPermissionGroup: str | None = Field(
+        default=None, alias="_chairmanPermissionGroup"
+    )
     declarationOfApplication: AnyHttpURL | None = None
     declarationOfResignation: AnyHttpURL | None = None
     declarationOfConsent: AnyHttpURL | None = None
     membershipNumber: str | None = None
     contactDetails: ContactDetails | EasyVereinReference | None = None
-    _paymentStartDate: Date | None = None
+    paymentStartDate: DateTime | None = Field(default=None, alias="_paymentStartDate")
     paymentAmount: float | None = None
     paymentIntervallMonths: PositiveInt | None = None
     useBalanceForMembershipFee: bool | None = None
     bulletinBoardNewPostNotification: bool | None = None
     integrationDosbGender: Literal["m", "w", "d"] | None = None
-    _isApplication: bool | None = None
-    _applicationDate: Date | None = None
-    _applicationWasAcceptedAt: Date | None = None
+    isApplication: bool | None = Field(default=None, alias="_isApplication")
+    applicationDate: Date | None = Field(default=None, alias="_applicationDate")
+    applicationWasAcceptedAt: Date | None = Field(
+        default=None, alias="_applicationWasAcceptedAt"
+    )
     signatureText: str | None = None
-    _relatedMember: Member | EasyVereinReference | None = None
-    _editableByRelatedMembers: bool | None = None
+    relatedMember: Member | EasyVereinReference | None = Field(
+        default=None, alias="_relatedMember"
+    )
+    editableByRelatedMembers: bool | None = Field(
+        default=None, alias="_editableByRelatedMembers"
+    )
     sepaMandateFile: AnyHttpURL | None = None
     # TODO: exact type is not specified in API docs
     integrationDosbSport: list | None = None
     customFields: EasyVereinReference | list[MemberCustomField] | None = None
-
-
-class MemberCreate(Member, required_mixin(["contactDetails"])):
-    """
-    Pydantic model for creating a new member
-    """
 
 
 class MemberUpdate(Member):
@@ -66,7 +64,24 @@ class MemberUpdate(Member):
     Pydantic model used to update a member
     """
 
+    profilePicture: AnyHttpURL | None = Field(
+        default=None, serialization_alias="_profilePicture"
+    )
+    isChairman: bool | None = Field(default=None, serialization_alias="_isChairman")
+    chairmanPermissionGroup: str | None = Field(
+        default=None, serialization_alias="_chairmanPermissionGroup"
+    )
+    isApplication: bool | None = Field(
+        default=None, serialization_alias="_isApplication"
+    )
+
     pass
+
+
+class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):
+    """
+    Pydantic model for creating a new member
+    """
 
 
 from .contact_details import ContactDetails  # noqa: E402

@@ -16,22 +16,16 @@ Note that the way to change a value of custom field X on member Y depends on the
 """
 from __future__ import annotations
 
-from pydantic import BaseModel, PositiveInt
-
+from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import Date, EasyVereinReference
+from ..core.types import EasyVereinReference
 
 
-class MemberCustomField(BaseModel):
+class MemberCustomField(EasyVereinBase):
     """
     Pydantic model representing an Invoice
     """
 
-    id: PositiveInt | None = None
-    org: EasyVereinReference | None = None
-    # TODO: Add reference to Organization once implemented
-    _deleteAfterDate: Date | None = None
-    _deletedBy: str | None = None
     userObject: EasyVereinReference | Member | None = None
     customField: EasyVereinReference | CustomField | None = None
     value: str | None = None

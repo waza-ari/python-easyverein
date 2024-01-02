@@ -5,20 +5,18 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import BaseModel, PositiveInt, StringConstraints
+from pydantic import PositiveInt, StringConstraints
 
-from ..core.types import EasyVereinReference
+from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
+from ..core.types import EasyVereinReference
 
 
-class InvoiceItem(BaseModel):
+class InvoiceItem(EasyVereinBase):
     """
     Pydantic model representing an Invoice
     """
 
-    id: PositiveInt | None = None
-    # TODO: Add reference to Organization once implemented
-    org: EasyVereinReference | None = None
     relatedInvoice: Invoice | EasyVereinReference | None = None
     quantity: PositiveInt | None = None
     unitPrice: float | None = None

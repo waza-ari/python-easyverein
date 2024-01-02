@@ -3,6 +3,9 @@
 There are some issues on the EV API that we cannot fix on API client side. They're documented
 here so we can track them and remove when fixed on EV side
 
+## General
+
+- The API uses a lot of attributes prefixed with an underscore. Pydantic [does not treat private attributes as Fields](https://docs.pydantic.dev/latest/concepts/models/). That's fine for parsing, but when there's a need to set them (`isCompany` on `ContactDetails`) this is currently not supported. As a workaround, we're using Pydantic [Field Aliases](https://docs.pydantic.dev/latest/concepts/fields/#field-aliases) for this purpose. This has a side effect though: we need to use the alias both when parsing the API reply (e.g. into `ContactDetails` model), as well as during serialization. It is not possible to access the parsed result using the alias, so the user has to use the normalized name (`isCompany` instead of `_isCompany`) when accessing the parsed attribute. Without further measures, the user would need to supply `_isCompany` when creating a model though, as this technically is a validation, too. Therefore we overwrite the "private" attributes in the `XYZCreate` and `XYZUpdate` models using only a `serialization_alias`, to keep the user experience consistent.
 ## Invoices
 
 - The `path` attribute of `Invoice` is supposed to be a reference or `None`, but sometimes returns an emptry string. For this purpose, we've implemented the `empty_string_to_none` validator and added it as `BeforeValidator` to rewrite emptry strings to None before performing URL parsing.

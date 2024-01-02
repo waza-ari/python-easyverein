@@ -5,13 +5,14 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import Field
 
+from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import Date, EasyVereinReference, Email
+from ..core.types import Date, Email
 
 
-class ContactDetails(BaseModel):
+class ContactDetails(EasyVereinBase):
     """
     Pydantic model representing contact details
 
@@ -19,12 +20,7 @@ class ContactDetails(BaseModel):
     are required to have a contact details linked.
     """
 
-    id: PositiveInt | None = None
-    org: EasyVereinReference | None = None
-    # TODO: Add reference to Organization once implemented
-    _deleteAfterDate: Date | None = None
-    _deletedBy: str | None = None
-    _isCompany: bool | None = None
+    isCompany: bool | None = Field(default=None, alias="_isCompany")
     salutation: Literal["", "Herr", "Frau"] | None = None
     firstName: str | None = Field(default=None, max_length=128)
     familyName: str | None = Field(default=None, max_length=128)
@@ -36,7 +32,9 @@ class ContactDetails(BaseModel):
     companyEmailInvoice: Email | None = None
     primaryEmail: str | None = "email"
     # Hint: 0 = Same as login, 1 = private, 2 = company
-    _preferredEmailField: Literal[0, 1, 2] | None = None
+    preferredEmailField: Literal[0, 1, 2] | None = Field(
+        default=None, alias="_preferredEmailField"
+    )
     # Hint: 0 = mail, 1 = phone, 3 = no communication
     preferredCommunicationWay: Literal[0, 1, 2] | None = None
     companyName: str | None = None
@@ -69,29 +67,37 @@ class ContactDetails(BaseModel):
     # Hint: 0 = not selected, 1 = direct debit, 2 = bank transfer, 3 = cash, 4 = Other
     methodOfPayment: int | None = None
     datevAccountNumber: int | None = None
-    _copiedFromParent: Any | None = (
-        None  # TODO: Refine once available from API description
+    # TODO: Refine once available from API description
+    copiedFromParent: Any | None = Field(default=None, alias="_copiedFromParent")
+    # TODO: Refine once available from API description
+    copiedFromParentStartDate: Any | None = Field(
+        default=None,
+        alias="_copiedFromParentStartDate",
     )
-    _copiedFromParentStartDate: Any | None = (
-        None  # TODO: Refine once available from API description
+    # TODO: Refine once available from API description
+    copiedFromParentEndDate: Any | None = Field(
+        default=None,
+        alias="_copiedFromParentEndDate",
     )
-    _copiedFromParentEndDate: Any | None = (
-        None  # TODO: Refine once available from API description
+    # TODO: Refine once available from API description
+    copiedFromParentEndDateAction: Any | None = Field(
+        default=None,
+        alias="_copiedFromParentEndDateAction",
     )
-    _copiedFromParentEndDateAction: Any | None = (
-        None  # TODO: Refine once available from API description
-    )
-
-
-class ContactDetailsCreate(ContactDetails, required_mixin(["contactDetails"])):
-    """
-    Pydantic model for creating a new member
-    """
 
 
 class ContactDetailsUpdate(ContactDetails):
     """
-    Pydantic model used to update a member
+    Pydantic model used to update contact details
     """
 
-    pass
+    isCompany: bool | None = Field(default=None, serialization_alias="_isCompany")
+    preferredEmailField: Literal[0, 1, 2] | None = Field(
+        default=None, alias="_preferredEmailField"
+    )
+
+
+class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):
+    """
+    Pydantic model for creating new contact details
+    """
