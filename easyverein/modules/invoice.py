@@ -30,7 +30,7 @@ class InvoiceMixin(
         self,
         invoice: InvoiceCreate,
         items: List[InvoiceItem],
-        set_draft_state: bool = False,
+        set_draft_state: bool = True,
     ):
         """
         The EV API doesn't support passing the InvoiceItems directly when creating an invoice,
@@ -41,6 +41,10 @@ class InvoiceMixin(
         as draft, then adds the invoice items to the invoice, and optionally updates the
         invoice to remove the draft state, which also triggers the automatic PDF generation
         as of version API version 1.7
+
+        :param invoice: Invoice to create
+        :param items: List of invoice items to add to the invoice
+        :param set_draft_state: Whether to convert the invoice from draft state to an actual invoice
         """
 
         if not set_draft_state and not invoice.isDraft:
