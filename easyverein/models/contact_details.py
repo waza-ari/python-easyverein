@@ -5,10 +5,10 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, EmailStr, Field, PositiveInt
+from pydantic import BaseModel, Field, PositiveInt
 
-from ..core.types import Date, EasyVereinReference
 from .mixins.required_attributes import required_mixin
+from ..core.types import Date, EasyVereinReference, Email
 
 
 class ContactDetails(BaseModel):
@@ -31,9 +31,9 @@ class ContactDetails(BaseModel):
     nameAffix: str | None = Field(default=None, max_length=100)
     dateOfBirth: Date | None = None
     internalNote: str | None = None
-    privateEmail: EmailStr | None = None
-    companyEmail: EmailStr | None = None
-    companyEmailInvoice: EmailStr | None = None
+    privateEmail: Email | None = None
+    companyEmail: Email | None = None
+    companyEmailInvoice: Email | None = None
     primaryEmail: str | None = "email"
     # Hint: 0 = Same as login, 1 = private, 2 = company
     _preferredEmailField: Literal[0, 1, 2] | None = None

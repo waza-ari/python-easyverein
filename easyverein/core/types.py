@@ -5,7 +5,7 @@ import datetime
 import json
 from typing import Annotated
 
-from pydantic import BeforeValidator, Field, PlainSerializer, UrlConstraints
+from pydantic import BeforeValidator, Field, PlainSerializer, UrlConstraints, EmailStr
 from pydantic_core import Url
 
 from .validators import empty_string_to_none, parse_json_string
@@ -37,3 +37,5 @@ HexColor = Annotated[
     Field(min_length=7, max_length=7),
     BeforeValidator(empty_string_to_none),
 ]
+
+Email = Annotated[EmailStr | None, BeforeValidator(empty_string_to_none)]
