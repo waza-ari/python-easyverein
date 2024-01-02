@@ -38,7 +38,9 @@ class InvoiceMixin(
             model=Invoice,
         )
 
-    def create_with_attachment(self, invoice: InvoiceCreate, attachment: Path, set_draft_state: bool = True):
+    def create_with_attachment(
+        self, invoice: InvoiceCreate, attachment: Path, set_draft_state: bool = True
+    ):
         """
         Creates an invoice with an attachment. For invoices, the file must be a PDF.
         """

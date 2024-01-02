@@ -168,7 +168,14 @@ class EasyvereinClient:
             expected_status_code=status_code,
         )
 
-    def upload(self, url: str, field_name: str, file: Path, model: Type[T] = None, status_code: int = 200) -> T:
+    def upload(
+        self,
+        url: str,
+        field_name: str,
+        file: Path,
+        model: Type[T] = None,
+        status_code: int = 200,
+    ) -> T:
         """
         This method uploads a file to a certain endpoint.
 
@@ -190,7 +197,7 @@ class EasyvereinClient:
                 files=files,
             ),
             model,
-            status_code
+            status_code,
         )
 
     def fetch(self, url, model: Type[T] = None) -> list[T]:

@@ -4,6 +4,7 @@ Main EasyVerein API class
 import logging
 
 from .core.client import EasyvereinClient
+from .modules.custom_field import CustomFieldMixin
 from .modules.invoice import InvoiceMixin
 from .modules.invoice_item import InvoiceItemMixin
 from .modules.member import MemberMixin
@@ -44,6 +45,7 @@ class EasyvereinAPI:
         self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self)
 
         # Add methods
+        self.custom_field = CustomFieldMixin(self.c, self.logger)
         self.invoice = InvoiceMixin(self.c, self.logger)
         self.invoice_item = InvoiceItemMixin(self.c, self.logger)
         self.member = MemberMixin(self.c, self.logger)

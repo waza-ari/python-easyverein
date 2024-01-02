@@ -18,7 +18,6 @@ class TestMember:
             assert isinstance(member, Member)
 
     def test_members_with_query(self, ev_connection: EasyvereinAPI):
-
         query = (
             "{id,membershipNumber,contactDetails{firstName,familyName,privateEmail,_isCompany,companyName},"
             "resignationDate,_isApplication}"

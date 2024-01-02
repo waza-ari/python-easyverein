@@ -2,12 +2,13 @@
 Custom types used for model validation
 """
 import datetime
+import json
 from typing import Annotated
 
 from pydantic import BeforeValidator, Field, PlainSerializer, UrlConstraints
 from pydantic_core import Url
 
-from .validators import empty_string_to_none
+from .validators import empty_string_to_none, parse_json_string
 
 AnyHttpURL = Annotated[
     Url,
@@ -24,4 +25,15 @@ Date = Annotated[
 DateTime = Annotated[
     datetime.datetime,
     PlainSerializer(lambda x: x.strftime("%Y-%m-%dT%H:%M:%S"), return_type=str),
+]
+OptionsField = Annotated[
+    list[str] | None,
+    PlainSerializer(lambda x: json.dumps(x), return_type=str),
+    BeforeValidator(parse_json_string),
+    BeforeValidator(empty_string_to_none),
+]
+HexColor = Annotated[
+    str | None,
+    Field(min_length=7, max_length=7),
+    BeforeValidator(empty_string_to_none),
 ]

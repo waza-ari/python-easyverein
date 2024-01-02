@@ -3,9 +3,9 @@ Contact Details related models
 """
 from __future__ import annotations
 
-from typing import Literal, Any
+from typing import Any, Literal
 
-from pydantic import BaseModel, PositiveInt, Field, EmailStr
+from pydantic import BaseModel, EmailStr, Field, PositiveInt
 
 from ..core.types import Date, EasyVereinReference
 from .mixins.required_attributes import required_mixin
@@ -49,7 +49,9 @@ class ContactDetails(BaseModel):
     street: str | None = Field(default=None, max_length=128)
     city: str | None = Field(default=None, max_length=100)
     state: str | None = Field(default=None, max_length=64)
-    additionalAdressInfo: str | None = Field(default=None, max_length=128)  # Intentionally written wrong, as per API
+    additionalAdressInfo: str | None = Field(
+        default=None, max_length=128
+    )  # Intentionally written wrong, as per API
     zip: str | None = Field(default=None, max_length=20)
     country: str | None = Field(default=None, max_length=50)
     companyStreet: str | None = Field(default=None, max_length=100)
@@ -67,10 +69,18 @@ class ContactDetails(BaseModel):
     # Hint: 0 = not selected, 1 = direct debit, 2 = bank transfer, 3 = cash, 4 = Other
     methodOfPayment: int | None = None
     datevAccountNumber: int | None = None
-    _copiedFromParent: Any | None = None  # TODO: Refine once available from API description
-    _copiedFromParentStartDate: Any | None = None  # TODO: Refine once available from API description
-    _copiedFromParentEndDate: Any | None = None  # TODO: Refine once available from API description
-    _copiedFromParentEndDateAction: Any | None = None  # TODO: Refine once available from API description
+    _copiedFromParent: Any | None = (
+        None  # TODO: Refine once available from API description
+    )
+    _copiedFromParentStartDate: Any | None = (
+        None  # TODO: Refine once available from API description
+    )
+    _copiedFromParentEndDate: Any | None = (
+        None  # TODO: Refine once available from API description
+    )
+    _copiedFromParentEndDateAction: Any | None = (
+        None  # TODO: Refine once available from API description
+    )
 
 
 class ContactDetailsCreate(ContactDetails, required_mixin(["contactDetails"])):

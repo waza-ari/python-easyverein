@@ -204,7 +204,7 @@ class TestInvoices:
             invNumber=random_string,
             totalPrice=21.10,
             date=datetime.date.today(),
-            dateItHappend=datetime.date.today()-datetime.timedelta(days=30),
+            dateItHappend=datetime.date.today() - datetime.timedelta(days=30),
             isDraft=False,
             gross=True,
             description="Test Attachment Upload",

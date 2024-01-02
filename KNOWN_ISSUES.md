@@ -12,3 +12,7 @@ here so we can track them and remove when fixed on EV side
 ## Contact Details
 
 - There are a bunch of fields lacking description on the API, therefore they're Any-typed for now: `_copiedFromParent`, `_copiedFromParentStartDate`, `_copiedFromParentEndDate`, `_copiedFromParentEndDateAction`
+
+## Custom Fields
+
+- The API defines 14 possible values for `kind` when creating custom fields, but only 4 of them are properly described. These four match the four you can also create in the Portal, so no idea what the others are meant for.
