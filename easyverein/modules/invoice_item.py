@@ -3,14 +3,12 @@ All methods related to invoices
 """
 import logging
 
-from .mixins.crud import CRUDMixin
 from ..core.client import EasyvereinClient
 from ..models.invoice_item import InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate
+from .mixins.crud import CRUDMixin
 
 
-class InvoiceItemMixin(
-    CRUDMixin[InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate]
-):
+class InvoiceItemMixin(CRUDMixin[InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate]):
     """
     All methods related to invoices
     """
