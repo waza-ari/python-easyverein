@@ -1,5 +1,3 @@
-# content of test_sample.py
-
 from easyverein import EasyvereinAPI
 from easyverein.models.custom_field import (
     CustomField,

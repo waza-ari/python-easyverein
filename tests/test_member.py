@@ -1,5 +1,3 @@
-# content of test_sample.py
-
 from easyverein import EasyvereinAPI
 from easyverein.models.member import Member
 
@@ -28,4 +26,7 @@ class TestMember:
 
         for member in members:
             assert isinstance(member, Member)
-            print(member)
+            assert member.contactDetails.firstName
+            assert member.contactDetails.familyName
+            assert member.contactDetails.primaryEmail
+            assert not member.contactDetails.companyEmail
