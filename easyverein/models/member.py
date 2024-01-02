@@ -7,8 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, PositiveInt
 
-from .mixins.required_attributes import required_mixin
 from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
+from .mixins.required_attributes import required_mixin
 
 
 class Member(BaseModel):
@@ -59,4 +59,5 @@ class MemberUpdate(Member):
     """
     Pydantic model used to update a member
     """
+
     pass

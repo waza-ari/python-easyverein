@@ -35,7 +35,7 @@ class InvoiceItem(BaseModel):
 
 class InvoiceItemCreate(
     InvoiceItem,
-    required_mixin(["title", "quantity", "unitPrice", "relatedInvoice"]),
+    required_mixin(["title", "quantity", "unitPrice"]),
 ):
     """
     Pydantic model representing an InvoiceItem
@@ -53,4 +53,3 @@ class InvoiceItemUpdate(InvoiceItem):
 
 
 from .invoice import Invoice  # noqa: E402
-Invoice.model_rebuild()

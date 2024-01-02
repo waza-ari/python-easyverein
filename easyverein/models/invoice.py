@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, PositiveInt
 
-from ..core.types import Date, EasyVereinReference, PositiveIntWithZero, AnyHttpURL
+from ..core.types import Date, EasyVereinReference, PositiveIntWithZero
 from .mixins.required_attributes import required_mixin
 
 
@@ -77,6 +77,5 @@ class InvoiceUpdate(Invoice):
     """
 
 
-from .member import Member  # noqa: E402
 from .invoice_item import InvoiceItem  # noqa: E402
-Invoice.model_rebuild()
+from .member import Member  # noqa: E402
