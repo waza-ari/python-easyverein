@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Type, TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import requests
 from pydantic import BaseModel
@@ -130,7 +130,7 @@ class EasyvereinClient:
         self,
         url,
         data: BaseModel = None,
-        return_model: Type[T] = None,
+        return_model: type[T] = None,
         status_code: int = 201,
     ) -> T:
         """
@@ -157,7 +157,7 @@ class EasyvereinClient:
         )
 
     def update(
-        self, url, data: BaseModel = None, model: Type[T] = None, status_code: int = 200
+        self, url, data: BaseModel = None, model: type[T] = None, status_code: int = 200
     ) -> T:
         """
         Method to update an object in the API
@@ -179,7 +179,7 @@ class EasyvereinClient:
         url: str,
         field_name: str,
         file: Path,
-        model: Type[T] = None,
+        model: type[T] = None,
         status_code: int = 200,
     ) -> T:
         """
@@ -206,7 +206,7 @@ class EasyvereinClient:
             status_code,
         )
 
-    def fetch(self, url, model: Type[T] = None) -> list[T]:
+    def fetch(self, url, model: type[T] = None) -> list[T]:
         """
         Helper method that fetches a result from an API call
 
@@ -215,7 +215,7 @@ class EasyvereinClient:
         res = self._do_request("get", url)
         return self._handle_response(res, model, 200)
 
-    def fetch_one(self, url, model: Type[T] = None) -> T | None:
+    def fetch_one(self, url, model: type[T] = None) -> T | None:
         """
         Helper method that fetches a result from an API call
 
@@ -234,7 +234,7 @@ class EasyvereinClient:
 
         return reply
 
-    def fetch_paginated(self, url, model: Type[T] = None, limit=100) -> list[T]:
+    def fetch_paginated(self, url, model: type[T] = None, limit=100) -> list[T]:
         """
         Helper method that fetches all pages of a paginated API call
 
@@ -276,7 +276,7 @@ class EasyvereinClient:
     def _handle_response(
         self,
         res: tuple[int, list | dict],
-        model: Type[T] = None,
+        model: type[T] = None,
         expected_status_code=200,
     ) -> T | list[T]:
         """

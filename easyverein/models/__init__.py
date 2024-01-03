@@ -1,3 +1,4 @@
+# noqa: F401
 from .contact_details import ContactDetails, ContactDetailsCreate, ContactDetailsUpdate
 from .custom_field import CustomField, CustomFieldCreate, CustomFieldUpdate
 from .invoice import Invoice, InvoiceCreate, InvoiceUpdate
