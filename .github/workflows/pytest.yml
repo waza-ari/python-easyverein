@@ -20,4 +20,6 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev
       - name: Run pytest
+        env:
+          EV_API_KEY: ${{ secrets.EV_API_KEY }}
         run: poetry run pytest --junitxml=junit/test-results.xml --cov=easyverein --cov-report=xml --cov-report=html
