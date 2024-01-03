@@ -14,10 +14,6 @@ class MemberCustomFieldMixin(
     CRUDMixin[MemberCustomField, MemberCustomFieldCreate, MemberCustomFieldUpdate],
     RecycleBinMixin[MemberCustomField],
 ):
-    """
-    All methods related to custom fields used on members
-    """
-
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         self.return_type = MemberCustomField
         self.c = client

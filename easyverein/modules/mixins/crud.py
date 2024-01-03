@@ -18,12 +18,12 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
         self: IsEVClientProtocol, query: str = None, limit: int = 10
     ) -> list[ModelType]:
         """
-        Fetches specified objects from the EV API
+        Fetches a single page of a given page size. The page size is defined by the `limit` parameter
+        with an API sided upper limit of 100.
 
         Args:
-            query (str, optional): Query to use with API. Defaults to None. Refer to the EV API help for more
-                                    information on how to use queries
-            limit (int, optional): Defines how many resources to return. Defaults to 10.
+            query: Query to use with API. Refer to the EV API help for more information on how to use queries
+            limit: Defines how many resources to return.
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
@@ -35,14 +35,15 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
         self: IsEVClientProtocol, query: str = None, limit_per_page: int = 10
     ) -> list[ModelType]:
         """
-        Fetches all objects from the EV API, abstracting away the need to handle pagination.
+        Convenient method that fetches all objects from the EV API, abstracting away the need to handle pagination.
 
-        Will fetch all pages of objects and return a single list.
+        Will fetch all pages of objects and return a single list. The default has been chosen to match the limit
+        of the API. It is advisable to set a higher limit to avoid many API calls. The maximum page size is 100.
 
         Args:
-            query (str, optional): Query to use with API. Defaults to None. Refer to the EV API help for more
+            query: Query to use with API. Defaults to None. Refer to the EV API help for more
                                     information on how to use queries
-            limit_per_page (int, optional): Defines how many resources to return. Defaults to 10.
+            limit_per_page: Defines how many resources to return. Defaults to 10.
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
@@ -56,11 +57,11 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
         self: IsEVClientProtocol, obj_id: int, query: str = None
     ) -> ModelType:
         """
-        Fetches a single object from the API.
+        Fetches a single object identified by its primary id.
 
         Args:
-            obj_id (int): Id of the object to be retrieved
-            query (str, optional): Query to use with API. Defaults to None. Refer to the EV API help for more
+            obj_id: Id of the object to be retrieved
+            query: Query to use with API. Defaults to None. Refer to the EV API help for more
                                     information on how to use queries
         """
         self.logger.info(
@@ -71,86 +72,97 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
 
         return self.c.fetch_one(url, self.return_type)
 
-    def create(self: IsEVClientProtocol, obj: CreateModelType) -> ModelType:
+    def create(self: IsEVClientProtocol, data: CreateModelType) -> ModelType:
         """
-        Creates an object of specified type and returns the created object
+        Creates an object of specified type and returns the created object.
+        The POST method of the respective endpoint is used to create a new resource and the API
+        result is parsed, validated and returned as Pydantic object.
+
+        **Example**:
+
+        This example uses the `custom-field` endpoint, but any other endpoint can be used similarly.
+
+        ```py
+        from easyverein import EasyvereinAPI
+
+        ev_client = EasyvereinAPI("your_api_key")
+
+        custom_field = ev.custom_field.create(
+            CustomFieldCreate(name="Test-Field", kind="e", settings_type="t")
+        )
+        ```
 
         Args:
-            obj (CreateModelType): Object to be created
+            data: Object to be created
         """
         self.logger.info(f"Creating object of type {self.endpoint_name}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/")
 
-        return self.c.create(url, obj, self.return_type)
+        return self.c.create(url, data, self.return_type)
 
     def update(
-        self: IsEVClientProtocol, obj_id: int, obj: UpdateModelType
+        self: IsEVClientProtocol, target: ModelType | int, data: UpdateModelType
     ) -> ModelType:
         """
-        Updates (patches) a certain object and returns the updated object.
+        Updates (PATCHes) a certain object and returns the updated object. Accepts either an object
+        or its id as first argument.
 
         Args:
-            obj_id (int): ID of the invoice to update
-            obj (UpdateModelType): Pydantic Model holding data to update the model
+            target: Model instance to update or id of the model to update
+            data: Pydantic Model holding data to update the model
         """
+
+        obj_id = target if isinstance(target, int) else target.id
+
         self.logger.info(
             f"Updating object of type {self.endpoint_name} with id {obj_id} %s"
         )
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
 
-        return self.c.update(url, obj, self.return_type)
+        return self.c.update(url, data, self.return_type)
 
     def delete(
         self: IsEVClientProtocol,
-        obj: ModelType,
+        target: ModelType | int,
         delete_from_recycle_bin: bool = False,
     ):
         """
-        Deletes an object. Can optionally purge the object and delete it from the recycle bin,
-        but only if supported by the API for this particular endpoint.
+        Deletes an object from the database and returns nothing. Can either take the object itself
+        or the id of the object as argument.
 
-        Available endpoints at the time of writing:
+        Note that the EV API soft-deletes some objects by default. These objects are not fully
+        deleted but instead placed in a recycle bin (official API calls this "wastebasket").
+
+        This library does provide methods to interact with soft deleted objects (see below), but you
+        may also instruct the `delete` method to immediately purge the object. This will result in two
+        API calls (first soft-delete the object, then remove it from recycle bin). This is only supported
+        for some endpoints:
 
         - member
         - contact-details
-        - event
-        - task
-        - protocol
-        - booking
         - invoice
-        - location
-        - inventory-object
-        - lending
-        - protocol-element
-        - protocol-element-comment
-        - voting
-        - billing-account
-        - member-group
-        - contact-details-group
-        - calendar
-        - task-group
-        - inventory-object-group
-        - chairman-level
-        - custom-field-collection
         - custom-field
 
         Args:
-            obj (ModelType): Object to delete
-            delete_from_recycle_bin (bool, optional): Whether to delete the invoice
+            target: Object to delete
+            delete_from_recycle_bin: Whether to delete the invoice
                 also from the recycle bin. Defaults to False.
         """
+
+        obj_id = target if isinstance(target, int) else target.id
+
         self.logger.info(
-            f"Deleting object of type {self.endpoint_name} with id {obj.id}"
+            f"Deleting object of type {self.endpoint_name} with id {obj_id}"
         )
 
-        url = self.c.get_url(f"/{self.endpoint_name}/{obj.id}")
+        url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
 
         self.c.delete(url)
 
         if delete_from_recycle_bin:
             self.logger.info(
-                f"Deleting object of type {self.endpoint_name} with id {obj.id} from wastebasket"
+                f"Deleting object of type {self.endpoint_name} with id {obj_id} from wastebasket"
             )
-            self.purge(obj.id)
+            self.purge(obj_id)

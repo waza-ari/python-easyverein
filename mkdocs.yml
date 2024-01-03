@@ -1,6 +1,12 @@
 site_name: Python Easyverein Documentation
+repo_url: https://github.com/waza-ari/python-easyverein
 theme:
   name: "material"
+  features:
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - announce.dismiss
 
 plugins:
   - search
@@ -10,18 +16,51 @@ plugins:
         python:
           options:
             show_source: false
+            show_bases: false
             docstring_options:
               ignore_init_summary: true
             merge_init_into_class: true
             separate_signature: true
-            show_signature_annotations: true
             unwrap_annotated: true
 
 markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
   - toc:
       toc_depth: 4
+      permalink: true
+      title: Page contents
 
 nav:
   - index.md
   - usage.md
-  - api.md
+  - "API Reference":
+    - "CRUD Operations": api/crud.md
+    - "Recycle Bin / Soft Delete": api/recycle_bin.md
+    - "Endpoint Specific":
+        - "Contact Details": api/endpoints/contact_details.md
+        - "Custom Field": api/endpoints/custom_field.md
+        - "Invoice": api/endpoints/invoice.md
+        - "Invoice Item": api/endpoints/invoice_item.md
+        - "Member": api/endpoints/member.md
+        - "Member Custom Field": api/endpoints/member_custom_field.md
+  - "Model Reference":
+    - "Base Model": models/base.md
+    - "Contact Details": models/contact_details.md
+    - "Custom Field": models/custom_field.md
+    - "Invoice": models/invoice.md
+    - "Invoice Item": models/invoice_item.md
+    - "Member": models/member.md
+    - "Member Custom Field": models/member_custom_field.md
+
+watch:
+  - docs
+  - easyverein

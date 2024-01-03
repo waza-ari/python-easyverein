@@ -14,7 +14,14 @@ from .mixins.required_attributes import required_mixin
 
 class InvoiceItem(EasyVereinBase):
     """
-    Pydantic model representing an Invoice
+    | Representative Model Class | Update Model Class | Create Model Class |
+    | --- | --- | --- |
+    | `InvoiceItem` | `InvoiceUpdateItem` | `InvoiceItemCreate` |
+
+    !!! tip "Creating Invoice Items"
+        Invoice Items can only be created once the invoice is already created and is still in the draft state.
+        Also note that the tax and gross settings must match those of the invoice this item is being attached to,
+        otherwise invoice generation (setting `isDraft` to `False`) will fail on EV API side.
     """
 
     relatedInvoice: Invoice | EasyVereinReference | None = None
@@ -37,10 +44,6 @@ class InvoiceItemCreate(
 ):
     """
     Pydantic model representing an InvoiceItem
-
-    Note that the tax and gross settings must match those of the invoice
-    this item is being attached to, otherwise invoice generation (setting
-    `isDraft` to `False`) will fail on EV API side.
     """
 
 

@@ -10,7 +10,7 @@ ModelType = TypeVar("ModelType", bound=BaseModel)
 class RecycleBinMixin(Generic[ModelType]):
     def get_deleted(self: IsEVClientProtocol) -> list[ModelType]:
         """
-        Fetches all deleted invoices from the API
+        Fetches all deleted resources from the recycle bin and returns a list.
         """
         self.logger.info(
             f"Fetching all deleted objects of type {self.endpoint_name} from API"
@@ -30,10 +30,17 @@ class RecycleBinMixin(Generic[ModelType]):
     #         self.c.do_request("patch", url), expected_status_code=200
     #     )
 
-    def purge(self: IsEVClientProtocol, item_id: int):
+    def purge(self: IsEVClientProtocol, item: ModelType | int):
         """
-        Purges a given item from recycle bin
+        Finally deletes a given item from the recycle bin. This is irreversible and cannot be undone.
+
+        This function can take either an object instance or a numerical id as argument.
+
+        Args:
+            item: The id or object that should be deleted.
         """
+        item_id = item if isinstance(item, int) else item.id
+
         self.logger.info(
             f"Purging object of type {self.endpoint_name} and id {item_id} from recycle bin"
         )

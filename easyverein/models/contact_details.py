@@ -14,13 +14,17 @@ from .mixins.required_attributes import required_mixin
 
 class ContactDetails(EasyVereinBase):
     """
-    Pydantic model representing contact details
+    | Representative Model Class | Update Model Class | Create Model Class |
+    | --- | --- | --- |
+    | `ContactDetails` | `ContactDetailsUpdate` | `ContactDetailsCreate` |
 
-    Note that contact details can be created standalone (independently of members), but members
-    are required to have a contact details linked.
+    !!! info "Contact Details and Members"
+        Note that contact details can be created standalone (independently of members), but members
+        are required to have a contact details object linked.
     """
 
     isCompany: bool | None = Field(default=None, alias="_isCompany")
+    """Alias for `_isCompany` field. See [Pydantic Models](../usage.md#pydantic-models) for details."""
     salutation: Literal["", "Herr", "Frau"] | None = None
     firstName: str | None = Field(default=None, max_length=128)
     familyName: str | None = Field(default=None, max_length=128)
@@ -31,10 +35,18 @@ class ContactDetails(EasyVereinBase):
     companyEmail: Email | None = None
     companyEmailInvoice: Email | None = None
     primaryEmail: str | None = "email"
-    # Hint: 0 = Same as login, 1 = private, 2 = company
     preferredEmailField: Literal[0, 1, 2] | None = Field(
         default=None, alias="_preferredEmailField"
     )
+    """
+    Alias for `_preferredEmailField` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
+
+    Possible values:
+
+    - 0: same as login
+    - 1: private
+    - 2: company
+    """
     # Hint: 0 = mail, 1 = phone, 3 = no communication
     preferredCommunicationWay: Literal[0, 1, 2] | None = None
     companyName: str | None = None
@@ -64,26 +76,48 @@ class ContactDetails(EasyVereinBase):
     bankAccountOwner: str | None = Field(default=None, max_length=128)
     sepaMandate: str | None = Field(default=None, max_length=60)
     sepaDate: Date | None = None
-    # Hint: 0 = not selected, 1 = direct debit, 2 = bank transfer, 3 = cash, 4 = Other
     methodOfPayment: int | None = None
+    """
+    Defines the method of payment preferred by the user.
+
+    Possible values:
+
+    - 0: not selected
+    - 1: direct debit
+    - 2: bank transfer
+    - 3: cash
+    - 4: other
+    """
     datevAccountNumber: int | None = None
     # TODO: Refine once available from API description
     copiedFromParent: Any | None = Field(default=None, alias="_copiedFromParent")
+    """
+    Alias for `_copiedFromParent` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
+    """
     # TODO: Refine once available from API description
     copiedFromParentStartDate: Any | None = Field(
         default=None,
         alias="_copiedFromParentStartDate",
     )
+    """
+    Alias for `_copiedFromParentStartDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
+    """
     # TODO: Refine once available from API description
     copiedFromParentEndDate: Any | None = Field(
         default=None,
         alias="_copiedFromParentEndDate",
     )
+    """
+    Alias for `_copiedFromParentEndDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
+    """
     # TODO: Refine once available from API description
     copiedFromParentEndDateAction: Any | None = Field(
         default=None,
         alias="_copiedFromParentEndDateAction",
     )
+    """
+    Alias for `_copiedFromParentEndDateAction` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
+    """
 
 
 class ContactDetailsUpdate(ContactDetails):

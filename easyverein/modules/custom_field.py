@@ -13,10 +13,6 @@ class CustomFieldMixin(
     CRUDMixin[CustomField, CustomFieldCreate, CustomFieldUpdate],
     RecycleBinMixin[CustomField],
 ):
-    """
-    All methods related to custom fields
-    """
-
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         super().__init__()
         self.endpoint_name = "custom-field"

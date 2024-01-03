@@ -13,10 +13,6 @@ class ContactDetailsMixin(
     CRUDMixin[ContactDetails, ContactDetailsCreate, ContactDetailsUpdate],
     RecycleBinMixin[ContactDetails],
 ):
-    """
-    All methods related to contact details
-    """
-
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         self.endpoint_name = "contact-details"
         self.return_type = ContactDetails

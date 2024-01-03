@@ -13,19 +13,6 @@ from .modules.member_custom_field import MemberCustomFieldMixin
 
 
 class EasyvereinAPI:
-    """
-    API Client to work wth the EasyVerein API. All methods
-    are available directly as methods of this class
-
-    Usage:
-
-    ```python
-    from easyverein import EasyvereinAPI
-    api = EasyvereinAPI(api_key="your_api_key")
-    invoices = api.invoices.get()
-    ```
-    """
-
     def __init__(
         self,
         api_key,
@@ -47,6 +34,7 @@ class EasyvereinAPI:
         self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self)
 
         # Add methods
+
         self.contact_details = ContactDetailsMixin(self.c, self.logger)
         self.custom_field = CustomFieldMixin(self.c, self.logger)
         self.invoice = InvoiceMixin(self.c, self.logger)

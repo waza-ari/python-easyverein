@@ -12,7 +12,9 @@ from .mixins.required_attributes import required_mixin
 
 class Invoice(EasyVereinBase):
     """
-    Pydantic model representing an Invoice
+    | Representative Model Class | Update Model Class | Create Model Class |
+    | --- | --- | --- |
+    | `Invoice` | `InvoiceUpdate` | `InvoiceCreate` |
     """
 
     gross: bool | None = None

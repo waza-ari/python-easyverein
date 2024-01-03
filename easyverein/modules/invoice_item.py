@@ -9,10 +9,6 @@ from .mixins.crud import CRUDMixin
 
 
 class InvoiceItemMixin(CRUDMixin[InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate]):
-    """
-    All methods related to invoices
-    """
-
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         self.endpoint_name = "invoice-item"
         self.return_type = InvoiceItem

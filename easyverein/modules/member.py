@@ -12,10 +12,6 @@ from .mixins.recycle_bin import RecycleBinMixin
 class MemberMixin(
     CRUDMixin[Member, MemberCreate, MemberUpdate], RecycleBinMixin[Member]
 ):
-    """
-    All methods related to invoices
-    """
-
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         self.endpoint_name = "member"
         self.return_type = Member
