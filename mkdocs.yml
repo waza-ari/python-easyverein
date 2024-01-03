@@ -1,5 +1,6 @@
 site_name: Python Easyverein Documentation
 repo_url: https://github.com/waza-ari/python-easyverein
+docs_dir: docs
 theme:
   name: "material"
   features:
