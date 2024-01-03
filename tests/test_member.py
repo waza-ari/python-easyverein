@@ -1,4 +1,7 @@
+import pytest
+
 from easyverein import EasyvereinAPI
+from easyverein.core.exceptions import EasyvereinAPINotFoundException
 from easyverein.models.member import Member
 
 
@@ -30,3 +33,8 @@ class TestMember:
             assert member.contactDetails.familyName
             assert member.contactDetails.primaryEmail
             assert not member.contactDetails.companyEmail
+
+    def test_member_by_id_not_found(self, ev_connection: EasyvereinAPI):
+        # Expect an Exception
+        with pytest.raises(EasyvereinAPINotFoundException):
+            ev_connection.member.get_by_id(123)

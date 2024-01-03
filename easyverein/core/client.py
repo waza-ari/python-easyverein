@@ -10,7 +10,11 @@ from typing import TYPE_CHECKING, TypeVar
 import requests
 from pydantic import BaseModel
 
-from .exceptions import EasyvereinAPIException, EasyvereinAPITooManyRetriesException
+from .exceptions import (
+    EasyvereinAPIException,
+    EasyvereinAPINotFoundException,
+    EasyvereinAPITooManyRetriesException,
+)
 
 if TYPE_CHECKING:
     from .. import EasyvereinAPI
@@ -110,7 +114,7 @@ class EasyvereinClient:
 
         if res.status_code == 404:
             self.logger.warning("Request returned status code 404, resource not found")
-            raise EasyvereinAPIException("Requested resource not found")
+            raise EasyvereinAPINotFoundException("Requested resource not found")
 
         # In some cases (for example on 204 delete) the response is empty
         if res.content == b"":

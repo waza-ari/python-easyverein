@@ -10,6 +10,12 @@ class EasyvereinAPIException(Exception):
     """
 
 
+class EasyvereinAPINotFoundException(EasyvereinAPIException):
+    """
+    Exception describing that a requested resource or endpoint has not been found
+    """
+
+
 class EasyvereinAPITooManyRetriesException(EasyvereinAPIException):
     """
     Exception if the API returns a 429 Too Many Requests error
