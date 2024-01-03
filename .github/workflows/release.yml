@@ -14,7 +14,7 @@ jobs:
           pypi_token: ${{ secrets.TEST_PYPI_TOKEN }}
           repository_name: "python-easyverein"
           repository_url: "https://test.pypi.org/legacy/"
-          python_version: "3.11.6"
+          python_version: "3.11"
           poetry_version: "==1.6.1"
   release:
     runs-on: ubuntu-22.04
@@ -26,5 +26,5 @@ jobs:
         with:
           pypi_token: ${{ secrets.PYPI_TOKEN }}
           repository_name: "python-easyverein"
-          python_version: "3.11.3"
+          python_version: "3.11"
           poetry_version: "==1.6.1"
