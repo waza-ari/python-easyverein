@@ -1,9 +1,10 @@
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import Field, PositiveInt
 
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from ..core.types import DateTime, EasyVereinReference
 
 
-class EasyVereinBase(BaseModel):
+class EasyVereinBase(EmptyStringsToNone):
     """
     Base class encapsulating common fields for all models
     """

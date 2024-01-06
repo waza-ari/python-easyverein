@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import Field
+from pydantic import Field, EmailStr
 
-from ..core.types import Date, Email
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
+from ..core.types import Date
 
 
 class ContactDetails(EasyVereinBase):
@@ -31,9 +31,9 @@ class ContactDetails(EasyVereinBase):
     nameAffix: str | None = Field(default=None, max_length=100)
     dateOfBirth: Date | None = None
     internalNote: str | None = None
-    privateEmail: Email | None = None
-    companyEmail: Email | None = None
-    companyEmailInvoice: Email | None = None
+    privateEmail: EmailStr | None = None
+    companyEmail: EmailStr | None = None
+    companyEmailInvoice: EmailStr | None = None
     primaryEmail: str | None = "email"
     preferredEmailField: Literal[0, 1, 2] | None = Field(
         default=None, alias="_preferredEmailField"
