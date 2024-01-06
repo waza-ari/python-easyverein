@@ -65,7 +65,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
                                     information on how to use queries
         """
         self.logger.info(
-            f"Fetching {self.endpoint_name} object with id %s from API", obj_id
+            f"Fetching {self.endpoint_name} object with id {obj_id} from API"
         )
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}", {"query": query})
@@ -116,7 +116,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
         obj_id = target if isinstance(target, int) else target.id
 
         self.logger.info(
-            f"Updating object of type {self.endpoint_name} with id {obj_id} %s"
+            f"Updating object of type {self.endpoint_name} with id {obj_id}"
         )
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
