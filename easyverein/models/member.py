@@ -7,9 +7,9 @@ from typing import Literal
 
 from pydantic import Field, PositiveInt
 
-from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
+from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 
 
 class Member(EasyVereinBase):
@@ -43,9 +43,9 @@ class Member(EasyVereinBase):
     """
     Alias for `_chairmanPermissionGroup` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    declarationOfApplication: AnyHttpURL | None = None
-    declarationOfResignation: AnyHttpURL | None = None
-    declarationOfConsent: AnyHttpURL | None = None
+    declarationOfApplication: AnyHttpURL | str | None = None
+    declarationOfResignation: AnyHttpURL | str | None = None
+    declarationOfConsent: AnyHttpURL | str | None = None
     membershipNumber: str | None = None
     contactDetails: ContactDetails | EasyVereinReference | None = None
     paymentStartDate: DateTime | None = Field(default=None, alias="_paymentStartDate")
@@ -84,7 +84,7 @@ class Member(EasyVereinBase):
     """
     Alias for `_editableByRelatedMembers` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    sepaMandateFile: AnyHttpURL | None = None
+    sepaMandateFile: AnyHttpURL | str | None = None
     # TODO: exact type is not specified in API docs
     integrationDosbSport: list | None = None
     customFields: EasyVereinReference | list[MemberCustomField] | None = None
