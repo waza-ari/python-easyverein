@@ -102,7 +102,7 @@ class EasyvereinClient:
         self.logger.debug("Request returned status code %d", res.status_code)
 
         if res.status_code == 429:
-            retry_after = res.headers("Retry-After")
+            retry_after = res.headers["Retry-After"]
             self.logger.warning(
                 "Request returned status code 429, too many requests. Wait %d seconds",
                 retry_after,
