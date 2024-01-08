@@ -5,11 +5,11 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import Field, EmailStr
+from pydantic import EmailStr, Field
 
+from ..core.types import Date, DateTime
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import Date, DateTime
 
 
 class ContactDetails(EasyVereinBase):

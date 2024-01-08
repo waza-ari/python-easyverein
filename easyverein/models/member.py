@@ -7,9 +7,9 @@ from typing import Literal
 
 from pydantic import Field, PositiveInt
 
+from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
 
 
 class Member(EasyVereinBase):

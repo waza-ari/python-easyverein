@@ -1,7 +1,7 @@
 from pydantic import Field, PositiveInt
 
-from .mixins.empty_strings_mixin import EmptyStringsToNone
 from ..core.types import DateTime, EasyVereinReference
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 
 
 class EasyVereinBase(EmptyStringsToNone):
