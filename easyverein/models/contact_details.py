@@ -9,7 +9,7 @@ from pydantic import Field, EmailStr
 
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
-from ..core.types import Date
+from ..core.types import Date, DateTime
 
 
 class ContactDetails(EasyVereinBase):
@@ -75,7 +75,7 @@ class ContactDetails(EasyVereinBase):
     bic: str | None = Field(default=None, max_length=100)
     bankAccountOwner: str | None = Field(default=None, max_length=128)
     sepaMandate: str | None = Field(default=None, max_length=60)
-    sepaDate: Date | None = None
+    sepaDate: DateTime | None = None
     methodOfPayment: int | None = None
     """
     Defines the method of payment preferred by the user.
