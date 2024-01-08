@@ -105,6 +105,9 @@ class MemberUpdate(Member):
     isApplication: bool | None = Field(
         default=None, serialization_alias="_isApplication"
     )
+    paymentStartDate: DateTime | None = Field(
+        default=None, serialization_alias="_paymentStartDate"
+    )
 
     pass
 
@@ -113,6 +116,8 @@ class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):
     """
     Pydantic model for creating a new member
     """
+
+    emailOrUserName: str
 
 
 from .contact_details import ContactDetails  # noqa: E402
