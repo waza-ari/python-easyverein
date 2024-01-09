@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import Field, PositiveInt
 
-from ..core.types import AnyHttpURL, Date, DateTime, EasyVereinReference
+from ..core.types import AnyHttpURL, DateTime, EasyVereinReference
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 
@@ -32,7 +32,7 @@ class Member(EasyVereinBase):
     Alias for `_profilePicture` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
     joinDate: DateTime | None = None
-    resignationDate: Date | None = None
+    resignationDate: DateTime | None = None
     isChairman: bool | None = Field(default=None, alias="_isChairman")
     """
     Alias for `_isChairman` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
@@ -61,11 +61,11 @@ class Member(EasyVereinBase):
     """
     Alias for `_isApplication` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    applicationDate: Date | None = Field(default=None, alias="_applicationDate")
+    applicationDate: DateTime | None = Field(default=None, alias="_applicationDate")
     """
     Alias for `_applicationDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    applicationWasAcceptedAt: Date | None = Field(
+    applicationWasAcceptedAt: DateTime | None = Field(
         default=None, alias="_applicationWasAcceptedAt"
     )
     """
