@@ -3,7 +3,8 @@
 ![GitHub issues](https://img.shields.io/github/issues/waza-ari/python-easyverein)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/waza-ari/python-easyverein)
 ![GitHub top language](https://img.shields.io/github/languages/top/waza-ari/python-easyverein)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/waza-ari/python-easyverein/development.svg)](https://results.pre-commit.ci/latest/github/waza-ari/python-easyverein/development)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/waza-ari/python-easyverein/main.svg)](https://results.pre-commit.ci/latest/github/waza-ari/python-easyverein/main)
+
 
 
 # Python EasyVerein
