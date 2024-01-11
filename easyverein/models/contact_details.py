@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field
 
 from ..core.types import Date, DateTime
 from .base import EasyVereinBase
@@ -135,3 +135,11 @@ class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):
     """
     Pydantic model for creating new contact details
     """
+
+
+class ContactDetailsFilter(BaseModel):
+    """
+    Pydantic model used to filter contact details
+    """
+
+    # TODO: implement

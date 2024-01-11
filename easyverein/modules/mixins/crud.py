@@ -11,11 +11,15 @@ from easyverein.core.protocol import IsEVClientProtocol
 ModelType = TypeVar("ModelType", bound=BaseModel)
 CreateModelType = TypeVar("CreateModelType", bound=BaseModel)
 UpdateModelType = TypeVar("UpdateModelType", bound=BaseModel)
+FilterType = TypeVar("FilterType", bound=BaseModel)
 
 
-class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
+class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]):
     def get(
-        self: IsEVClientProtocol, query: str = None, limit: int = 10
+        self: IsEVClientProtocol,
+        query: str = None,
+        search: FilterType = None,
+        limit: int = 10,
     ) -> list[ModelType]:
         """
         Fetches a single page of a given page size. The page size is defined by the `limit` parameter
@@ -23,16 +27,24 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
 
         Args:
             query: Query to use with API. Refer to the EV API help for more information on how to use queries
+            search: Filter to use with API. Refer to the EV API help for more information on how to use filters
             limit: Defines how many resources to return.
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url = self.c.get_url(f"/{self.endpoint_name}", {"limit": limit, "query": query})
+        url_params = {"limit": limit, "query": query}
+        if search:
+            url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True)
+
+        url = self.c.get_url(f"/{self.endpoint_name}", url_params)
 
         return self.c.fetch(url, self.return_type)
 
     def get_all(
-        self: IsEVClientProtocol, query: str = None, limit_per_page: int = 10
+        self: IsEVClientProtocol,
+        query: str = None,
+        search: FilterType = None,
+        limit_per_page: int = 10,
     ) -> list[ModelType]:
         """
         Convenient method that fetches all objects from the EV API, abstracting away the need to handle pagination.
@@ -43,13 +55,16 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
         Args:
             query: Query to use with API. Defaults to None. Refer to the EV API help for more
                                     information on how to use queries
+            search: Filter to use with API. Refer to the EV API help for more information on how to use filters
             limit_per_page: Defines how many resources to return. Defaults to 10.
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url = self.c.get_url(
-            f"/{self.endpoint_name}", {"limit": limit_per_page, "query": query}
-        )
+        url_params = {"limit": limit_per_page, "query": query}
+        if search:
+            url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True)
+
+        url = self.c.get_url(f"/{self.endpoint_name}", url_params)
 
         return self.c.fetch_paginated(url, self.return_type, limit_per_page)
 

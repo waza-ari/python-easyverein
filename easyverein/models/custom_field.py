@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import Field
+from pydantic import BaseModel, Field
 
 from ..core.types import (
     EasyVereinReference,
@@ -91,3 +91,11 @@ class CustomFieldUpdate(CustomField):
     """
 
     pass
+
+
+class CustomFieldFilter(BaseModel):
+    """
+    Pydantic model used to filter custom fields
+    """
+
+    # TODO: implement

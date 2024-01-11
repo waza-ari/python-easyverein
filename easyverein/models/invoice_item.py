@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import PositiveInt, StringConstraints
+from pydantic import BaseModel, PositiveInt, StringConstraints
 
 from ..core.types import EasyVereinReference
 from .base import EasyVereinBase
@@ -51,6 +51,14 @@ class InvoiceItemUpdate(InvoiceItem):
     """
     Pydantic model used to patch an InvoiceItem
     """
+
+
+class InvoiceItemFilter(BaseModel):
+    """
+    Pydantic model used to filter invoice items
+    """
+
+    # TODO: implement
 
 
 from .invoice import Invoice  # noqa: E402

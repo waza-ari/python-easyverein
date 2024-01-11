@@ -5,7 +5,15 @@ from __future__ import annotations
 
 from typing import Literal
 
-from ..core.types import Date, EasyVereinReference, PositiveIntWithZero
+from pydantic import BaseModel
+
+from ..core.types import (
+    Date,
+    EasyVereinReference,
+    FilterIntList,
+    FilterStrList,
+    PositiveIntWithZero,
+)
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 
@@ -71,6 +79,54 @@ class InvoiceUpdate(Invoice):
     """
     Pydantic model representing an Invoice
     """
+
+
+class InvoiceFilter(BaseModel):
+    """
+    Pydantic model used to filter invoices
+    """
+
+    id__in: FilterIntList | None = None
+    relatedAddress: int | None = None
+    relatedAddress__isnull: bool = None
+    relatedBookings: FilterIntList | None = None
+    relatedBookings__isnull: bool = None
+    relatedBookings__ne: FilterIntList | None = None
+    payedFromUser: int | None = None
+    payedFromUser__isnull: bool = None
+    approvedFromAdmin: int | None = None
+    approvedFromAdmin__isnull: bool = None
+    canceledInvoice__isnull: bool = None
+    date: Date | None = None
+    date__gt: Date | None = None
+    date__lt: Date | None = None
+    dateItHappened: Date | None = None
+    dateItHappened__gt: Date | None = None
+    dateItHappened__lt: Date | None = None
+    invNumber__in: FilterStrList | None = None
+    receiver: str | None = None
+    totalPrice: float | None = None
+    totalPrice__gte: float | None = None
+    totalPrice__lte: float | None = None
+    kind: str | None = None
+    kind__in: FilterStrList | None = None
+    refNumber: str | None = None
+    paymentDifference: float | None = None
+    paymentDifference__gte: float | None = None
+    paymentDifference__lte: float | None = None
+    paymentDifference__ne: float | None = None
+    isRequest: bool | None = None
+    accnumber: int | None = None
+    accnumber__ne: int | None = None
+    isDraft: bool | None = None
+    isTemplate: bool | None = None
+    actualCallStateName: str | None = None
+    actualCallStateName__ne: str | None = None
+    deleted: bool | None = None
+    customfilter: int | None = None
+    usesessionfilter: bool | None = None
+    ordering: str | None = None
+    search: str | None = None
 
 
 from .invoice_item import InvoiceItem  # noqa: E402

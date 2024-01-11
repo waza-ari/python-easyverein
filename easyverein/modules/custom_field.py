@@ -4,13 +4,18 @@ All methods related to custom fields
 import logging
 
 from ..core.client import EasyvereinClient
-from ..models.custom_field import CustomField, CustomFieldCreate, CustomFieldUpdate
+from ..models.custom_field import (
+    CustomField,
+    CustomFieldCreate,
+    CustomFieldFilter,
+    CustomFieldUpdate,
+)
 from .mixins.crud import CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
 
 class CustomFieldMixin(
-    CRUDMixin[CustomField, CustomFieldCreate, CustomFieldUpdate],
+    CRUDMixin[CustomField, CustomFieldCreate, CustomFieldUpdate, CustomFieldFilter],
     RecycleBinMixin[CustomField],
 ):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):

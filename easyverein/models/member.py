@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import Field, PositiveInt
+from pydantic import BaseModel, Field, PositiveInt
 
 from ..core.types import AnyHttpURL, DateTime, EasyVereinReference
 from .base import EasyVereinBase
@@ -118,6 +118,14 @@ class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):
     """
 
     emailOrUserName: str
+
+
+class MemberFilter(BaseModel):
+    """
+    Pydantic model used to filter members
+    """
+
+    # TODO: implement
 
 
 from .contact_details import ContactDetails  # noqa: E402

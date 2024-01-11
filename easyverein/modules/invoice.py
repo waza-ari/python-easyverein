@@ -4,14 +4,15 @@ from typing import List
 
 from ..core.client import EasyvereinClient
 from ..core.exceptions import EasyvereinAPIException
-from ..models.invoice import Invoice, InvoiceCreate, InvoiceUpdate
+from ..models.invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
 from ..models.invoice_item import InvoiceItem
 from .mixins.crud import CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
 
 class InvoiceMixin(
-    CRUDMixin[Invoice, InvoiceCreate, InvoiceUpdate], RecycleBinMixin[Invoice]
+    CRUDMixin[Invoice, InvoiceCreate, InvoiceUpdate, InvoiceFilter],
+    RecycleBinMixin[Invoice],
 ):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         super().__init__()
