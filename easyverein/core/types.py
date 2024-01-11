@@ -30,3 +30,13 @@ HexColor = Annotated[
     str | None,
     Field(min_length=7, max_length=7),
 ]
+
+FilterIntList = Annotated[
+    list[int],
+    PlainSerializer(lambda x: ",".join([str(i) for i in x]), return_type=str),
+]
+
+FilterStrList = Annotated[
+    list[str],
+    PlainSerializer(lambda x: ",".join(x), return_type=str),
+]
