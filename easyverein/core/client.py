@@ -103,13 +103,23 @@ class EasyvereinClient:
 
         if res.status_code == 429:
             retry_after = res.headers["Retry-After"]
+
+            try:
+                retry_after = int(retry_after)
+            except ValueError:
+                self.logger.error(
+                    "Unable to parse Retry-After header while handling 429 response code."
+                )
+                self.logger.debug("Retry-After header: %s", retry_after)
+                retry_after = 0
+
             self.logger.warning(
                 "Request returned status code 429, too many requests. Wait %d seconds",
                 retry_after,
             )
             raise EasyvereinAPITooManyRetriesException(
-                retry_after,
                 f"Too many requests, please wait {retry_after} seconds and try again.",
+                retry_after=retry_after,
             )
 
         if res.status_code == 404:
