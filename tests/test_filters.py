@@ -8,18 +8,21 @@ from easyverein.models.member import Member, MemberFilter
 
 class TestFilter:
     @staticmethod
-    def validate_response(response: list[Any], model: type, num_expected_results: int):
+    def validate_response(
+        response: tuple[list[Any], int], model: type, num_expected_results: int
+    ):
         """
         Helper method that validates the response of a filter
         """
         # Check if the response is a list
-        assert isinstance(response, list)
+        assert isinstance(response[0], list)
 
-        # We should have 5 invoices based on the example data
-        assert len(response) == num_expected_results
+        # Assert length of response, in this case should match the total
+        assert len(response[0]) == num_expected_results
+        assert response[1] == num_expected_results
 
         # Check if all the invoices are of type Invoice
-        for instance in response:
+        for instance in response[0]:
             assert isinstance(instance, model)
 
     def test_filter_invoices(self, ev_connection: EasyvereinAPI):

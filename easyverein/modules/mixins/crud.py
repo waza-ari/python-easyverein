@@ -21,10 +21,12 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         search: FilterType = None,
         limit: int = 10,
         page: int = 1,
-    ) -> list[ModelType]:
+    ) -> tuple[list[ModelType], int]:
         """
         Fetches a single page of a given page size. The page size is defined by the `limit` parameter
         with an API sided upper limit of 100.
+
+        Returns a tuple, where the first element is the returned objects and the second is the total count.
 
         Args:
             query: Query to use with API. Refer to the EV API help for more information on how to use queries

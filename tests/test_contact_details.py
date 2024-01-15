@@ -4,11 +4,12 @@ from easyverein.models import ContactDetails, ContactDetailsCreate, ContactDetai
 
 class TestContactDetails:
     def test_get_contact_details(self, ev_connection: EasyvereinAPI):
-        contact_details = ev_connection.contact_details.get()
+        contact_details, total_count = ev_connection.contact_details.get()
         # Check if the response is a list
         assert isinstance(contact_details, list)
 
-        # We should have 5 invoices based on the example data
+        # We should have 6 invoices based on the example data
+        assert total_count == 6
         assert len(contact_details) == 6
 
         # Check if all the members are of type Member
@@ -27,14 +28,14 @@ class TestContactDetails:
         ev_connection.contact_details.delete(contact_details)
 
         # Get entries from wastebasket
-        deleted_contact_details = ev_connection.contact_details.get_deleted()
+        deleted_contact_details, _ = ev_connection.contact_details.get_deleted()
         assert len(deleted_contact_details) == 1
 
         # Finally purge contact details from wastebasket
         ev_connection.contact_details.purge(contact_details.id)
 
         # Get entries from wastebasket
-        deleted_contact_details = ev_connection.contact_details.get_deleted()
+        deleted_contact_details, _ = ev_connection.contact_details.get_deleted()
         assert len(deleted_contact_details) == 0
 
     def test_create_minimal_personal_contact_details(

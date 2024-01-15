@@ -28,8 +28,8 @@ Once you have the client object, all supported attributes are composed into the 
 c = EasyvereinAPI(api_key="your_key")
 
 # Get invoices
-c.invoice.get()
-c.invoice.get_all()
+invoices, total_count = c.invoice.get()
+invoices = c.invoice.get_all()
 
 # Members
 c.member.get()
@@ -91,7 +91,7 @@ parsing (JSON API response to models), validating (make sure all fields adhere t
 
 To read data from the API, all CRUD endpoints feature the `get`, `get_all` and `get_by_id` endpoints.
 
-- `get()`: Returns a single page of the resource
+- `get()`: Returns a single page of the resource and the total count
 - `get_all()`: Provides an abstraction layer around pagination, fetches all available resources
 - `get_by_id`: Returns a single resource based on its resource id
 
@@ -101,12 +101,62 @@ API including auto-completion and type hinting by popular IDEs.
 **Example**:
 
 ```python
+# get() returns the member and total count
+members, total_count = ev_connection.member.get()
+
+# Get all returns a simple list, you can obtain the total count based on the list length
 invoices = ev_connection.invoice.get_all(limit_per_page=100)
 
 # Invoices now is a list of Invoice objects
 for invoice in invoices:
     print(invoice.isDraft)
     print(invoice.invNumber)
+```
+
+### Using filters
+
+The library also supports using the search parameters and filters, on the `get()` and `get_all()` endpoint. For this
+to work, you need to define a filter model and pass it as parameter. The filter model is generated using the OpenAPI
+specs provided by the EasyVerein API and validated as Pydantic model, too.
+
+**Example**
+
+```python
+search = InvoiceFilter(
+    invNumber__in=["1", "3", "5"], canceledInvoice__isnull=True, isDraft=False
+)
+
+filtered_invoices, total_count = ev_connection.invoice.get(search=search)
+```
+
+### Pagination
+
+The `get_all()` endpoint abstracts the need for pagination from the user, as it will simply fetch all resources of a
+given endpoint, potentially by doing multiple API requests. If you need additional control, you can always fall back
+to the `get()` method, which accepts two parameters:
+
+- `limit`: elements to be returned per page
+- `page`: page to return
+
+This endpoints are passed to the query string without validation, so please make sure to stay within the limits
+imposed by the EV API.
+
+### The `get()` Endpoint and total count`
+
+The `get()` method returns a tuple, consisting of the parsed response and the total count in addition. There`s three
+possible options on how to work on that:
+
+```python
+# If you need both the returned values and the total count, simply unpack them
+members, total_count = ev_connection.member.get()
+
+# In case you don't need the total count, the preferred way is to simply access the first element of the response
+members = ev_connection.member.get()[0]
+
+# Another common option (although not recommended, because it shadows a function of the popular gettext library)
+# is to use `_` as temporary variable:
+
+members, _ = ev_connection.member.get()
 ```
 
 ### EasyVerein References
