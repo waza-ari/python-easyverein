@@ -210,14 +210,20 @@ class EasyvereinClient:
             status_code,
         )
 
-    def fetch(self, url, model: type[T] = None) -> list[T]:
+    def fetch(self, url, model: type[T] = None) -> tuple[list[T], int]:
         """
         Helper method that fetches a result from an API call
 
         Only supports GET endpoints
         """
         res = self._do_request("get", url)
-        return self._handle_response(res, model, 200)
+        data = self._handle_response(res, model, 200)
+        try:
+            total_count = res[1]["count"]
+        except KeyError:
+            total_count = 0
+
+        return data, total_count
 
     def fetch_one(self, url, model: type[T] = None) -> T | None:
         """
@@ -225,7 +231,7 @@ class EasyvereinClient:
 
         Only supports GET endpoints
         """
-        reply = self.fetch(url, model)
+        reply, _ = self.fetch(url, model)
         if isinstance(reply, list):
             if len(reply) == 0:
                 return None

@@ -5,9 +5,15 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import Field, PositiveInt
+from pydantic import BaseModel, Field, PositiveInt
 
-from ..core.types import AnyHttpURL, DateTime, EasyVereinReference
+from ..core.types import (
+    AnyHttpURL,
+    DateTime,
+    EasyVereinReference,
+    FilterIntList,
+    FilterStrList,
+)
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 
@@ -118,6 +124,80 @@ class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):
     """
 
     emailOrUserName: str
+
+
+class MemberFilter(BaseModel):
+    """
+    Pydantic model used to filter members
+    """
+
+    id__in: FilterIntList | None = None
+    paymentAmount__gt: float | None = None
+    paymentAmount__lt: float | None = None
+    paymentAmount: float | None = None
+    paymentAmount__ne: float | None = None
+    email: str | None = None
+    email__ne: str | None = None
+    contactDetails: str | None = None
+    contactDetails__preferredCommunicationWay: int | None = None
+    contactDetails__preferredCommunicationWay__ne: int | None = None
+    contactDetails__country: str | None = None
+    membershipNumber: str | None = None
+    membershipNumber__in: FilterStrList | None = None
+    deletedBy: int = Field(default=None, serialization_alias="_deletedBy")
+    deletedBy__ne: int = Field(default=None, serialization_alias="_deletedBy__ne")
+    deletedBy__isnull: bool = Field(
+        default=None, serialization_alias="_deletedBy__isnull"
+    )
+    joinDate: DateTime | None = None
+    joinDate__gte: DateTime | None = None
+    joinDate__lte: DateTime | None = None
+    joinDate__isnull: DateTime | None = None
+    resignationDate: DateTime | None = None
+    resignationDate__gte: DateTime | None = None
+    resignationDate__lte: DateTime | None = None
+    resignationDate__isnull: DateTime | None = None
+    isApplication: bool = Field(default=None, serialization_alias="_isApplication")
+    applicationDate: DateTime = Field(
+        default=None, serialization_alias="_applicationDate"
+    )
+    applicationDate__gte: DateTime = Field(
+        default=None, serialization_alias="_applicationDate__gte"
+    )
+    applicationDate__lte: DateTime = Field(
+        default=None, serialization_alias="_applicationDate__lte"
+    )
+    applicationDate__isnull: DateTime = Field(
+        default=None, serialization_alias="_applicationDate__isnull"
+    )
+    applicationWasAcceptedAt: DateTime = Field(
+        default=None, serialization_alias="_applicationWasAcceptedAt"
+    )
+    applicationWasAcceptedAt__gte: DateTime = Field(
+        default=None, serialization_alias="_applicationWasAcceptedAt__gte"
+    )
+    applicationWasAcceptedAt__lte: DateTime = Field(
+        default=None, serialization_alias="_applicationWasAcceptedAt__lte"
+    )
+    applicationWasAcceptedAt__isnull: bool = Field(
+        default=None, serialization_alias="_applicationWasAcceptedAt__isnull"
+    )
+    isChairman: bool = Field(default=None, serialization_alias="_isChairman")
+    memberGroups: str | None = None
+    memberGroups__not: str | None = None
+    deleted: bool | None = None
+    custom_field_name: str | None = None
+    custom_field_value: str | None = None
+    custom_field_value__in: FilterStrList | None = None
+    custom_field_value__not_in: FilterStrList | None = None
+    ordering: str | None = None
+    showOnlyUpcomingBirthdays: bool | None = None
+    showOnlyUpcomingAnniversaries: bool | None = None
+    hasCopyInOrg: str | None = None
+    hasCopyInOrg__not: str | None = None
+    isCopy: bool | None = None
+    hasCopy: bool | None = None
+    search: str | None = None
 
 
 from .contact_details import ContactDetails  # noqa: E402

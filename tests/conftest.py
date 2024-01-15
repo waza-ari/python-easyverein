@@ -26,7 +26,8 @@ def random_string():
 
 @pytest.fixture(scope="module")
 def example_member(ev_connection):
-    return ev_connection.member.get()[1]
+    members, _ = ev_connection.member.get()
+    return members[0]
 
 
 @pytest.fixture(scope="module")

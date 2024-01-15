@@ -7,11 +7,12 @@ from easyverein.models.member import Member
 
 class TestMember:
     def test_get_members(self, ev_connection: EasyvereinAPI):
-        members = ev_connection.member.get()
+        members, total_count = ev_connection.member.get()
         # Check if the response is a list
         assert isinstance(members, list)
 
         # We should have 5 invoices based on the example data
+        assert total_count == 5
         assert len(members) == 5
 
         # Check if all the members are of type Member
@@ -24,8 +25,9 @@ class TestMember:
             "resignationDate,_isApplication}"
         )
 
-        members = ev_connection.member.get(query=query, limit=2)
+        members, total_count = ev_connection.member.get(query=query, limit=2)
         assert len(members) == 2
+        assert total_count == 5
 
         for member in members:
             assert isinstance(member, Member)

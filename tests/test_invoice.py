@@ -13,11 +13,12 @@ from easyverein.models.member import Member
 
 class TestInvoices:
     def test_get_invoices(self, ev_connection: EasyvereinAPI):
-        invoices = ev_connection.invoice.get()
+        invoices, total_count = ev_connection.invoice.get()
         # Check if the response is a list
         assert isinstance(invoices, list)
 
         # We should have 5 invoices based on the example data
+        assert total_count == 5
         assert len(invoices) == 5
 
         # Check if all the invoices are of type Invoice
@@ -47,7 +48,7 @@ class TestInvoices:
             ev_connection.invoice.create(invoice_model)
 
         # Get entries from wastebasket
-        deleted_invoices = ev_connection.invoice.get_deleted()
+        deleted_invoices, _ = ev_connection.invoice.get_deleted()
         assert len(deleted_invoices) == 1
         assert deleted_invoices[0].id == invoice.id
         assert deleted_invoices[0].invNumber == invoice.invNumber
@@ -56,7 +57,7 @@ class TestInvoices:
         ev_connection.invoice.purge(invoice.id)
 
         # Get entries from wastebasket
-        deleted_invoices = ev_connection.invoice.get_deleted()
+        deleted_invoices, _ = ev_connection.invoice.get_deleted()
         assert len(deleted_invoices) == 0
 
     def test_create_invoice_with_items(
@@ -170,14 +171,15 @@ class TestInvoices:
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
         # Check that we're back to 5 invoices
-        invoices = ev_connection.invoice.get()
+        invoices, total_count = ev_connection.invoice.get()
+        assert total_count == 5
         assert len(invoices) == 5
 
     def test_create_invoice_with_attachment(
         self, ev_connection: EasyvereinAPI, random_string: str, request: FixtureRequest
     ):
         # Get members
-        members = ev_connection.member.get()
+        members, _ = ev_connection.member.get()
         assert len(members) > 0
         member = members[1]
 
@@ -213,5 +215,5 @@ class TestInvoices:
         # Delete invoice again
         ev_connection.invoice.delete(invoice)
         # Check that we're back to 5 invoices
-        invoices = ev_connection.invoice.get()
+        invoices, _ = ev_connection.invoice.get()
         assert len(invoices) == 5

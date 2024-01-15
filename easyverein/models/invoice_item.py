@@ -5,9 +5,9 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import PositiveInt, StringConstraints
+from pydantic import BaseModel, PositiveInt, StringConstraints
 
-from ..core.types import EasyVereinReference
+from ..core.types import EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 
@@ -51,6 +51,28 @@ class InvoiceItemUpdate(InvoiceItem):
     """
     Pydantic model used to patch an InvoiceItem
     """
+
+
+class InvoiceItemFilter(BaseModel):
+    """
+    Pydantic model used to filter invoice items
+    """
+
+    id__in: FilterIntList | None = None
+    title: str | None = None
+    taxName: str | None = None
+    quantity__gte: int | None = None
+    quantity__lte: int | None = None
+    description: str | None = None
+    billingAccount__isnull: bool | None = None
+    relatedInvoice: int | None = None
+    relatedInvoice__not: int | None = None
+    relatedInvoice__isDraft: bool | None = None
+    relatedInvoice__isTemplate: bool | None = None
+    billingAccount: str | None = None
+    billingAccount__not: str | None = None
+    ordering: str | None = None
+    search: str | None = None
 
 
 from .invoice import Invoice  # noqa: E402

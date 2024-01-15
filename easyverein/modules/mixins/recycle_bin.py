@@ -8,7 +8,7 @@ ModelType = TypeVar("ModelType", bound=BaseModel)
 
 
 class RecycleBinMixin(Generic[ModelType]):
-    def get_deleted(self: IsEVClientProtocol) -> list[ModelType]:
+    def get_deleted(self: IsEVClientProtocol) -> tuple[list[ModelType], int]:
         """
         Fetches all deleted resources from the recycle bin and returns a list.
         """

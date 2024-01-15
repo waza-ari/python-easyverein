@@ -5,9 +5,9 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field
 
-from ..core.types import Date, DateTime
+from ..core.types import Date, DateTime, FilterIntList
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 
@@ -135,3 +135,31 @@ class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):
     """
     Pydantic model for creating new contact details
     """
+
+
+class ContactDetailsFilter(BaseModel):
+    """
+    Pydantic model used to filter contact details
+    """
+
+    id__in: FilterIntList | None = None
+    country: str | None = None
+    isCompany: bool = Field(default=None, serialization_alias="_isCompany")
+    preferredCommunicationWay: str | None = None
+    contactDetailsGroups: str | None = None
+    contactDetailsGroups__not: str | None = None
+    dateOfBirthUnset: bool | None = None
+    showBirthdaysBetween: str | None = None
+    deleted: bool | None = None
+    firstName: str | None = None
+    familyName: str | None = None
+    companyName: str | None = None
+    isReferencedByOrgUser: bool | None = None
+    lat: str | None = None
+    lng: str | None = None
+    hasCopyInOrg: str | None = None
+    hasCopyInOrg__not: str | None = None
+    isCopy: bool | None = None
+    hasCopy: bool | None = None
+    ordering: str | None = None
+    search: str | None = None

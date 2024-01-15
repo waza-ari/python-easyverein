@@ -6,12 +6,18 @@ import logging
 from ..core.client import EasyvereinClient
 from ..core.protocol import IsEVClientProtocol
 from ..models import MemberCustomField, MemberCustomFieldCreate, MemberCustomFieldUpdate
+from ..models.member_custom_field import MemberCustomFieldFilter
 from .mixins.crud import CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
 
 class MemberCustomFieldMixin(
-    CRUDMixin[MemberCustomField, MemberCustomFieldCreate, MemberCustomFieldUpdate],
+    CRUDMixin[
+        MemberCustomField,
+        MemberCustomFieldCreate,
+        MemberCustomFieldUpdate,
+        MemberCustomFieldFilter,
+    ],
     RecycleBinMixin[MemberCustomField],
 ):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
