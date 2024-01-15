@@ -20,6 +20,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         query: str = None,
         search: FilterType = None,
         limit: int = 10,
+        page: int = 1,
     ) -> list[ModelType]:
         """
         Fetches a single page of a given page size. The page size is defined by the `limit` parameter
@@ -29,10 +30,11 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             query: Query to use with API. Refer to the EV API help for more information on how to use queries
             search: Filter to use with API. Refer to the EV API help for more information on how to use filters
             limit: Defines how many resources to return.
+            page: Deinfines which page to return. Defaults to 1, which is the first page.
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url_params = {"limit": limit, "query": query}
+        url_params = {"limit": limit, "query": query, "page": page}
         if search:
             url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True)
 
