@@ -38,6 +38,8 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         if search:
             url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True)
 
+        self.logger.debug(f"Computed URL params for this request: {url_params}")
+
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
 
         return self.c.fetch(url, self.return_type)

@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 
 from ..core.types import (
     EasyVereinReference,
+    FilterIntList,
     HexColor,
     OptionsField,
     PositiveIntWithZero,
@@ -98,4 +99,14 @@ class CustomFieldFilter(BaseModel):
     Pydantic model used to filter custom fields
     """
 
-    # TODO: implement
+    id__in: FilterIntList | None = None
+    name: str | None = None
+    color: str | None = None
+    kind: str | None = None
+    member_edit: bool | None = None
+    member_show: bool | None = None
+    deletedBy__isnull: bool = Field(
+        default=None, serialization_alias="_deletedBy__isnull"
+    )
+    deleted: bool | None = None
+    ordering: str | None = None

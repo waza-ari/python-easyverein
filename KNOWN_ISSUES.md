@@ -15,6 +15,7 @@ here so we can track them and remove when fixed on EV side
 ## Contact Details
 
 - There are a bunch of fields lacking description on the API, therefore they're Any-typed for now: `_copiedFromParent`, `_copiedFromParentStartDate`, `_copiedFromParentEndDate`, `_copiedFromParentEndDateAction`
+- Filter spec contains both `_isCompany` and `isCompay`. Only keeping `_isCompany` with serialization alias to stay consistent to other models
 
 ## Custom Fields
 
@@ -25,3 +26,4 @@ here so we can track them and remove when fixed on EV side
 - The API does not offer a simple way to ensure that a custom field is set to a certain value for member. You have to either create (POST) a member_custom_field if the member has no relation to a certain custom field yet, or modify an existing one (PATCH) if there is such a relation. Before modifying a value you therefore have to know if such a relation exists or not.
 - When deleting a custom field, the relation between the member and a custom field still stays intact, just with `customField` set to `None`. The tests therefore manually delete member custom field associations before deleting the actual custom field definition to not pollute the test tenant.
 - Apparently "path" doesn't mean, that is always will be a HTTP URL. In some cases it has been reported that the path is a local file path, following the `<member_number>_<firstname>_<lastname>/<random_number>_<member_number>-SEPA-Mandat_,,,` syntax. My assumption is that those paths have been used before the introduction of S3 storage on EV side. As I couldn't find any documentation around the naming standard, nor find any information how to actually work with these fields, we're simply adding a string fallback.
+- In the filter, `contactDetails__preferredCommunicationWay` is defined as `string` while `contactDetails__preferredCommunicationWay__ne` is defined as number. Considering both to be integers

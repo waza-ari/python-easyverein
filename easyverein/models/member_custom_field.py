@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from ..core.types import EasyVereinReference
+from ..core.types import EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
 from .mixins.required_attributes import required_mixin
 
@@ -54,7 +54,18 @@ class MemberCustomFieldFilter(BaseModel):
     Pydantic model used to filter members custom fields
     """
 
-    # TODO: implement
+    id__in: FilterIntList | None = None
+    paymentActive: bool | None = None
+    start__gte: str | None = None
+    start__lte: str | None = None
+    start: str | None = None
+    end__gte: str | None = None
+    end__lte: str | None = None
+    end: str | None = None
+    deleted: bool | None = None
+    memberGroup: str | None = None
+    memberGroup__not: str | None = None
+    ordering: str | None = None
 
 
 from .custom_field import CustomField  # noqa: E402
