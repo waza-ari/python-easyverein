@@ -5,10 +5,11 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 import requests
 from pydantic import BaseModel
+from requests.structures import CaseInsensitiveDict
 
 from .exceptions import (
     EasyvereinAPIException,
@@ -76,8 +77,8 @@ class EasyvereinClient:
         return url
 
     def _do_request(  # noqa: PLR0913
-        self, method, url, data=None, headers=None, files=None
-    ):
+        self, method, url, binary=False, data=None, headers=None, files=None
+    ) -> tuple[int, dict[str, Any] | requests.Response | None]:
         """
         Helper method that performs an actual call against the API,
         fetching the most common errors
@@ -129,6 +130,10 @@ class EasyvereinClient:
         # In some cases (for example on 204 delete) the response is empty
         if res.content == b"":
             return res.status_code, None
+
+        # If content is supposed to be binary, return the entire response to maintain headers
+        if binary:
+            return res.status_code, res
 
         # Try to parse response as JSON and return it for further processing
         try:
@@ -234,6 +239,25 @@ class EasyvereinClient:
             total_count = 0
 
         return data, total_count
+
+    def fetch_file(self, url: str) -> tuple[bytes, CaseInsensitiveDict[str]]:
+        """
+        Helper method that fetches a file from the API including the authentication header
+
+        Returns the raw bytes object and the entire header for further processing
+        """
+        status_code, res = self._do_request("get", url, binary=True)
+
+        # Check if status code is 200
+        if status_code != 200:
+            self.logger.error(
+                f"Request to download file failed with unexpected status code {status_code}"
+            )
+            raise EasyvereinAPIException(
+                f"Request to download file failed with unexpected status code {status_code}"
+            )
+
+        return res.content, res.headers
 
     def fetch_one(self, url, model: type[T] = None) -> T | None:
         """

@@ -3,6 +3,7 @@ import datetime
 import pytest
 from _pytest.fixtures import FixtureRequest
 from pydantic_core import Url
+from requests.structures import CaseInsensitiveDict
 
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPIException
@@ -24,6 +25,51 @@ class TestInvoices:
         # Check if all the invoices are of type Invoice
         for invoice in invoices:
             assert isinstance(invoice, Invoice)
+
+    def test_get_attachment(self, ev_connection: EasyvereinAPI):
+        invoices, _ = ev_connection.invoice.get()
+        invoice = invoices[0]
+        assert isinstance(invoice, Invoice)
+
+        # Get attachment using the pre-populated invoice object
+        attachment, headers = ev_connection.invoice.get_attachment(invoice)
+
+        assert isinstance(headers, CaseInsensitiveDict)
+        assert isinstance(attachment, bytes)
+
+        # Get attachment again by ID only
+        attachment2, headers2 = ev_connection.invoice.get_attachment(invoice.id)
+
+        assert isinstance(headers2, CaseInsensitiveDict)
+        assert isinstance(attachment2, bytes)
+
+        # Should have same length
+        assert len(attachment) == len(attachment2)
+
+        # Verify header contains Content-Type (that key is in dict)
+        assert "Content-Type" in headers
+        assert "Content-Type" in headers2
+
+        # Verify header contains same Content-Type
+        assert headers["Content-Type"] == "application/pdf;charset=utf-8"
+        assert headers2["Content-Type"] == "application/pdf;charset=utf-8"
+
+        # Verify headers contain Content Disposition
+        assert "Content-Disposition" in headers
+        assert "Content-Disposition" in headers2
+
+        # Verify headers contain same Content Disposition
+        assert headers["Content-Disposition"] == headers2["Content-Disposition"]
+
+        # Verify it contains the keyword attachmet and a filename
+        assert "attachment" in headers["Content-Disposition"]
+        assert (
+            headers["Content-Disposition"].split(";")[1].strip().startswith("filename=")
+        )
+
+        # Verify header content length matches actual length
+        assert len(attachment) == int(headers["Content-Length"])
+        assert len(attachment2) == int(headers2["Content-Length"])
 
     def test_create_invoice_minimal(
         self, ev_connection: EasyvereinAPI, random_string: str

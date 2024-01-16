@@ -2,6 +2,8 @@ import logging
 from pathlib import Path
 from typing import List
 
+from requests.structures import CaseInsensitiveDict
+
 from ..core.client import EasyvereinClient
 from ..core.exceptions import EasyvereinAPIException
 from ..models.invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
@@ -125,3 +127,46 @@ class InvoiceMixin(
             inv = self.get_by_id(inv.id)
 
         return inv
+
+    def get_attachment(
+        self, invoice: Invoice | int
+    ) -> tuple[bytes, CaseInsensitiveDict[str]]:
+        """
+        This method downloads and returns the invoice attachment if available.
+
+        It accepts either an invoice object or its id. If the invoice is given, and the path attribute is
+        set, it will simply use this path to download and return the file. In all other cases, it first retrieves
+        the invoice object by id and then proceeds to download the file.
+
+        Returns a tuple, where the first element is the file and the second contains the headers of the response
+
+        **Usage**
+
+        ```python
+        invoice = ev_connection.invoice.get_by_id(invoice_id, query="{id,path}")
+
+        attachment, headers = ev_connection.invoice.get_attachment(invoice)
+        ```
+
+        Args:
+            invoice: The invoice object or its id for which the attachment should be retrieved
+        """
+        if isinstance(invoice, Invoice) and invoice.path:
+            self.logger.info(
+                "Invoice already has the path attribute set, using that path."
+            )
+            path = invoice.path
+        else:
+            self.logger.info(
+                "Invoice is either given by id or doesn't contain the path attribute"
+            )
+            invoice_id = invoice.id if isinstance(invoice, Invoice) else invoice
+            fetched_invoice = self.get_by_id(invoice_id, query="{id,path}")
+            path = fetched_invoice.path
+
+        if not path:
+            raise EasyvereinAPIException(
+                "Unable to obtain a valid path for given invoice."
+            )
+
+        return self.c.fetch_file(path)
