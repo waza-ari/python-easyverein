@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field, PositiveInt
 
 from ..core.types import (
     AnyHttpURL,
+    Date,
     DateTime,
     EasyVereinReference,
     FilterIntList,
@@ -67,7 +68,7 @@ class Member(EasyVereinBase):
     """
     Alias for `_isApplication` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    applicationDate: DateTime | None = Field(default=None, alias="_applicationDate")
+    applicationDate: Date | None = Field(default=None, alias="_applicationDate")
     """
     Alias for `_applicationDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
@@ -158,16 +159,14 @@ class MemberFilter(BaseModel):
     resignationDate__lte: DateTime | None = None
     resignationDate__isnull: DateTime | None = None
     isApplication: bool = Field(default=None, serialization_alias="_isApplication")
-    applicationDate: DateTime = Field(
-        default=None, serialization_alias="_applicationDate"
-    )
-    applicationDate__gte: DateTime = Field(
+    applicationDate: Date = Field(default=None, serialization_alias="_applicationDate")
+    applicationDate__gte: Date = Field(
         default=None, serialization_alias="_applicationDate__gte"
     )
-    applicationDate__lte: DateTime = Field(
+    applicationDate__lte: Date = Field(
         default=None, serialization_alias="_applicationDate__lte"
     )
-    applicationDate__isnull: DateTime = Field(
+    applicationDate__isnull: Date = Field(
         default=None, serialization_alias="_applicationDate__isnull"
     )
     applicationWasAcceptedAt: DateTime = Field(
