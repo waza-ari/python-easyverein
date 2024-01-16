@@ -39,8 +39,7 @@ class Invoice(EasyVereinBase):
     tax: float | None = None
     taxRate: float | None = None
     taxName: str | None = None
-    # TODO: Add reference to ContactDetails once implemented
-    relatedAddress: EasyVereinReference | None = None
+    relatedAddress: ContactDetails | EasyVereinReference | None = None
     path: EasyVereinReference | None = None
     kind: Literal[
         "balance", "donation", "membership", "revenue", "expense", "cancel", "credit"
@@ -129,5 +128,6 @@ class InvoiceFilter(BaseModel):
     search: str | None = None
 
 
+from .contact_details import ContactDetails  # noqa: E402
 from .invoice_item import InvoiceItem  # noqa: E402
 from .member import Member  # noqa: E402
