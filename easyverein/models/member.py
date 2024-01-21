@@ -73,7 +73,7 @@ class MemberBase(EasyVereinBase):
     """
     Alias for `_applicationDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    applicationWasAcceptedAt: DateTime | None = Field(
+    applicationWasAcceptedAt: Date | None = Field(
         default=None, alias="_applicationWasAcceptedAt"
     )
     """
@@ -178,13 +178,13 @@ class MemberFilter(BaseModel):
     applicationDate__isnull: Date = Field(
         default=None, serialization_alias="_applicationDate__isnull"
     )
-    applicationWasAcceptedAt: DateTime = Field(
+    applicationWasAcceptedAt: Date = Field(
         default=None, serialization_alias="_applicationWasAcceptedAt"
     )
-    applicationWasAcceptedAt__gte: DateTime = Field(
+    applicationWasAcceptedAt__gte: Date = Field(
         default=None, serialization_alias="_applicationWasAcceptedAt__gte"
     )
-    applicationWasAcceptedAt__lte: DateTime = Field(
+    applicationWasAcceptedAt__lte: Date = Field(
         default=None, serialization_alias="_applicationWasAcceptedAt__lte"
     )
     applicationWasAcceptedAt__isnull: bool = Field(
