@@ -1,4 +1,4 @@
-::: easyverein.models.member.Member
+::: easyverein.models.member.MemberBase
     options:
         show_root_heading: false
         heading_level: 2

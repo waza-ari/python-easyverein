@@ -1,4 +1,4 @@
-::: easyverein.models.contact_details.ContactDetails
+::: easyverein.models.contact_details.ContactDetailsBase
     options:
         show_root_heading: false
         heading_level: 2

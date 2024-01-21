@@ -4,10 +4,10 @@ empty strings and converts them to None.
 """
 from typing import Any
 
-from pydantic import BaseModel, model_validator
+from pydantic import model_validator
 
 
-class EmptyStringsToNone(BaseModel):
+class EmptyStringsToNone:
     """
     Mixin class for Pydantic models
     """

@@ -15,10 +15,11 @@ from ..core.types import (
     PositiveIntWithZero,
 )
 from .base import EasyVereinBase
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
 
-class CustomField(EasyVereinBase):
+class CustomFieldBase(EasyVereinBase):
     """
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |
@@ -80,15 +81,25 @@ class CustomField(EasyVereinBase):
     collection: EasyVereinReference | None = None
 
 
-class CustomFieldCreate(CustomField, required_mixin(["name", "settings_type", "kind"])):
+class CustomField(CustomFieldBase, EmptyStringsToNone):
     """
-    Pydantic model for creating a new member
+    Pydantic model used to represent a custom field
+    """
+
+    pass
+
+
+class CustomFieldCreate(
+    CustomFieldBase, required_mixin(["name", "settings_type", "kind"])
+):
+    """
+    Pydantic model for creating a new custom field
     """
 
 
-class CustomFieldUpdate(CustomField):
+class CustomFieldUpdate(CustomFieldBase):
     """
-    Pydantic model used to update a member
+    Pydantic model used to update a custom field
     """
 
     pass

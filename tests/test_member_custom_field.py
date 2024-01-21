@@ -59,3 +59,17 @@ class TestMemberCustomField:
             example_member.id, example_custom_field.id, "Ensured-Value"
         )
         assert member_custom_field.value == "Ensured-Value"
+
+    def test_ensure_custom_field_value_empty(
+        self, ev_connection: EasyvereinAPI, example_custom_field, example_member
+    ):
+        member_custom_field = ev_connection.member_custom_field.ensure_set(
+            example_member.id, example_custom_field.id, "New-Ensured-Value"
+        )
+
+        assert member_custom_field.value == "New-Ensured-Value"
+
+        member_custom_field = ev_connection.member_custom_field.ensure_set(
+            example_member.id, example_custom_field.id, ""
+        )
+        assert member_custom_field.value is None

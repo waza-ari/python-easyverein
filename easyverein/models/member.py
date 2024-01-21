@@ -16,10 +16,11 @@ from ..core.types import (
     FilterStrList,
 )
 from .base import EasyVereinBase
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
 
-class Member(EasyVereinBase):
+class MemberBase(EasyVereinBase):
     """
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |
@@ -97,7 +98,15 @@ class Member(EasyVereinBase):
     customFields: EasyVereinReference | list[MemberCustomField] | None = None
 
 
-class MemberUpdate(Member):
+class Member(MemberBase, EmptyStringsToNone):
+    """
+    Pydantic model for members
+    """
+
+    pass
+
+
+class MemberUpdate(MemberBase):
     """
     Pydantic model used to update a member
     """

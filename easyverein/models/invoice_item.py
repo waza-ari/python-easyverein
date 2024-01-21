@@ -9,10 +9,11 @@ from pydantic import BaseModel, PositiveInt, StringConstraints
 
 from ..core.types import EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
 
-class InvoiceItem(EasyVereinBase):
+class InvoiceItemBase(EasyVereinBase):
     """
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |
@@ -38,8 +39,16 @@ class InvoiceItem(EasyVereinBase):
     costCentre: Annotated[str, StringConstraints(max_length=8)] | None = None
 
 
+class InvoiceItem(InvoiceItemBase, EmptyStringsToNone):
+    """
+    Pydantic model representing an InvoiceItem
+    """
+
+    pass
+
+
 class InvoiceItemCreate(
-    InvoiceItem,
+    InvoiceItemBase,
     required_mixin(["title", "quantity", "unitPrice"]),
 ):
     """
@@ -47,7 +56,7 @@ class InvoiceItemCreate(
     """
 
 
-class InvoiceItemUpdate(InvoiceItem):
+class InvoiceItemUpdate(InvoiceItemBase):
     """
     Pydantic model used to patch an InvoiceItem
     """

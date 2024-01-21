@@ -1,4 +1,4 @@
-::: easyverein.models.custom_field.CustomField
+::: easyverein.models.custom_field.CustomFieldBase
     options:
         show_root_heading: false
         heading_level: 2

@@ -15,10 +15,11 @@ from ..core.types import (
     PositiveIntWithZero,
 )
 from .base import EasyVereinBase
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
 
-class Invoice(EasyVereinBase):
+class InvoiceBase(EasyVereinBase):
     """
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |
@@ -63,8 +64,16 @@ class Invoice(EasyVereinBase):
     invoiceItems: list[InvoiceItem] | list[EasyVereinReference] | None = None
 
 
+class Invoice(InvoiceBase, EmptyStringsToNone):
+    """
+    Pydantic model representing an Invoice
+    """
+
+    pass
+
+
 class InvoiceCreate(
-    Invoice,
+    InvoiceBase,
     required_mixin(["invNumber", "totalPrice", ["relatedAddress", "receiver"]]),
 ):
     """
@@ -74,7 +83,7 @@ class InvoiceCreate(
     storedInS3: bool | None = None
 
 
-class InvoiceUpdate(Invoice):
+class InvoiceUpdate(InvoiceBase):
     """
     Pydantic model representing an Invoice
     """

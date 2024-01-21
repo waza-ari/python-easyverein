@@ -4,10 +4,11 @@ from pydantic import BaseModel
 
 from ..core.types import EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
 
-class MemberCustomField(EasyVereinBase):
+class MemberCustomFieldBase(EasyVereinBase):
     """
     This model represents a custom field associated to a member with a certain value.
 
@@ -33,15 +34,23 @@ class MemberCustomField(EasyVereinBase):
     requestedValue: str | None = None  # Purpose of this field is not documented
 
 
+class MemberCustomField(MemberCustomFieldBase, EmptyStringsToNone):
+    """
+    Pydantic model representing a member custom field
+    """
+
+    pass
+
+
 class MemberCustomFieldCreate(
-    MemberCustomField, required_mixin(["customField", "value"])
+    MemberCustomFieldBase, required_mixin(["customField", "value"])
 ):
     """
     Pydantic model for creating a new member
     """
 
 
-class MemberCustomFieldUpdate(MemberCustomField):
+class MemberCustomFieldUpdate(MemberCustomFieldBase):
     """
     Pydantic model used to update a member
     """

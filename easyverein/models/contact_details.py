@@ -9,10 +9,11 @@ from pydantic import BaseModel, EmailStr, Field
 
 from ..core.types import Date, DateTime, FilterIntList
 from .base import EasyVereinBase
+from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
 
-class ContactDetails(EasyVereinBase):
+class ContactDetailsBase(EasyVereinBase):
     """
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |
@@ -120,7 +121,15 @@ class ContactDetails(EasyVereinBase):
     """
 
 
-class ContactDetailsUpdate(ContactDetails):
+class ContactDetails(ContactDetailsBase, EmptyStringsToNone):
+    """
+    Pydantic model for contact details
+    """
+
+    pass
+
+
+class ContactDetailsUpdate(ContactDetailsBase):
     """
     Pydantic model used to update contact details
     """

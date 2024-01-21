@@ -2,28 +2,28 @@
 from .contact_details import (
     ContactDetails,
     ContactDetailsCreate,
-    ContactDetailsUpdate,
     ContactDetailsFilter,
+    ContactDetailsUpdate,
 )
 from .custom_field import (
     CustomField,
     CustomFieldCreate,
-    CustomFieldUpdate,
     CustomFieldFilter,
+    CustomFieldUpdate,
 )
-from .invoice import Invoice, InvoiceCreate, InvoiceUpdate, InvoiceFilter
+from .invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
 from .invoice_item import (
     InvoiceItem,
     InvoiceItemCreate,
-    InvoiceItemUpdate,
     InvoiceItemFilter,
+    InvoiceItemUpdate,
 )
-from .member import Member, MemberCreate, MemberUpdate, MemberFilter
+from .member import Member, MemberCreate, MemberFilter, MemberUpdate
 from .member_custom_field import (
     MemberCustomField,
     MemberCustomFieldCreate,
-    MemberCustomFieldUpdate,
     MemberCustomFieldFilter,
+    MemberCustomFieldUpdate,
 )
 
 ContactDetails.model_rebuild()

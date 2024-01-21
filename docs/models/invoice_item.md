@@ -1,4 +1,4 @@
-::: easyverein.models.invoice_item.InvoiceItem
+::: easyverein.models.invoice_item.InvoiceItemBase
     options:
         show_root_heading: false
         heading_level: 2
