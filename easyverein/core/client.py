@@ -206,11 +206,6 @@ class EasyvereinClient:
 
         Only tested with invoices so far
         """
-        # Check that path is a file and it exists
-        if not file.exists() or not file.is_file():
-            self.logger.error("File does not exist or is not a file.")
-            raise FileNotFoundError("File does not exist")
-
         files = {field_name: open(file, "rb")}
         headers = {"Content-Disposition": f'name="file"; filename="{file.name}"'}
 
