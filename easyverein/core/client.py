@@ -36,6 +36,7 @@ class EasyvereinClient:
         base_url,
         logger: logging.Logger,
         instance: EasyvereinAPI,
+        auto_retry=False,
     ):
         """
         Constructor setting API key and logger
@@ -45,6 +46,7 @@ class EasyvereinClient:
         self.api_version = api_version
         self.logger = logger
         self.api_instance = instance
+        self.auto_retry = auto_retry
 
     def _get_header(self):
         """
@@ -78,7 +80,7 @@ class EasyvereinClient:
         return url
 
     def _do_request(  # noqa: PLR0913
-        self, method, url, binary=False, data=None, headers=None, files=None, retry=True
+        self, method, url, binary=False, data=None, headers=None, files=None
     ) -> tuple[int, dict[str, Any] | requests.Response | None]:
         """
         Helper method that performs an actual call against the API,
@@ -119,15 +121,13 @@ class EasyvereinClient:
                 "Request returned status code 429, too many requests. Wait %d seconds",
                 retry_after,
             )
-            if retry:
-                self.logger.warning("Sleeping %d seconds", retry_after)
+            if self.auto_retry:
+                self.logger.warning("Retrying after %d seconds sleep.", retry_after)
                 sleep(retry_after)
                 if files:
-                    for k, v in files:
-                        v.seek(0)
-                return self._do_request(
-                    method, url, binary, data, headers, files, retry=False
-                )
+                    for k,v in files:
+                        v.seek(0)  # reset file seek, as it has been moved by the previous call
+                return self._do_request(method, url, binary, data, headers, files)
             else:
                 raise EasyvereinAPITooManyRetriesException(
                     f"Too many requests, please wait {retry_after} seconds and try again.",
