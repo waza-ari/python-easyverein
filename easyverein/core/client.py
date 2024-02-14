@@ -5,8 +5,8 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypeVar
 from time import sleep
+from typing import TYPE_CHECKING, Any, TypeVar
 
 import requests
 from pydantic import BaseModel
@@ -123,9 +123,11 @@ class EasyvereinClient:
                 self.logger.warning("Sleeping %d seconds", retry_after)
                 sleep(retry_after)
                 if files:
-                    for k,v in files:
+                    for k, v in files:
                         v.seek(0)
-                return self._do_request(method, url, binary, data, headers, files, retry=False)
+                return self._do_request(
+                    method, url, binary, data, headers, files, retry=False
+                )
             else:
                 raise EasyvereinAPITooManyRetriesException(
                     f"Too many requests, please wait {retry_after} seconds and try again.",
