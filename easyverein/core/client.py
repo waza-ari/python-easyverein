@@ -125,8 +125,10 @@ class EasyvereinClient:
                 self.logger.warning("Retrying after %d seconds sleep.", retry_after)
                 sleep(retry_after)
                 if files:
-                    for k,v in files:
-                        v.seek(0)  # reset file seek, as it has been moved by the previous call
+                    for k, v in files:
+                        v.seek(
+                            0
+                        )  # reset file seek, as it has been moved by the previous call
                 return self._do_request(method, url, binary, data, headers, files)
             else:
                 raise EasyvereinAPITooManyRetriesException(

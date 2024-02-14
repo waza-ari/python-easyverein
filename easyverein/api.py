@@ -32,7 +32,9 @@ class EasyvereinAPI:
         else:
             self.logger = logging.getLogger("easyverein")
 
-        self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self, auto_retry)
+        self.c = EasyvereinClient(
+            api_key, api_version, base_url, self.logger, self, auto_retry
+        )
 
         # Add methods
 
