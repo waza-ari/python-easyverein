@@ -6,6 +6,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeVar
+from time import sleep
 
 import requests
 from pydantic import BaseModel
@@ -77,7 +78,7 @@ class EasyvereinClient:
         return url
 
     def _do_request(  # noqa: PLR0913
-        self, method, url, binary=False, data=None, headers=None, files=None
+        self, method, url, binary=False, data=None, headers=None, files=None, retry=True
     ) -> tuple[int, dict[str, Any] | requests.Response | None]:
         """
         Helper method that performs an actual call against the API,
@@ -118,10 +119,18 @@ class EasyvereinClient:
                 "Request returned status code 429, too many requests. Wait %d seconds",
                 retry_after,
             )
-            raise EasyvereinAPITooManyRetriesException(
-                f"Too many requests, please wait {retry_after} seconds and try again.",
-                retry_after=retry_after,
-            )
+            if retry:
+                self.logger.warning("Sleeping %d seconds", retry_after)
+                sleep(retry_after)
+                if files:
+                    for k,v in files:
+                        v.seek(0)
+                return self._do_request(method, url, binary, data, headers, files, retry=False)
+            else:
+                raise EasyvereinAPITooManyRetriesException(
+                    f"Too many requests, please wait {retry_after} seconds and try again.",
+                    retry_after=retry_after,
+                )
 
         if res.status_code == 404:
             self.logger.warning("Request returned status code 404, resource not found")
