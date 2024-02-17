@@ -19,6 +19,7 @@ class EasyvereinAPI:
         api_version="v1.7",
         base_url: str = "https://hexa.easyverein.com/api/",
         logger: logging.Logger = None,
+        auto_retry=False,
     ):
         """
         Constructor setting API key and logger. Test
@@ -31,7 +32,9 @@ class EasyvereinAPI:
         else:
             self.logger = logging.getLogger("easyverein")
 
-        self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self)
+        self.c = EasyvereinClient(
+            api_key, api_version, base_url, self.logger, self, auto_retry
+        )
 
         # Add methods
 
