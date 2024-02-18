@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
+import re
 from typing import List
+import urllib
 
 from requests.structures import CaseInsensitiveDict
 
@@ -169,4 +171,10 @@ class InvoiceMixin(
                 "Unable to obtain a valid path for given invoice."
             )
 
-        return self.c.fetch_file(path)
+        # Fix for unencoded characters - should probably be fixed in easyverein API
+        m = re.fullmatch(r'^(.*\&path=)(.*)(&storedInS3=True)$', path.unicode_string())
+        url_components = list(m.groups())
+        if '%' not in url_components[1]:
+            url_components[1] = urllib.parse.quote(url_components[1])
+
+        return self.c.fetch_file(''.join(url_components))
