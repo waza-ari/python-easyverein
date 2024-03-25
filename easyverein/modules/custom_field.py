@@ -1,6 +1,7 @@
 """
 All methods related to custom fields
 """
+
 import logging
 
 from ..core.client import EasyvereinClient

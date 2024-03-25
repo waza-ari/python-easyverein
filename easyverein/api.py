@@ -1,6 +1,7 @@
 """
 Main EasyVerein API class
 """
+
 import logging
 
 from .core.client import EasyvereinClient
