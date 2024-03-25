@@ -1,6 +1,7 @@
 """
 All methods related to invoices
 """
+
 import logging
 
 from ..core.client import EasyvereinClient

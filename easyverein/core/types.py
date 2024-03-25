@@ -1,6 +1,7 @@
 """
 Custom types used for model validation
 """
+
 import datetime
 import json
 from typing import Annotated

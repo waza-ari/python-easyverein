@@ -2,6 +2,7 @@
 This module contains a generic plugin for Pydantic models that removes
 empty strings and converts them to None.
 """
+
 from typing import Any
 
 from pydantic import model_validator
