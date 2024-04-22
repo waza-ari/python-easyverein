@@ -1,6 +1,7 @@
 """
 Invoice related models
 """
+
 from __future__ import annotations
 
 from typing import Literal
@@ -42,9 +43,18 @@ class InvoiceBase(EasyVereinBase):
     taxName: str | None = None
     relatedAddress: ContactDetails | EasyVereinReference | None = None
     path: EasyVereinReference | None = None
-    kind: Literal[
-        "balance", "donation", "membership", "revenue", "expense", "cancel", "credit"
-    ] | None = None
+    kind: (
+        Literal[
+            "balance",
+            "donation",
+            "membership",
+            "revenue",
+            "expense",
+            "cancel",
+            "credit",
+        ]
+        | None
+    ) = None
     # TODO: Add reference to BillingAccount once implemented
     selectionAcc: EasyVereinReference | None = None
     refNumber: str | None = None

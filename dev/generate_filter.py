@@ -1,6 +1,7 @@
 """
 Helper script to automatically generate pydantic models from a swagger spec
 """
+
 import json
 import sys
 from pathlib import Path
