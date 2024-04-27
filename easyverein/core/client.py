@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from time import sleep
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import requests
@@ -35,6 +36,7 @@ class EasyvereinClient:
         base_url,
         logger: logging.Logger,
         instance: EasyvereinAPI,
+        auto_retry=False,
     ):
         """
         Constructor setting API key and logger
@@ -44,6 +46,7 @@ class EasyvereinClient:
         self.api_version = api_version
         self.logger = logger
         self.api_instance = instance
+        self.auto_retry = auto_retry
 
     def _get_header(self):
         """
@@ -118,10 +121,21 @@ class EasyvereinClient:
                 "Request returned status code 429, too many requests. Wait %d seconds",
                 retry_after,
             )
-            raise EasyvereinAPITooManyRetriesException(
-                f"Too many requests, please wait {retry_after} seconds and try again.",
-                retry_after=retry_after,
-            )
+            if self.auto_retry:
+                self.logger.warning("Retrying after %d seconds sleep.", retry_after)
+                sleep(retry_after)
+                if files:
+                    for v in files.values():
+                        v.seek(
+                            0
+                        )  # reset file seek, as it has been moved by the previous call
+
+                return self._do_request(method, url, binary, data, headers, files)
+            else:
+                raise EasyvereinAPITooManyRetriesException(
+                    f"Too many requests, please wait {retry_after} seconds and try again.",
+                    retry_after=retry_after,
+                )
 
         if res.status_code == 404:
             self.logger.warning("Request returned status code 404, resource not found")
