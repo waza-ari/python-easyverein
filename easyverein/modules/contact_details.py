@@ -1,6 +1,7 @@
 """
 All methods related to contact details
 """
+
 import logging
 
 from ..core.client import EasyvereinClient

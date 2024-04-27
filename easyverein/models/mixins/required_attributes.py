@@ -1,6 +1,7 @@
 """
 This module contains a class factory returning a Mixin class
 """
+
 from typing import Self
 
 from pydantic import BaseModel, model_validator
