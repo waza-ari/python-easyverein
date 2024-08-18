@@ -17,8 +17,8 @@ FilterType = TypeVar("FilterType", bound=BaseModel)
 class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]):
     def get(
         self: IsEVClientProtocol,
-        query: str = None,
-        search: FilterType = None,
+        query: str = "",
+        search: FilterType | None = None,
         limit: int = 10,
         page: int = 1,
     ) -> tuple[list[ModelType], int]:
@@ -48,8 +48,8 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
     def get_all(
         self: IsEVClientProtocol,
-        query: str = None,
-        search: FilterType = None,
+        query: str = "",
+        search: FilterType | None = None,
         limit_per_page: int = 10,
     ) -> list[ModelType]:
         """
@@ -74,7 +74,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         return self.c.fetch_paginated(url, self.return_type, limit_per_page)
 
-    def get_by_id(self: IsEVClientProtocol, obj_id: int, query: str = None) -> ModelType:
+    def get_by_id(self: IsEVClientProtocol, obj_id: int, query: str = "") -> ModelType:
         """
         Fetches a single object identified by its primary id.
 

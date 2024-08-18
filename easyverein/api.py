@@ -11,6 +11,7 @@ from .modules.invoice import InvoiceMixin
 from .modules.invoice_item import InvoiceItemMixin
 from .modules.member import MemberMixin
 from .modules.member_custom_field import MemberCustomFieldMixin
+from .modules.member_group import MemberMemberGroupMixin
 
 
 class EasyvereinAPI:
@@ -19,7 +20,7 @@ class EasyvereinAPI:
         api_key,
         api_version="v1.7",
         base_url: str = "https://hexa.easyverein.com/api/",
-        logger: logging.Logger = None,
+        logger: logging.Logger | None = None,
         auto_retry=False,
     ):
         """
@@ -36,10 +37,10 @@ class EasyvereinAPI:
         self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self, auto_retry)
 
         # Add methods
-
         self.contact_details = ContactDetailsMixin(self.c, self.logger)
         self.custom_field = CustomFieldMixin(self.c, self.logger)
         self.invoice = InvoiceMixin(self.c, self.logger)
         self.invoice_item = InvoiceItemMixin(self.c, self.logger)
         self.member = MemberMixin(self.c, self.logger)
         self.member_custom_field = MemberCustomFieldMixin(self.c, self.logger)
+        self.member_member_group = MemberMemberGroupMixin(self.c, self.logger)

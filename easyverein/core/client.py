@@ -5,9 +5,10 @@ Main EasyVerein API class
 from __future__ import annotations
 
 import logging
+from io import BufferedReader
 from pathlib import Path
 from time import sleep
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import requests
 from pydantic import BaseModel
@@ -18,11 +19,12 @@ from .exceptions import (
     EasyvereinAPINotFoundException,
     EasyvereinAPITooManyRetriesException,
 )
+from .responses import ResponseSchema
 
 if TYPE_CHECKING:
     from .. import EasyvereinAPI
 
-T = TypeVar("T")
+T = TypeVar("T", bound=BaseModel)
 
 
 class EasyvereinClient:
@@ -55,7 +57,7 @@ class EasyvereinClient:
         """
         return {"Authorization": "Bearer " + self.api_key}
 
-    def get_url(self, path: str, url_params: dict = None) -> str:
+    def get_url(self, path: str, url_params: dict | None = None) -> str:
         """
         Constructs a URL for the API request.
 
@@ -81,7 +83,13 @@ class EasyvereinClient:
         return url
 
     def _do_request(  # noqa: PLR0913
-        self, method, url, binary=False, data=None, headers=None, files=None
+        self,
+        method: str,
+        url: str,
+        binary: bool = False,
+        data: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
+        files: dict[str, BufferedReader] | None = None,
     ) -> tuple[int, dict[str, Any] | requests.Response | None]:
         """
         Helper method that performs an actual call against the API,
@@ -99,6 +107,7 @@ class EasyvereinClient:
         self.logger.debug("Final request headers: %s", final_headers)
 
         func = getattr(requests, method)
+        res: requests.Response
         if data:
             res = func(url, headers=final_headers, json=data, files=files or {})
         else:
@@ -159,21 +168,24 @@ class EasyvereinClient:
     def create(
         self,
         url,
-        data: BaseModel = None,
-        return_model: type[T] = None,
+        data: BaseModel,
+        return_model: type[T],
         status_code: int = 201,
     ) -> T:
         """
         Method to create an object in the API
         """
-        return self._handle_response(
-            self._do_request(
-                "post",
-                url,
-                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
+        return cast(
+            T,
+            self._handle_response(
+                self._do_request(
+                    "post",
+                    url,
+                    data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
+                ),
+                return_model,
+                status_code,
             ),
-            return_model,
-            status_code,
         )
 
     def delete(self, url, status_code: int = 204):
@@ -182,18 +194,21 @@ class EasyvereinClient:
         """
         return self._handle_response(self._do_request("delete", url), expected_status_code=status_code)
 
-    def update(self, url, data: BaseModel = None, model: type[T] = None, status_code: int = 200) -> T:
+    def update(self, url, data: BaseModel, model: type[T], status_code: int = 200) -> T:
         """
         Method to update an object in the API
         """
-        return self._handle_response(
-            self._do_request(
-                "patch",
-                url,
-                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
+        return cast(
+            T,
+            self._handle_response(
+                self._do_request(
+                    "patch",
+                    url,
+                    data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
+                ),
+                model,
+                expected_status_code=status_code,
             ),
-            model,
-            expected_status_code=status_code,
         )
 
     def upload(
@@ -201,7 +216,7 @@ class EasyvereinClient:
         url: str,
         field_name: str,
         file: Path,
-        model: type[T] = None,
+        model: type[T],
         status_code: int = 200,
     ) -> T:
         """
@@ -217,18 +232,21 @@ class EasyvereinClient:
         files = {field_name: open(file, "rb")}
         headers = {"Content-Disposition": f'name="file"; filename="{file.name}"'}
 
-        return self._handle_response(
-            self._do_request(
-                "patch",
-                url,
-                headers=headers,
-                files=files,
+        return cast(
+            T,
+            self._handle_response(
+                self._do_request(
+                    "patch",
+                    url,
+                    headers=headers,
+                    files=files,
+                ),
+                model,
+                status_code,
             ),
-            model,
-            status_code,
         )
 
-    def fetch(self, url, model: type[T] = None) -> tuple[list[T], int]:
+    def fetch(self, url, model: type[T]) -> tuple[list[T], int]:
         """
         Helper method that fetches a result from an API call
 
@@ -236,12 +254,11 @@ class EasyvereinClient:
         """
         res = self._do_request("get", url)
         data = self._handle_response(res, model, 200)
-        try:
-            total_count = res[1]["count"]
-        except KeyError:
-            total_count = 0
 
-        return data, total_count
+        if data is None:
+            return [], 0
+
+        return cast(list[T], data.result), data.count
 
     def fetch_file(self, url: str) -> tuple[bytes, CaseInsensitiveDict[str]]:
         """
@@ -251,6 +268,11 @@ class EasyvereinClient:
         """
         status_code, res = self._do_request("get", url, binary=True)
 
+        # Response needs to be a Response object
+        if not isinstance(res, requests.Response):
+            self.logger.error("Request to download file failed with unexpected response")
+            raise EasyvereinAPIException("Request to download file failed with unexpected response")
+
         # Check if status code is 200
         if status_code != 200:
             self.logger.error(f"Request to download file failed with unexpected status code {status_code}")
@@ -258,7 +280,7 @@ class EasyvereinClient:
 
         return res.content, res.headers
 
-    def fetch_one(self, url, model: type[T] = None) -> T | None:
+    def fetch_one(self, url, model: type[T]) -> T | None:
         """
         Helper method that fetches a result from an API call
 
@@ -275,7 +297,7 @@ class EasyvereinClient:
 
         return reply
 
-    def fetch_paginated(self, url, model: type[T] = None, limit=100) -> list[T]:
+    def fetch_paginated(self, url, model: type[T] | None = None, limit=100) -> list[T]:
         """
         Helper method that fetches all pages of a paginated API call
 
@@ -299,6 +321,13 @@ class EasyvereinClient:
             status_code, result = self._do_request("get", url)
             self.logger.debug("Request returned status code %d", status_code)
 
+            if not isinstance(result, dict):
+                self.logger.error("Could not fetch paginated API %s, status code %d", url, status_code)
+                self.logger.debug("API response: %s", result)
+                raise EasyvereinAPIException(
+                    f"Could not fetch paginated API {url}, " f"status code {status_code}. API response: {result}"
+                )
+
             if not status_code == 200:
                 self.logger.error("Could not fetch paginated API %s, status code %d", url, status_code)
                 self.logger.debug("API response: %s", result)
@@ -309,14 +338,18 @@ class EasyvereinClient:
             resources.extend(result["results"])
             url = result["next"]
 
-        return self._handle_response((status_code, resources), model, 200)
+        result = self._handle_response((status_code, resources), model, 200)
+        if not result:
+            logging.warning("No data was returned from the API.")
+            return []
+        return cast(list[T], result.result)
 
     def _handle_response(
         self,
-        res: tuple[int, list | dict],
-        model: type[T] = None,
+        res: tuple[int, dict[str, Any] | list[dict[str, Any]] | requests.Response | None],
+        model: type[T] | None = None,
         expected_status_code=200,
-    ) -> T | list[T]:
+    ) -> ResponseSchema[T] | None:
         """
         Helper method that handles API responses
         """
@@ -329,7 +362,7 @@ class EasyvereinClient:
         # if no data is expected return raw data (usually None)
         if not model:
             self.logger.debug("No model provided. Returning raw data: %s", data)
-            return data
+            return None
 
         self.logger.debug("Received raw data: %s", data)
 
@@ -339,12 +372,21 @@ class EasyvereinClient:
             objects = []
             for obj in data:
                 objects.append(model.model_validate(obj))
+            return ResponseSchema(
+                result=objects,
+                count=len(objects),
+            )
         elif isinstance(data, dict) and "results" in data:
             objects = []
             for obj in data["results"]:
                 objects.append(model.model_validate(obj))
+            return ResponseSchema(
+                result=objects,
+                count=data.get("count", 0),
+            )
         else:
             # Handle the case when data is not a list
-            objects = model.model_validate(data)
-
-        return objects
+            return ResponseSchema(
+                result=model.model_validate(data),
+                count=1,
+            )
