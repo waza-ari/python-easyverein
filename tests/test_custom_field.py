@@ -14,11 +14,11 @@ class TestMember:
         assert isinstance(custom_field, CustomField)
         assert custom_field.name == "Test-Field"
 
-        # Get all custom fields and check that we've got one now
+        # Get all custom fields and check that we've got one more than the 40 built-in now
         custom_fields, total_count = ev_connection.custom_field.get()
         assert isinstance(custom_fields, list)
-        assert total_count == 1
-        assert len(custom_fields) == 1
+        assert total_count == 41
+        assert len(custom_fields) == 10  # Default limit is 10
         assert all(isinstance(f, CustomField) for f in custom_fields)
 
         # Change the name of the custom field
@@ -42,7 +42,8 @@ class TestMember:
         # Delete custom field again
         ev_connection.custom_field.delete(custom_field)
 
-        # Now there should be none left
-        custom_fields = ev_connection.custom_field.get()[0]
+        # Now there should be the original 40 left
+        custom_fields, total_count = ev_connection.custom_field.get()
         assert isinstance(custom_fields, list)
-        assert len(custom_fields) == 0
+        assert total_count == 40
+        assert len(custom_fields) == 10  # Default limit is 10

@@ -24,9 +24,9 @@ class TestFilter:
             assert isinstance(instance, model)
 
     def test_filter_invoices(self, ev_connection: EasyvereinAPI):
-        search = InvoiceFilter(invNumber__in=["1", "3", "5"], canceledInvoice__isnull=True, isDraft=False)
+        search = InvoiceFilter(invNumber__in=["10", "11"], canceledInvoice__isnull=True, isDraft=False)
 
-        TestFilter.validate_response(ev_connection.invoice.get(search=search), Invoice, 3)
+        TestFilter.validate_response(ev_connection.invoice.get(search=search), Invoice, 2)
 
     def test_filter_members(self, ev_connection: EasyvereinAPI):
         # Case 1: non existing membership number
@@ -43,7 +43,7 @@ class TestFilter:
 
         # Case 4: test bool, get chairmans
         search = MemberFilter(isChairman=True)
-        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 5)
+        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 1)
 
         # Case 5: test date, joinDate in future
         search = MemberFilter(joinDate__gte=datetime.datetime.now())
@@ -51,4 +51,4 @@ class TestFilter:
 
         # Case 6: test date, joinDate in past
         search = MemberFilter(joinDate__lte=datetime.datetime.now())
-        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 4)
+        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 5)

@@ -17,9 +17,10 @@ class TestInvoices:
         # Check if the response is a list
         assert isinstance(invoices, list)
 
-        # We should have 5 invoices based on the example data
-        assert total_count == 5
-        assert len(invoices) == 5
+        # We should have 6 invoices based on the example data
+        # 4 regular invoices, 2 requests
+        assert total_count == 6
+        assert len(invoices) == 6
 
         # Check if all the invoices are of type Invoice
         for invoice in invoices:
@@ -151,9 +152,9 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
-        # Check that we're back to 5 invoices
+        # Check that we're back to 6 invoices
         invoices = ev_connection.invoice.get_all()
-        assert len(invoices) == 5
+        assert len(invoices) == 6
 
     def test_create_invoice_with_items_helper(self, ev_connection: EasyvereinAPI, random_string: str, example_member):
         # Create a minimal invoice
@@ -203,10 +204,10 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
-        # Check that we're back to 5 invoices
+        # Check that we're back to 6 invoices
         invoices, total_count = ev_connection.invoice.get()
-        assert total_count == 5
-        assert len(invoices) == 5
+        assert total_count == 6
+        assert len(invoices) == 6
 
     def test_create_invoice_with_attachment(
         self, ev_connection: EasyvereinAPI, random_string: str, request: FixtureRequest
@@ -245,6 +246,6 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice)
-        # Check that we're back to 5 invoices
+        # Check that we're back to 6 invoices
         invoices, _ = ev_connection.invoice.get()
-        assert len(invoices) == 5
+        assert len(invoices) == 6

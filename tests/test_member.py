@@ -10,9 +10,10 @@ class TestMember:
         # Check if the response is a list
         assert isinstance(members, list)
 
-        # We should have 5 invoices based on the example data
-        assert total_count == 5
-        assert len(members) == 5
+        # We should have 8 members based on the example data
+        # 5 regular members, 3 requests
+        assert total_count == 8
+        assert len(members) == 8
 
         # Check if all the members are of type Member
         for member in members:
@@ -26,14 +27,17 @@ class TestMember:
 
         members, total_count = ev_connection.member.get(query=query, limit=2)
         assert len(members) == 2
-        assert total_count == 5
+        assert total_count == 8
 
         for member in members:
             assert isinstance(member, Member)
-            assert member.contactDetails.firstName
-            assert member.contactDetails.familyName
-            assert member.contactDetails.primaryEmail
-            assert not member.contactDetails.companyEmail
+            if member.contactDetails.isCompany:
+                assert member.contactDetails.companyName
+                assert member.contactDetails.primaryEmail
+            else:
+                assert member.contactDetails.firstName
+                assert member.contactDetails.familyName
+                assert not member.contactDetails.companyEmail
 
     def test_member_by_id_not_found(self, ev_connection: EasyvereinAPI):
         # Expect an Exception
