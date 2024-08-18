@@ -46,9 +46,7 @@ class MemberBase(EasyVereinBase):
     """
     Alias for `_isChairman` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    chairmanPermissionGroup: str | None = Field(
-        default=None, alias="_chairmanPermissionGroup"
-    )
+    chairmanPermissionGroup: str | None = Field(default=None, alias="_chairmanPermissionGroup")
     """
     Alias for `_chairmanPermissionGroup` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
@@ -74,22 +72,16 @@ class MemberBase(EasyVereinBase):
     """
     Alias for `_applicationDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    applicationWasAcceptedAt: Date | None = Field(
-        default=None, alias="_applicationWasAcceptedAt"
-    )
+    applicationWasAcceptedAt: Date | None = Field(default=None, alias="_applicationWasAcceptedAt")
     """
     Alias for `_applicationWasAcceptedAt` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
     signatureText: str | None = None
-    relatedMember: Member | EasyVereinReference | None = Field(
-        default=None, alias="_relatedMember"
-    )
+    relatedMember: Member | EasyVereinReference | None = Field(default=None, alias="_relatedMember")
     """
     Alias for `_relatedMember` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    editableByRelatedMembers: bool | None = Field(
-        default=None, alias="_editableByRelatedMembers"
-    )
+    editableByRelatedMembers: bool | None = Field(default=None, alias="_editableByRelatedMembers")
     """
     Alias for `_editableByRelatedMembers` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
@@ -112,19 +104,11 @@ class MemberUpdate(MemberBase):
     Pydantic model used to update a member
     """
 
-    profilePicture: AnyHttpURL | None = Field(
-        default=None, serialization_alias="_profilePicture"
-    )
+    profilePicture: AnyHttpURL | None = Field(default=None, serialization_alias="_profilePicture")
     isChairman: bool | None = Field(default=None, serialization_alias="_isChairman")
-    chairmanPermissionGroup: str | None = Field(
-        default=None, serialization_alias="_chairmanPermissionGroup"
-    )
-    isApplication: bool | None = Field(
-        default=None, serialization_alias="_isApplication"
-    )
-    paymentStartDate: DateTime | None = Field(
-        default=None, serialization_alias="_paymentStartDate"
-    )
+    chairmanPermissionGroup: str | None = Field(default=None, serialization_alias="_chairmanPermissionGroup")
+    isApplication: bool | None = Field(default=None, serialization_alias="_isApplication")
+    paymentStartDate: DateTime | None = Field(default=None, serialization_alias="_paymentStartDate")
 
     pass
 
@@ -157,9 +141,7 @@ class MemberFilter(BaseModel):
     membershipNumber__in: FilterStrList | None = None
     deletedBy: int = Field(default=None, serialization_alias="_deletedBy")
     deletedBy__ne: int = Field(default=None, serialization_alias="_deletedBy__ne")
-    deletedBy__isnull: bool = Field(
-        default=None, serialization_alias="_deletedBy__isnull"
-    )
+    deletedBy__isnull: bool = Field(default=None, serialization_alias="_deletedBy__isnull")
     joinDate: DateTime | None = None
     joinDate__gte: DateTime | None = None
     joinDate__lte: DateTime | None = None
@@ -170,24 +152,12 @@ class MemberFilter(BaseModel):
     resignationDate__isnull: DateTime | None = None
     isApplication: bool = Field(default=None, serialization_alias="_isApplication")
     applicationDate: Date = Field(default=None, serialization_alias="_applicationDate")
-    applicationDate__gte: Date = Field(
-        default=None, serialization_alias="_applicationDate__gte"
-    )
-    applicationDate__lte: Date = Field(
-        default=None, serialization_alias="_applicationDate__lte"
-    )
-    applicationDate__isnull: Date = Field(
-        default=None, serialization_alias="_applicationDate__isnull"
-    )
-    applicationWasAcceptedAt: Date = Field(
-        default=None, serialization_alias="_applicationWasAcceptedAt"
-    )
-    applicationWasAcceptedAt__gte: Date = Field(
-        default=None, serialization_alias="_applicationWasAcceptedAt__gte"
-    )
-    applicationWasAcceptedAt__lte: Date = Field(
-        default=None, serialization_alias="_applicationWasAcceptedAt__lte"
-    )
+    applicationDate__gte: Date = Field(default=None, serialization_alias="_applicationDate__gte")
+    applicationDate__lte: Date = Field(default=None, serialization_alias="_applicationDate__lte")
+    applicationDate__isnull: Date = Field(default=None, serialization_alias="_applicationDate__isnull")
+    applicationWasAcceptedAt: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt")
+    applicationWasAcceptedAt__gte: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt__gte")
+    applicationWasAcceptedAt__lte: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt__lte")
     applicationWasAcceptedAt__isnull: bool = Field(
         default=None, serialization_alias="_applicationWasAcceptedAt__isnull"
     )

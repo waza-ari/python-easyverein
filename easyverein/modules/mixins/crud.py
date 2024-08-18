@@ -74,9 +74,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         return self.c.fetch_paginated(url, self.return_type, limit_per_page)
 
-    def get_by_id(
-        self: IsEVClientProtocol, obj_id: int, query: str = None
-    ) -> ModelType:
+    def get_by_id(self: IsEVClientProtocol, obj_id: int, query: str = None) -> ModelType:
         """
         Fetches a single object identified by its primary id.
 
@@ -85,9 +83,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             query: Query to use with API. Defaults to None. Refer to the EV API help for more
                                     information on how to use queries
         """
-        self.logger.info(
-            f"Fetching {self.endpoint_name} object with id {obj_id} from API"
-        )
+        self.logger.info(f"Fetching {self.endpoint_name} object with id {obj_id} from API")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}", {"query": query})
 
@@ -122,9 +118,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         return self.c.create(url, data, self.return_type)
 
-    def update(
-        self: IsEVClientProtocol, target: ModelType | int, data: UpdateModelType
-    ) -> ModelType:
+    def update(self: IsEVClientProtocol, target: ModelType | int, data: UpdateModelType) -> ModelType:
         """
         Updates (PATCHes) a certain object and returns the updated object. Accepts either an object
         or its id as first argument.
@@ -136,9 +130,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         obj_id = target if isinstance(target, int) else target.id
 
-        self.logger.info(
-            f"Updating object of type {self.endpoint_name} with id {obj_id}"
-        )
+        self.logger.info(f"Updating object of type {self.endpoint_name} with id {obj_id}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
 
@@ -174,16 +166,12 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         obj_id = target if isinstance(target, int) else target.id
 
-        self.logger.info(
-            f"Deleting object of type {self.endpoint_name} with id {obj_id}"
-        )
+        self.logger.info(f"Deleting object of type {self.endpoint_name} with id {obj_id}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
 
         self.c.delete(url)
 
         if delete_from_recycle_bin:
-            self.logger.info(
-                f"Deleting object of type {self.endpoint_name} with id {obj_id} from wastebasket"
-            )
+            self.logger.info(f"Deleting object of type {self.endpoint_name} with id {obj_id} from wastebasket")
             self.purge(obj_id)

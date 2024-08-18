@@ -8,9 +8,7 @@ from easyverein.models.member import Member, MemberFilter
 
 class TestFilter:
     @staticmethod
-    def validate_response(
-        response: tuple[list[Any], int], model: type, num_expected_results: int
-    ):
+    def validate_response(response: tuple[list[Any], int], model: type, num_expected_results: int):
         """
         Helper method that validates the response of a filter
         """
@@ -26,13 +24,9 @@ class TestFilter:
             assert isinstance(instance, model)
 
     def test_filter_invoices(self, ev_connection: EasyvereinAPI):
-        search = InvoiceFilter(
-            invNumber__in=["1", "3", "5"], canceledInvoice__isnull=True, isDraft=False
-        )
+        search = InvoiceFilter(invNumber__in=["1", "3", "5"], canceledInvoice__isnull=True, isDraft=False)
 
-        TestFilter.validate_response(
-            ev_connection.invoice.get(search=search), Invoice, 3
-        )
+        TestFilter.validate_response(ev_connection.invoice.get(search=search), Invoice, 3)
 
     def test_filter_members(self, ev_connection: EasyvereinAPI):
         # Case 1: non existing membership number

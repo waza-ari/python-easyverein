@@ -112,9 +112,7 @@ class EasyvereinClient:
             try:
                 retry_after = int(retry_after)
             except ValueError:
-                self.logger.error(
-                    "Unable to parse Retry-After header while handling 429 response code."
-                )
+                self.logger.error("Unable to parse Retry-After header while handling 429 response code.")
                 self.logger.debug("Retry-After header: %s", retry_after)
                 retry_after = 0
 
@@ -127,9 +125,7 @@ class EasyvereinClient:
                 sleep(retry_after)
                 if files:
                     for v in files.values():
-                        v.seek(
-                            0
-                        )  # reset file seek, as it has been moved by the previous call
+                        v.seek(0)  # reset file seek, as it has been moved by the previous call
 
                 return self._do_request(method, url, binary, data, headers, files)
             else:
@@ -174,9 +170,7 @@ class EasyvereinClient:
             self._do_request(
                 "post",
                 url,
-                data=data.model_dump(
-                    exclude_none=True, exclude_unset=True, by_alias=True
-                ),
+                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
             ),
             return_model,
             status_code,
@@ -186,13 +180,9 @@ class EasyvereinClient:
         """
         Method to delete an object in the API
         """
-        return self._handle_response(
-            self._do_request("delete", url), expected_status_code=status_code
-        )
+        return self._handle_response(self._do_request("delete", url), expected_status_code=status_code)
 
-    def update(
-        self, url, data: BaseModel = None, model: type[T] = None, status_code: int = 200
-    ) -> T:
+    def update(self, url, data: BaseModel = None, model: type[T] = None, status_code: int = 200) -> T:
         """
         Method to update an object in the API
         """
@@ -200,9 +190,7 @@ class EasyvereinClient:
             self._do_request(
                 "patch",
                 url,
-                data=data.model_dump(
-                    exclude_none=True, exclude_unset=True, by_alias=True
-                ),
+                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
             ),
             model,
             expected_status_code=status_code,
@@ -265,12 +253,8 @@ class EasyvereinClient:
 
         # Check if status code is 200
         if status_code != 200:
-            self.logger.error(
-                f"Request to download file failed with unexpected status code {status_code}"
-            )
-            raise EasyvereinAPIException(
-                f"Request to download file failed with unexpected status code {status_code}"
-            )
+            self.logger.error(f"Request to download file failed with unexpected status code {status_code}")
+            raise EasyvereinAPIException(f"Request to download file failed with unexpected status code {status_code}")
 
         return res.content, res.headers
 
@@ -285,9 +269,7 @@ class EasyvereinClient:
             if len(reply) == 0:
                 return None
 
-            self.logger.warning(
-                "One object was requested, but multiple objects were returned. Returning first."
-            )
+            self.logger.warning("One object was requested, but multiple objects were returned. Returning first.")
             self.logger.debug(f"In total {len(reply)} objects where returned.")
             return reply[0]
 
@@ -318,13 +300,10 @@ class EasyvereinClient:
             self.logger.debug("Request returned status code %d", status_code)
 
             if not status_code == 200:
-                self.logger.error(
-                    "Could not fetch paginated API %s, status code %d", url, status_code
-                )
+                self.logger.error("Could not fetch paginated API %s, status code %d", url, status_code)
                 self.logger.debug("API response: %s", result)
                 raise EasyvereinAPIException(
-                    f"Could not fetch paginated API {url}, "
-                    f"status code {status_code}. API response: {result}"
+                    f"Could not fetch paginated API {url}, " f"status code {status_code}. API response: {result}"
                 )
 
             resources.extend(result["results"])
@@ -343,9 +322,7 @@ class EasyvereinClient:
         """
         status_code, data = res
         if status_code != expected_status_code:
-            raise EasyvereinAPIException(
-                f"API returned status code {status_code}. API response: {data}"
-            )
+            raise EasyvereinAPIException(f"API returned status code {status_code}. API response: {data}")
         else:
             self.logger.debug("API returned status code %d", status_code)
 

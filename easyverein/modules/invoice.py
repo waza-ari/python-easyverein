@@ -44,9 +44,7 @@ class InvoiceMixin(
             model=Invoice,
         )
 
-    def create_with_attachment(
-        self, invoice: InvoiceCreate, attachment: Path, set_draft_state: bool = True
-    ):
+    def create_with_attachment(self, invoice: InvoiceCreate, attachment: Path, set_draft_state: bool = True):
         """
         Creates an invoice with an attachment. Note that the only valid file type is PDF.
 
@@ -130,9 +128,7 @@ class InvoiceMixin(
 
         return inv
 
-    def get_attachment(
-        self, invoice: Invoice | int
-    ) -> tuple[bytes, CaseInsensitiveDict[str]]:
+    def get_attachment(self, invoice: Invoice | int) -> tuple[bytes, CaseInsensitiveDict[str]]:
         """
         This method downloads and returns the invoice attachment if available.
 
@@ -154,22 +150,16 @@ class InvoiceMixin(
             invoice: The invoice object or its id for which the attachment should be retrieved
         """
         if isinstance(invoice, Invoice) and invoice.path:
-            self.logger.info(
-                "Invoice already has the path attribute set, using that path."
-            )
+            self.logger.info("Invoice already has the path attribute set, using that path.")
             path = invoice.path
         else:
-            self.logger.info(
-                "Invoice is either given by id or doesn't contain the path attribute"
-            )
+            self.logger.info("Invoice is either given by id or doesn't contain the path attribute")
             invoice_id = invoice.id if isinstance(invoice, Invoice) else invoice
             fetched_invoice = self.get_by_id(invoice_id, query="{id,path}")
             path = fetched_invoice.path
 
         if not path:
-            raise EasyvereinAPIException(
-                "Unable to obtain a valid path for given invoice."
-            )
+            raise EasyvereinAPIException("Unable to obtain a valid path for given invoice.")
 
         # Fix for unencoded characters - should probably be fixed in easyverein API
         m = re.fullmatch(r"^(.*\&path=)(.*)(&storedInS3=True)$", path.unicode_string())

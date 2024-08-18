@@ -22,25 +22,19 @@ class TestMember:
         assert all(isinstance(f, CustomField) for f in custom_fields)
 
         # Change the name of the custom field
-        cf = ev_connection.custom_field.update(
-            custom_field.id, CustomFieldUpdate(name="Changed-Name")
-        )
+        cf = ev_connection.custom_field.update(custom_field.id, CustomFieldUpdate(name="Changed-Name"))
 
         assert isinstance(cf, CustomField)
         assert cf.name == "Changed-Name"
 
         # Change type to date
-        cf = ev_connection.custom_field.update(
-            custom_field.id, CustomFieldUpdate(settings_type="d")
-        )
+        cf = ev_connection.custom_field.update(custom_field.id, CustomFieldUpdate(settings_type="d"))
 
         assert isinstance(cf, CustomField)
         assert cf.settings_type == "d"
 
         # Change kind to contact details
-        cf = ev_connection.custom_field.update(
-            custom_field.id, CustomFieldUpdate(kind="j")
-        )
+        cf = ev_connection.custom_field.update(custom_field.id, CustomFieldUpdate(kind="j"))
 
         assert isinstance(cf, CustomField)
         assert cf.kind == "j"

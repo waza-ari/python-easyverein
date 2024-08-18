@@ -65,9 +65,7 @@ def create_pydantic_fields(params: list[Any]) -> None:
 
         # Print
         if use_serialization_alias:
-            print(
-                f'    {name[1:]}: {vartype} = Field(default=None, serialization_alias="{name}")'
-            )
+            print(f'    {name[1:]}: {vartype} = Field(default=None, serialization_alias="{name}")')
         else:
             print(f"    {name}: {vartype} | None = None")
 

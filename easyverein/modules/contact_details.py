@@ -12,9 +12,7 @@ from .mixins.recycle_bin import RecycleBinMixin
 
 
 class ContactDetailsMixin(
-    CRUDMixin[
-        ContactDetails, ContactDetailsCreate, ContactDetailsUpdate, ContactDetailsFilter
-    ],
+    CRUDMixin[ContactDetails, ContactDetailsCreate, ContactDetailsUpdate, ContactDetailsFilter],
     RecycleBinMixin[ContactDetails],
 ):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):

@@ -12,9 +12,7 @@ class RecycleBinMixin(Generic[ModelType]):
         """
         Fetches all deleted resources from the recycle bin and returns a list.
         """
-        self.logger.info(
-            f"Fetching all deleted objects of type {self.endpoint_name} from API"
-        )
+        self.logger.info(f"Fetching all deleted objects of type {self.endpoint_name} from API")
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/")
         return self.c.fetch(url, self.return_type)
 
@@ -41,8 +39,6 @@ class RecycleBinMixin(Generic[ModelType]):
         """
         item_id = item if isinstance(item, int) else item.id
 
-        self.logger.info(
-            f"Purging object of type {self.endpoint_name} and id {item_id} from recycle bin"
-        )
+        self.logger.info(f"Purging object of type {self.endpoint_name} and id {item_id} from recycle bin")
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}")
         return self.c.delete(url)

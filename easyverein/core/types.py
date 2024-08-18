@@ -16,9 +16,7 @@ AnyHttpURL = Annotated[
 ]
 EasyVereinReference = int | AnyHttpURL | None
 PositiveIntWithZero = Annotated[int, Field(ge=0)]
-Date = Annotated[
-    datetime.date, PlainSerializer(lambda x: x.strftime("%Y-%m-%d"), return_type=str)
-]
+Date = Annotated[datetime.date, PlainSerializer(lambda x: x.strftime("%Y-%m-%d"), return_type=str)]
 DateTime = Annotated[
     datetime.datetime,
     PlainSerializer(lambda x: x.strftime("%Y-%m-%dT%H:%M:%S"), return_type=str),

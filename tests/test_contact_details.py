@@ -38,9 +38,7 @@ class TestContactDetails:
         deleted_contact_details, _ = ev_connection.contact_details.get_deleted()
         assert len(deleted_contact_details) == 0
 
-    def test_create_minimal_personal_contact_details(
-        self, ev_connection: EasyvereinAPI
-    ):
+    def test_create_minimal_personal_contact_details(self, ev_connection: EasyvereinAPI):
         contact_details = ev_connection.contact_details.create(
             ContactDetailsCreate(isCompany=False, firstName="Test", familyName="Person")
         )
@@ -68,6 +66,4 @@ class TestContactDetails:
         assert contact_details.country == "Deutschland"
 
         # Delete the contact details again
-        ev_connection.contact_details.delete(
-            contact_details, delete_from_recycle_bin=True
-        )
+        ev_connection.contact_details.delete(contact_details, delete_from_recycle_bin=True)

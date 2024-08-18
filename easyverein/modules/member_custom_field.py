@@ -51,16 +51,12 @@ class MemberCustomFieldMixin(
             self.member_id = member_id
         return super().get_all(query=query, limit_per_page=limit_per_page)
 
-    def get_by_id(
-        self: IsEVClientProtocol, obj_id: int, member_id: int = None, query: str = None
-    ) -> MemberCustomField:
+    def get_by_id(self: IsEVClientProtocol, obj_id: int, member_id: int = None, query: str = None) -> MemberCustomField:
         if member_id:
             self.member_id = member_id
         return super().get_by_id(obj_id, query=query)
 
-    def create(
-        self: IsEVClientProtocol, obj: MemberCustomFieldCreate, member_id: int = None
-    ) -> MemberCustomField:
+    def create(self: IsEVClientProtocol, obj: MemberCustomFieldCreate, member_id: int = None) -> MemberCustomField:
         if member_id:
             self.member_id = member_id
         return super().create(obj)
@@ -85,9 +81,7 @@ class MemberCustomFieldMixin(
             self.member_id = member_id
         return super().delete(obj, delete_from_recycle_bin)
 
-    def ensure_set(
-        self, member_id: int, custom_field_id: int, value: str
-    ) -> MemberCustomField:
+    def ensure_set(self, member_id: int, custom_field_id: int, value: str) -> MemberCustomField:
         """
         Convenience method to set the custom field value on a member, no matter if it was
         set before already (PATCH) or not.
@@ -108,11 +102,7 @@ class MemberCustomFieldMixin(
 
         # Extract custom field from that list if it exists
         existing_custom_field = next(
-            (
-                mcf
-                for mcf in all_member_custom_fields
-                if mcf.customField.id == custom_field_id
-            ),
+            (mcf for mcf in all_member_custom_fields if mcf.customField.id == custom_field_id),
             None,
         )
 

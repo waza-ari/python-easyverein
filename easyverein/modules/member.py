@@ -10,9 +10,7 @@ from .mixins.crud import CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
 
-class MemberMixin(
-    CRUDMixin[Member, MemberCreate, MemberUpdate, MemberFilter], RecycleBinMixin[Member]
-):
+class MemberMixin(CRUDMixin[Member, MemberCreate, MemberUpdate, MemberFilter], RecycleBinMixin[Member]):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         self.endpoint_name = "member"
         self.return_type = Member

@@ -37,9 +37,7 @@ class ContactDetailsBase(EasyVereinBase):
     companyEmail: EmailStr | None = None
     companyEmailInvoice: EmailStr | None = None
     primaryEmail: str | None = "email"
-    preferredEmailField: Literal[0, 1, 2] | None = Field(
-        default=None, alias="_preferredEmailField"
-    )
+    preferredEmailField: Literal[0, 1, 2] | None = Field(default=None, alias="_preferredEmailField")
     """
     Alias for `_preferredEmailField` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
 
@@ -61,9 +59,7 @@ class ContactDetailsBase(EasyVereinBase):
     street: str | None = Field(default=None, max_length=128)
     city: str | None = Field(default=None, max_length=100)
     state: str | None = Field(default=None, max_length=64)
-    additionalAdressInfo: str | None = Field(
-        default=None, max_length=128
-    )  # Intentionally written wrong, as per API
+    additionalAdressInfo: str | None = Field(default=None, max_length=128)  # Intentionally written wrong, as per API
     zip: str | None = Field(default=None, max_length=20)
     country: str | None = Field(default=None, max_length=50)
     companyStreet: str | None = Field(default=None, max_length=100)
@@ -136,9 +132,7 @@ class ContactDetailsUpdate(ContactDetailsBase):
     """
 
     isCompany: bool | None = Field(default=None, serialization_alias="_isCompany")
-    preferredEmailField: Literal[0, 1, 2] | None = Field(
-        default=None, alias="_preferredEmailField"
-    )
+    preferredEmailField: Literal[0, 1, 2] | None = Field(default=None, alias="_preferredEmailField")
 
 
 class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):

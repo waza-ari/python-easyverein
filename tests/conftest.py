@@ -3,7 +3,6 @@ import random
 import string
 
 import pytest
-
 from easyverein import EasyvereinAPI
 from easyverein.models import CustomFieldCreate
 
@@ -19,9 +18,7 @@ def ev_connection():
 
 @pytest.fixture(scope="function")
 def random_string():
-    return "".join(
-        random.choice(string.ascii_uppercase + string.digits) for _ in range(16)
-    )
+    return "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(16))
 
 
 @pytest.fixture(scope="module")
@@ -32,8 +29,6 @@ def example_member(ev_connection):
 
 @pytest.fixture(scope="module")
 def example_custom_field(ev_connection):
-    custom_field = ev_connection.custom_field.create(
-        CustomFieldCreate(name="Test-Field", kind="e", settings_type="t")
-    )
+    custom_field = ev_connection.custom_field.create(CustomFieldCreate(name="Test-Field", kind="e", settings_type="t"))
     yield custom_field
     ev_connection.custom_field.delete(custom_field)

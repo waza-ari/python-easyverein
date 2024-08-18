@@ -1,5 +1,4 @@
 import pytest
-
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPINotFoundException
 from easyverein.models.member import Member

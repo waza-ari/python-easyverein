@@ -2,14 +2,13 @@ import datetime
 
 import pytest
 from _pytest.fixtures import FixtureRequest
-from pydantic_core import Url
-from requests.structures import CaseInsensitiveDict
-
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPIException
 from easyverein.models.invoice import Invoice, InvoiceCreate, InvoiceUpdate
 from easyverein.models.invoice_item import InvoiceItem, InvoiceItemCreate
 from easyverein.models.member import Member
+from pydantic_core import Url
+from requests.structures import CaseInsensitiveDict
 
 
 class TestInvoices:
@@ -63,17 +62,13 @@ class TestInvoices:
 
         # Verify it contains the keyword attachmet and a filename
         assert "attachment" in headers["Content-Disposition"]
-        assert (
-            headers["Content-Disposition"].split(";")[1].strip().startswith("filename=")
-        )
+        assert headers["Content-Disposition"].split(";")[1].strip().startswith("filename=")
 
         # Verify header content length matches actual length
         assert len(attachment) == int(headers["Content-Length"])
         assert len(attachment2) == int(headers2["Content-Length"])
 
-    def test_create_invoice_minimal(
-        self, ev_connection: EasyvereinAPI, random_string: str
-    ):
+    def test_create_invoice_minimal(self, ev_connection: EasyvereinAPI, random_string: str):
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -106,9 +101,7 @@ class TestInvoices:
         deleted_invoices, _ = ev_connection.invoice.get_deleted()
         assert len(deleted_invoices) == 0
 
-    def test_create_invoice_with_items(
-        self, ev_connection: EasyvereinAPI, random_string: str, example_member
-    ):
+    def test_create_invoice_with_items(self, ev_connection: EasyvereinAPI, random_string: str, example_member):
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -151,9 +144,7 @@ class TestInvoices:
         assert isinstance(invoice_item, InvoiceItem)
 
         # Convert invoice to non-draft
-        updated_invoice = ev_connection.invoice.update(
-            invoice.id, InvoiceUpdate(isDraft=False)
-        )
+        updated_invoice = ev_connection.invoice.update(invoice.id, InvoiceUpdate(isDraft=False))
         assert isinstance(updated_invoice, Invoice)
         assert updated_invoice.invNumber == invoice.invNumber
         assert updated_invoice.isDraft is False
@@ -164,9 +155,7 @@ class TestInvoices:
         invoices = ev_connection.invoice.get_all()
         assert len(invoices) == 5
 
-    def test_create_invoice_with_items_helper(
-        self, ev_connection: EasyvereinAPI, random_string: str, example_member
-    ):
+    def test_create_invoice_with_items_helper(self, ev_connection: EasyvereinAPI, random_string: str, example_member):
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -204,9 +193,7 @@ class TestInvoices:
             ),
         ]
 
-        invoice = ev_connection.invoice.create_with_items(
-            invoice_model, invoice_items, True
-        )
+        invoice = ev_connection.invoice.create_with_items(invoice_model, invoice_items, True)
 
         # Check if the response is an invoice
         assert isinstance(invoice, Invoice)
@@ -248,9 +235,7 @@ class TestInvoices:
 
         file = request.path.parent / "data" / "dummy.pdf"
 
-        invoice = ev_connection.invoice.create_with_attachment(
-            invoice_model, file, True
-        )
+        invoice = ev_connection.invoice.create_with_attachment(invoice_model, file, True)
 
         # Check if the response is an invoice
         assert isinstance(invoice, Invoice)

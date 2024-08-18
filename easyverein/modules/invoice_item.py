@@ -14,9 +14,7 @@ from ..models.invoice_item import (
 from .mixins.crud import CRUDMixin
 
 
-class InvoiceItemMixin(
-    CRUDMixin[InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate, InvoiceItemFilter]
-):
+class InvoiceItemMixin(CRUDMixin[InvoiceItem, InvoiceItemCreate, InvoiceItemUpdate, InvoiceItemFilter]):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):
         self.endpoint_name = "invoice-item"
         self.return_type = InvoiceItem

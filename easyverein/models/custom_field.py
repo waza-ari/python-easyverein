@@ -37,9 +37,7 @@ class CustomFieldBase(EasyVereinBase):
     color: HexColor = None
     short: str | None = Field(default=None, max_length=4)
     orderSequence: PositiveIntWithZero | None = None
-    settings_type: Literal["t", "f", "z", "d", "c", "r", "s", "a", "b", "m"] | None = (
-        None
-    )
+    settings_type: Literal["t", "f", "z", "d", "c", "r", "s", "a", "b", "m"] | None = None
     """
     Settings type defines which type of field this custom field should be. Possible values:
 
@@ -56,12 +54,7 @@ class CustomFieldBase(EasyVereinBase):
 
     If type is set to s or a, the possible options need to be defined in the additional field
     """
-    kind: (
-        Literal[
-            "a", "b", "ba", "ca", "iv", "t", "u", "ic", "c", "e", "h", "j", "i", "k"
-        ]
-        | None
-    ) = None
+    kind: Literal["a", "b", "ba", "ca", "iv", "t", "u", "ic", "c", "e", "h", "j", "i", "k"] | None = None
     """
     Kind defines in which context this custom field is used. Unfortunately only some possible values are
     documented in the API spec:
@@ -93,9 +86,7 @@ class CustomField(CustomFieldBase, EmptyStringsToNone):
     pass
 
 
-class CustomFieldCreate(
-    CustomFieldBase, required_mixin(["name", "settings_type", "kind"])
-):
+class CustomFieldCreate(CustomFieldBase, required_mixin(["name", "settings_type", "kind"])):
     """
     Pydantic model for creating a new custom field
     """
@@ -120,8 +111,6 @@ class CustomFieldFilter(BaseModel):
     kind: str | None = None
     member_edit: bool | None = None
     member_show: bool | None = None
-    deletedBy__isnull: bool = Field(
-        default=None, serialization_alias="_deletedBy__isnull"
-    )
+    deletedBy__isnull: bool = Field(default=None, serialization_alias="_deletedBy__isnull")
     deleted: bool | None = None
     ordering: str | None = None
