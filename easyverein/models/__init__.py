@@ -25,10 +25,12 @@ from .member_custom_field import (
     MemberCustomFieldFilter,
     MemberCustomFieldUpdate,
 )
+from .member_group import MemberGroup, MemberGroupCreate, MemberGroupFilter, MemberGroupUpdate
 
 ContactDetails.model_rebuild()
 CustomField.model_rebuild()
 Invoice.model_rebuild()
 InvoiceItem.model_rebuild()
 Member.model_rebuild()
+MemberGroup.model_rebuild()
 MemberCustomField.model_rebuild()

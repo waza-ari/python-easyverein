@@ -21,18 +21,6 @@ class RecycleBinMixin(Generic[ModelType]):
         assert isinstance(parsed_objects, list)
         return parsed_objects, response.count or 0
 
-    # def restore(self: EVClientProtocol, item_id: int):
-    #     """
-    #     Restores a given item from the recycle bin
-    #     """
-    #     self.logger.info("Restoring item from recycle bin")
-    #
-    #     url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}/")
-    #
-    #     return self.c.handle_response(
-    #         self.c.do_request("patch", url), expected_status_code=200
-    #     )
-
     def purge(self: EVClientProtocol[ModelType], item: ModelType | int):
         """
         Finally deletes a given item from the recycle bin. This is irreversible and cannot be undone.
