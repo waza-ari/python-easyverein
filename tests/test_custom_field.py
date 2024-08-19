@@ -6,7 +6,7 @@ from easyverein.models.custom_field import (
 )
 
 
-class TestMember:
+class TestCustomField:
     def test_create_custom_field(self, ev_connection: EasyvereinAPI):
         custom_field = ev_connection.custom_field.create(
             CustomFieldCreate(name="Test-Field", kind="e", settings_type="t")
