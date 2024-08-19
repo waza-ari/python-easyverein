@@ -20,6 +20,7 @@ class TestMember:
         assert total_count == 41
         assert len(custom_fields) == 10  # Default limit is 10
         assert all(isinstance(f, CustomField) for f in custom_fields)
+        assert isinstance(custom_field.id, int)
 
         # Change the name of the custom field
         cf = ev_connection.custom_field.update(custom_field.id, CustomFieldUpdate(name="Changed-Name"))

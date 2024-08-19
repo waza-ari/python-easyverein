@@ -30,6 +30,7 @@ class TestInvoices:
         invoices, _ = ev_connection.invoice.get()
         invoice = invoices[0]
         assert isinstance(invoice, Invoice)
+        assert isinstance(invoice.id, int)
 
         # Get attachment using the pre-populated invoice object
         attachment, headers = ev_connection.invoice.get_attachment(invoice)
@@ -81,6 +82,7 @@ class TestInvoices:
 
         # Check if the response is a list
         assert isinstance(invoice, Invoice)
+        assert isinstance(invoice.id, int)
 
         # Delete invoice - should now be in recycle bin
         ev_connection.invoice.delete(invoice)
@@ -128,6 +130,7 @@ class TestInvoices:
         assert isinstance(invoice, Invoice)
         assert invoice.invNumber == invoice_model.invNumber
         assert invoice.isDraft
+        assert isinstance(invoice.id, int)
 
         # Create an invoice item
         invoice_item_model = InvoiceItemCreate(
@@ -242,7 +245,6 @@ class TestInvoices:
         assert isinstance(invoice, Invoice)
         assert invoice.invNumber == invoice_model.invNumber
         assert invoice.isDraft is False
-        assert isinstance(invoice.path, Url)
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice)

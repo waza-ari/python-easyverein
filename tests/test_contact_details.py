@@ -23,6 +23,7 @@ class TestContactDetails:
         assert isinstance(contact_details, ContactDetails)
         assert contact_details.isCompany is True
         assert contact_details.companyName == "Test Company"
+        assert isinstance(contact_details.id, int)
 
         # Delete the contact details again, should only soft delete them
         ev_connection.contact_details.delete(contact_details)
@@ -47,6 +48,7 @@ class TestContactDetails:
         assert contact_details.isCompany is False
         assert contact_details.firstName == "Test"
         assert contact_details.familyName == "Person"
+        assert isinstance(contact_details.id, int)
 
         # Modify the contact details to include address
         contact_details = ev_connection.contact_details.update(

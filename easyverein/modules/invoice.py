@@ -1,15 +1,16 @@
 import logging
 import re
-import urllib
 from pathlib import Path
 from typing import List
+from urllib import parse
 
+from pydantic_core import Url
 from requests.structures import CaseInsensitiveDict
 
 from ..core.client import EasyvereinClient
 from ..core.exceptions import EasyvereinAPIException
 from ..models.invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
-from ..models.invoice_item import InvoiceItem
+from ..models.invoice_item import InvoiceItemCreate
 from .mixins.crud import CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
@@ -37,12 +38,7 @@ class InvoiceMixin(
 
         invoice_id = invoice if isinstance(invoice, int) else invoice.id
 
-        return self.c.upload(
-            url=self.c.get_url(f"/{self.endpoint_name}/{invoice_id}"),
-            field_name="path",
-            file=file,
-            model=Invoice,
-        )
+        return self.c.upload(url=self.c.get_url(f"/{self.endpoint_name}/{invoice_id}"), field_name="path", file=file)
 
     def create_with_attachment(self, invoice: InvoiceCreate, attachment: Path, set_draft_state: bool = True):
         """
@@ -70,9 +66,11 @@ class InvoiceMixin(
 
         # Create invoice object
         created_invoice = self.create(invoice)
+        if not created_invoice or not created_invoice.id:
+            raise EasyvereinAPIException("Failed to create invoice")
 
         # Upload the attachment
-        created_invoice = self.upload_attachment(created_invoice.id, attachment)
+        self.upload_attachment(created_invoice.id, attachment)
 
         # Set draft state to False if desired
         if set_draft_state:
@@ -84,7 +82,7 @@ class InvoiceMixin(
     def create_with_items(
         self,
         invoice: InvoiceCreate,
-        items: List[InvoiceItem],
+        items: List[InvoiceItemCreate],
         set_draft_state: bool = True,
     ):
         """
@@ -117,6 +115,9 @@ class InvoiceMixin(
         invoice.isDraft = True
 
         inv = self.create(invoice)
+        if not inv.id:
+            raise EasyvereinAPIException("Failed to create invoice")
+
         for item in items:
             item.relatedInvoice = inv.id
             self.c.api_instance.invoice_item.create(item)
@@ -155,16 +156,23 @@ class InvoiceMixin(
         else:
             self.logger.info("Invoice is either given by id or doesn't contain the path attribute")
             invoice_id = invoice.id if isinstance(invoice, Invoice) else invoice
+            if not invoice_id:
+                self.logger.error("No invoice id given to retrieve attachment")
+                raise EasyvereinAPIException("No invoice id given to retrieve attachment")
             fetched_invoice = self.get_by_id(invoice_id, query="{id,path}")
+            if not fetched_invoice or not fetched_invoice.path:
+                raise EasyvereinAPIException("No path available for given invoice")
             path = fetched_invoice.path
 
-        if not path:
+        if not path or not isinstance(path, Url):
             raise EasyvereinAPIException("Unable to obtain a valid path for given invoice.")
 
         # Fix for unencoded characters - should probably be fixed in easyverein API
         m = re.fullmatch(r"^(.*\&path=)(.*)(&storedInS3=True)$", path.unicode_string())
+        if not m:
+            raise EasyvereinAPIException("Unable to parse path for attachment download")
         url_components = list(m.groups())
         if "%" not in url_components[1]:
-            url_components[1] = urllib.parse.quote(url_components[1])
+            url_components[1] = parse.quote(url_components[1])
 
         return self.c.fetch_file("".join(url_components))

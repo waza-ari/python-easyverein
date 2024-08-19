@@ -1,6 +1,7 @@
 import pytest
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPINotFoundException
+from easyverein.models.contact_details import ContactDetails
 from easyverein.models.member import Member
 
 
@@ -31,6 +32,7 @@ class TestMember:
 
         for member in members:
             assert isinstance(member, Member)
+            assert isinstance(member.contactDetails, ContactDetails)
             if member.contactDetails.isCompany:
                 assert member.contactDetails.companyName
                 assert member.contactDetails.primaryEmail
