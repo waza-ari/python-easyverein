@@ -50,7 +50,7 @@ class InvoiceItem(InvoiceItemBase, EmptyStringsToNone):
 
 class InvoiceItemCreate(
     InvoiceItemBase,
-    required_mixin(["title", "quantity", "unitPrice"]),
+    required_mixin(["title", "quantity", "unitPrice"]),  # type: ignore
 ):
     """
     Pydantic model representing an InvoiceItem

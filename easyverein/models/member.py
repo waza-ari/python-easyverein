@@ -113,7 +113,7 @@ class MemberUpdate(MemberBase):
     pass
 
 
-class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):
+class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):  # type: ignore
     """
     Pydantic model for creating a new member
     """

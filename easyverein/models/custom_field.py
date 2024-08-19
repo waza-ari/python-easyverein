@@ -86,7 +86,7 @@ class CustomField(CustomFieldBase, EmptyStringsToNone):
     pass
 
 
-class CustomFieldCreate(CustomFieldBase, required_mixin(["name", "settings_type", "kind"])):
+class CustomFieldCreate(CustomFieldBase, required_mixin(["name", "settings_type", "kind"])):  # type: ignore
     """
     Pydantic model for creating a new custom field
     """

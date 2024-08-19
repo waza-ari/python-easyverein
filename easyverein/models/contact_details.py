@@ -135,7 +135,7 @@ class ContactDetailsUpdate(ContactDetailsBase):
     preferredEmailField: Literal[0, 1, 2] | None = Field(default=None, alias="_preferredEmailField")
 
 
-class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):
+class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):  # type: ignore
     """
     Pydantic model for creating new contact details
     """

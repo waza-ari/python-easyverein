@@ -42,7 +42,7 @@ class MemberCustomField(MemberCustomFieldBase, EmptyStringsToNone):
     pass
 
 
-class MemberCustomFieldCreate(MemberCustomFieldBase, required_mixin(["customField", "value"])):
+class MemberCustomFieldCreate(MemberCustomFieldBase, required_mixin(["customField", "value"])):  # type: ignore
     """
     Pydantic model for creating a new member
     """

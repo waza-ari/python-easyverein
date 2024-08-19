@@ -84,7 +84,7 @@ class Invoice(InvoiceBase, EmptyStringsToNone):
 
 class InvoiceCreate(
     InvoiceBase,
-    required_mixin(["invNumber", "totalPrice", ["relatedAddress", "receiver"]]),
+    required_mixin(["invNumber", "totalPrice", ["relatedAddress", "receiver"]]),  # type: ignore
 ):
     """
     Pydantic model representing an Invoice
