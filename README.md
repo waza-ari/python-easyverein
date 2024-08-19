@@ -89,11 +89,17 @@ EV_API_KEY=<your-api-key>
 The client is written in pure Python, using `mkdocs` with `mkdocstrings` for documentation. Any changes or
 pull requests are more than welcome, but please adhere to the code style:
 
-- Use `black` for code formatting
-- Use `isort` based import sorting
-- Use `ruff` based code linting
+- Use `ruff` based code linting, formatting and styling
+- Use `mypy` for static type checking
 
-A pre-commit hook configuration is supplied as part of the project.
+A pre-commit hook configuration is supplied as part of the project. You can run them prior to your commit using:
+
+```bash
+pre-commit
+
+# Or run them for the entire project
+pre-commit run --all-files
+```
 
 Please make sure that any additions are properly tested. PRs won't get accepted if they don't have test cases to
 cover them.
