@@ -1,0 +1,23 @@
+version: '3'
+
+dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
+
+tasks:
+  test:
+    cmds:
+      - poetry run pytest
+
+  lint:
+    cmds:
+      - poetry run ruff check easyverein --fix
+      - poetry run ruff format easyverein
+
+  typecheck:
+    cmds:
+      - poetry run mypy easyverein
+
+  all:
+    cmds:
+      - task lint
+      - task typecheck
+      - task test
