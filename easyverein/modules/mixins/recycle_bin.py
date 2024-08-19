@@ -2,21 +2,26 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
-from ...core.protocol import IsEVClientProtocol
+from easyverein.core.protocol import EVClientProtocol
+
+from .helper import _get_id, _parse_models
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 
 
 class RecycleBinMixin(Generic[ModelType]):
-    def get_deleted(self: IsEVClientProtocol) -> tuple[list[ModelType], int]:
+    def get_deleted(self: EVClientProtocol[ModelType]) -> tuple[list[ModelType], int]:
         """
         Fetches all deleted resources from the recycle bin and returns a list.
         """
         self.logger.info(f"Fetching all deleted objects of type {self.endpoint_name} from API")
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/")
-        return self.c.fetch(url, self.return_type)
+        response = self.c.fetch(url)
+        parsed_objects = _parse_models(response.result, self.return_type)
+        assert isinstance(parsed_objects, list)
+        return parsed_objects, response.count or 0
 
-    # def restore(self: IsEVClientProtocol, item_id: int):
+    # def restore(self: EVClientProtocol, item_id: int):
     #     """
     #     Restores a given item from the recycle bin
     #     """
@@ -28,7 +33,7 @@ class RecycleBinMixin(Generic[ModelType]):
     #         self.c.do_request("patch", url), expected_status_code=200
     #     )
 
-    def purge(self: IsEVClientProtocol, item: ModelType | int):
+    def purge(self: EVClientProtocol[ModelType], item: ModelType | int):
         """
         Finally deletes a given item from the recycle bin. This is irreversible and cannot be undone.
 
@@ -37,7 +42,7 @@ class RecycleBinMixin(Generic[ModelType]):
         Args:
             item: The id or object that should be deleted.
         """
-        item_id = item if isinstance(item, int) else item.id
+        item_id = _get_id(item)
 
         self.logger.info(f"Purging object of type {self.endpoint_name} and id {item_id} from recycle bin")
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}")

@@ -8,7 +8,7 @@ import logging
 from io import BufferedReader
 from pathlib import Path
 from time import sleep
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any
 
 import requests
 from pydantic import BaseModel
@@ -23,8 +23,6 @@ from .responses import ResponseSchema
 
 if TYPE_CHECKING:
     from .. import EasyvereinAPI
-
-T = TypeVar("T", bound=BaseModel)
 
 
 class EasyvereinClient:
@@ -169,23 +167,18 @@ class EasyvereinClient:
         self,
         url,
         data: BaseModel,
-        return_model: type[T],
         status_code: int = 201,
-    ) -> T:
+    ) -> ResponseSchema:
         """
         Method to create an object in the API
         """
-        return cast(
-            T,
-            self._handle_response(
-                self._do_request(
-                    "post",
-                    url,
-                    data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
-                ),
-                return_model,
-                status_code,
+        return self._handle_response(
+            self._do_request(
+                "post",
+                url,
+                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
             ),
+            status_code,
         )
 
     def delete(self, url, status_code: int = 204):
@@ -194,21 +187,17 @@ class EasyvereinClient:
         """
         return self._handle_response(self._do_request("delete", url), expected_status_code=status_code)
 
-    def update(self, url, data: BaseModel, model: type[T], status_code: int = 200) -> T:
+    def update(self, url, data: BaseModel, status_code: int = 200) -> ResponseSchema:
         """
         Method to update an object in the API
         """
-        return cast(
-            T,
-            self._handle_response(
-                self._do_request(
-                    "patch",
-                    url,
-                    data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
-                ),
-                model,
-                expected_status_code=status_code,
+        return self._handle_response(
+            self._do_request(
+                "patch",
+                url,
+                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
             ),
+            expected_status_code=status_code,
         )
 
     def upload(
@@ -216,9 +205,8 @@ class EasyvereinClient:
         url: str,
         field_name: str,
         file: Path,
-        model: type[T],
         status_code: int = 200,
-    ) -> T:
+    ) -> ResponseSchema:
         """
         This method uploads a file to a certain endpoint.
 
@@ -232,33 +220,24 @@ class EasyvereinClient:
         files = {field_name: open(file, "rb")}
         headers = {"Content-Disposition": f'name="file"; filename="{file.name}"'}
 
-        return cast(
-            T,
-            self._handle_response(
-                self._do_request(
-                    "patch",
-                    url,
-                    headers=headers,
-                    files=files,
-                ),
-                model,
-                status_code,
+        return self._handle_response(
+            self._do_request(
+                "patch",
+                url,
+                headers=headers,
+                files=files,
             ),
+            status_code,
         )
 
-    def fetch(self, url, model: type[T]) -> tuple[list[T], int]:
+    def fetch(self, url) -> ResponseSchema:
         """
         Helper method that fetches a result from an API call
 
         Only supports GET endpoints
         """
         res = self._do_request("get", url)
-        data = self._handle_response(res, model, 200)
-
-        if data is None:
-            return [], 0
-
-        return cast(list[T], data.result), data.count
+        return self._handle_response(res, 200)
 
     def fetch_file(self, url: str) -> tuple[bytes, CaseInsensitiveDict[str]]:
         """
@@ -280,24 +259,28 @@ class EasyvereinClient:
 
         return res.content, res.headers
 
-    def fetch_one(self, url, model: type[T]) -> T | None:
+    def fetch_one(self, url) -> ResponseSchema:
         """
         Helper method that fetches a result from an API call
 
         Only supports GET endpoints
         """
-        reply, _ = self.fetch(url, model)
-        if isinstance(reply, list):
-            if len(reply) == 0:
-                return None
+        reply = self.fetch(url)
+        if isinstance(reply.result, list):
+            if len(reply.result) == 0:
+                reply.result = None
+                reply.count = 0
+                return reply
 
             self.logger.warning("One object was requested, but multiple objects were returned. Returning first.")
-            self.logger.debug(f"In total {len(reply)} objects where returned.")
-            return reply[0]
+            self.logger.debug(f"In total {len(reply.result)} objects where returned.")
+            reply.result = reply.result[0]
+            reply.count = 1
+            return reply
 
         return reply
 
-    def fetch_paginated(self, url, model: type[T] | None = None, limit=100) -> list[T]:
+    def fetch_paginated(self, url, limit=100) -> ResponseSchema:
         """
         Helper method that fetches all pages of a paginated API call
 
@@ -338,18 +321,13 @@ class EasyvereinClient:
             resources.extend(result["results"])
             url = result["next"]
 
-        result = self._handle_response((status_code, resources), model, 200)
-        if not result:
-            logging.warning("No data was returned from the API.")
-            return []
-        return cast(list[T], result.result)
+        return self._handle_response((status_code, resources), 200)
 
     def _handle_response(
         self,
         res: tuple[int, dict[str, Any] | list[dict[str, Any]] | requests.Response | None],
-        model: type[T] | None = None,
         expected_status_code=200,
-    ) -> ResponseSchema[T] | None:
+    ) -> ResponseSchema:
         """
         Helper method that handles API responses
         """
@@ -359,34 +337,37 @@ class EasyvereinClient:
         else:
             self.logger.debug("API returned status code %d", status_code)
 
-        # if no data is expected return raw data (usually None)
-        if not model:
-            self.logger.debug("No model provided. Returning raw data: %s", data)
-            return None
-
         self.logger.debug("Received raw data: %s", data)
+
+        if data is None:
+            return ResponseSchema(result=None, count=0, response_code=status_code)
 
         # if data is a list, parse each entry
         # fetch_paginated returns a list of result entries instead of raw data, this is why this case is here.
         if isinstance(data, list):
-            objects = []
-            for obj in data:
-                objects.append(model.model_validate(obj))
             return ResponseSchema(
-                result=objects,
-                count=len(objects),
+                result=data,
+                count=len(data),
+                response_code=status_code,
             )
         elif isinstance(data, dict) and "results" in data:
-            objects = []
-            for obj in data["results"]:
-                objects.append(model.model_validate(obj))
             return ResponseSchema(
-                result=objects,
+                result=data["results"],
                 count=data.get("count", 0),
+                response_code=status_code,
+            )
+        elif isinstance(data, requests.Response):
+            # Return the raw response object
+            return ResponseSchema(
+                result=None,
+                count=0,
+                response_code=status_code,
+                response=data,
             )
         else:
-            # Handle the case when data is not a list
+            # Return the single object
             return ResponseSchema(
-                result=model.model_validate(data),
+                result=data,
                 count=1,
+                response_code=status_code,
             )

@@ -2,11 +2,13 @@
 This module provides general CRUD operations for all endpoints.
 """
 
-from typing import Generic, TypeVar
+from typing import Callable, Generic, TypeVar
 
 from pydantic import BaseModel
 
-from easyverein.core.protocol import IsEVClientProtocol
+from easyverein.core.protocol import EVClientProtocol
+
+from .helper import _get_id, _parse_models
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 CreateModelType = TypeVar("CreateModelType", bound=BaseModel)
@@ -16,7 +18,7 @@ FilterType = TypeVar("FilterType", bound=BaseModel)
 
 class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]):
     def get(
-        self: IsEVClientProtocol,
+        self: EVClientProtocol[ModelType],
         query: str = "",
         search: FilterType | None = None,
         limit: int = 10,
@@ -43,11 +45,13 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         self.logger.debug(f"Computed URL params for this request: {url_params}")
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
-
-        return self.c.fetch(url, self.return_type)
+        response = self.c.fetch(url)
+        parsed_objects = _parse_models(response.result, self.return_type)
+        assert isinstance(parsed_objects, list)
+        return parsed_objects, response.count or 0
 
     def get_all(
-        self: IsEVClientProtocol,
+        self: EVClientProtocol[ModelType],
         query: str = "",
         search: FilterType | None = None,
         limit_per_page: int = 10,
@@ -71,10 +75,12 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True, by_alias=True)
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
+        response = self.c.fetch_paginated(url, limit_per_page)
+        parsed_objects = _parse_models(response.result, self.return_type)
+        assert isinstance(parsed_objects, list)
+        return parsed_objects
 
-        return self.c.fetch_paginated(url, self.return_type, limit_per_page)
-
-    def get_by_id(self: IsEVClientProtocol, obj_id: int, query: str = "") -> ModelType:
+    def get_by_id(self: EVClientProtocol[ModelType], obj_id: int, query: str = "") -> ModelType:
         """
         Fetches a single object identified by its primary id.
 
@@ -86,10 +92,12 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         self.logger.info(f"Fetching {self.endpoint_name} object with id {obj_id} from API")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}", {"query": query})
+        response = self.c.fetch_one(url)
+        parsed_object = _parse_models(response.result, self.return_type)
+        assert isinstance(parsed_object, self.return_type)
+        return parsed_object
 
-        return self.c.fetch_one(url, self.return_type)
-
-    def create(self: IsEVClientProtocol, data: CreateModelType) -> ModelType:
+    def create(self: EVClientProtocol[ModelType], data: CreateModelType) -> ModelType:
         """
         Creates an object of specified type and returns the created object.
         The POST method of the respective endpoint is used to create a new resource and the API
@@ -115,10 +123,13 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         self.logger.info(f"Creating object of type {self.endpoint_name}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/")
+        response = self.c.create(url, data)
+        assert isinstance(response.result, dict)
+        parsed_object = _parse_models(response.result, self.return_type)
+        assert isinstance(parsed_object, self.return_type)
+        return parsed_object
 
-        return self.c.create(url, data, self.return_type)
-
-    def update(self: IsEVClientProtocol, target: ModelType | int, data: UpdateModelType) -> ModelType:
+    def update(self: EVClientProtocol[ModelType], target: ModelType | int, data: UpdateModelType) -> ModelType:
         """
         Updates (PATCHes) a certain object and returns the updated object. Accepts either an object
         or its id as first argument.
@@ -128,19 +139,22 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             data: Pydantic Model holding data to update the model
         """
 
-        obj_id = target if isinstance(target, int) else target.id
+        obj_id = _get_id(target)
 
         self.logger.info(f"Updating object of type {self.endpoint_name} with id {obj_id}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
-
-        return self.c.update(url, data, self.return_type)
+        response = self.c.update(url, data)
+        assert isinstance(response.result, dict)
+        parsed_object = _parse_models(response.result, self.return_type)
+        assert isinstance(parsed_object, self.return_type)
+        return parsed_object
 
     def delete(
-        self: IsEVClientProtocol,
+        self: EVClientProtocol[ModelType],
         target: ModelType | int,
         delete_from_recycle_bin: bool = False,
-    ):
+    ) -> None:
         """
         Deletes an object from the database and returns nothing. Can either take the object itself
         or the id of the object as argument.
@@ -164,7 +178,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
                 also from the recycle bin. Defaults to False.
         """
 
-        obj_id = target if isinstance(target, int) else target.id
+        obj_id = _get_id(target)
 
         self.logger.info(f"Deleting object of type {self.endpoint_name} with id {obj_id}")
 
@@ -172,6 +186,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         self.c.delete(url)
 
-        if delete_from_recycle_bin:
+        if delete_from_recycle_bin and hasattr(self, "purge"):
             self.logger.info(f"Deleting object of type {self.endpoint_name} with id {obj_id} from wastebasket")
-            self.purge(obj_id)
+            purge: Callable = getattr(self, "purge")
+            purge(obj_id)
