@@ -106,15 +106,15 @@ class InvoiceFilter(BaseModel):
 
     id__in: FilterIntList | None = None
     relatedAddress: int | None = None
-    relatedAddress__isnull: bool = None
+    relatedAddress__isnull: bool | None = None
     relatedBookings: FilterIntList | None = None
-    relatedBookings__isnull: bool = None
+    relatedBookings__isnull: bool | None = None
     relatedBookings__ne: FilterIntList | None = None
     payedFromUser: int | None = None
-    payedFromUser__isnull: bool = None
+    payedFromUser__isnull: bool | None = None
     approvedFromAdmin: int | None = None
-    approvedFromAdmin__isnull: bool = None
-    canceledInvoice__isnull: bool = None
+    approvedFromAdmin__isnull: bool | None = None
+    canceledInvoice__isnull: bool | None = None
     date: Date | None = None
     date__gt: Date | None = None
     date__lt: Date | None = None
