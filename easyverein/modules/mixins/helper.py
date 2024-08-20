@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from easyverein.core.exceptions import EasyvereinAPIException
 
 
-def _get_id(obj: BaseModel | int) -> int:
+def get_id(obj: BaseModel | int) -> int:
     if isinstance(obj, int):
         return obj
 
@@ -19,12 +19,12 @@ T = TypeVar("T", bound=BaseModel)
 
 
 @overload
-def _parse_models(result: dict[str, Any], return_model: type[T]) -> T: ...
+def parse_models(result: dict[str, Any], return_model: type[T]) -> T: ...
 @overload
-def _parse_models(result: list[dict[str, Any]], return_model: type[T]) -> list[T]: ...
+def parse_models(result: list[dict[str, Any]], return_model: type[T]) -> list[T]: ...
 @overload
-def _parse_models(result: None, return_model: type[T]) -> None: ...
-def _parse_models(result, return_model: type[T]):
+def parse_models(result: None, return_model: type[T]) -> None: ...
+def parse_models(result, return_model: type[T]):
     if result is None:
         return None
     elif isinstance(result, list):

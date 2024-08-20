@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from easyverein.core.protocol import EVClientProtocol
 
-from .helper import _get_id, _parse_models
+from .helper import get_id, parse_models
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 CreateModelType = TypeVar("CreateModelType", bound=BaseModel)
@@ -46,7 +46,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
         response = self.c.fetch(url)
-        parsed_objects = _parse_models(response.result, self.return_type)
+        parsed_objects = parse_models(response.result, self.return_type)
         assert isinstance(parsed_objects, list)
         return parsed_objects, response.count or 0
 
@@ -76,7 +76,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
         response = self.c.fetch_paginated(url, limit_per_page)
-        parsed_objects = _parse_models(response.result, self.return_type)
+        parsed_objects = parse_models(response.result, self.return_type)
         assert isinstance(parsed_objects, list)
         return parsed_objects
 
@@ -93,7 +93,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}", {"query": query})
         response = self.c.fetch_one(url)
-        parsed_object = _parse_models(response.result, self.return_type)
+        parsed_object = parse_models(response.result, self.return_type)
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
@@ -125,7 +125,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         url = self.c.get_url(f"/{self.endpoint_name}/")
         response = self.c.create(url, data)
         assert isinstance(response.result, dict)
-        parsed_object = _parse_models(response.result, self.return_type)
+        parsed_object = parse_models(response.result, self.return_type)
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
@@ -139,14 +139,14 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             data: Pydantic Model holding data to update the model
         """
 
-        obj_id = _get_id(target)
+        obj_id = get_id(target)
 
         self.logger.info(f"Updating object of type {self.endpoint_name} with id {obj_id}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
         response = self.c.update(url, data)
         assert isinstance(response.result, dict)
-        parsed_object = _parse_models(response.result, self.return_type)
+        parsed_object = parse_models(response.result, self.return_type)
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
@@ -178,7 +178,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
                 also from the recycle bin. Defaults to False.
         """
 
-        obj_id = _get_id(target)
+        obj_id = get_id(target)
 
         self.logger.info(f"Deleting object of type {self.endpoint_name} with id {obj_id}")
 

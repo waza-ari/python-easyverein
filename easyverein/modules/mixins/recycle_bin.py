@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from easyverein.core.protocol import EVClientProtocol
 
-from .helper import _get_id, _parse_models
+from .helper import get_id, parse_models
 
 ModelType = TypeVar("ModelType", bound=BaseModel)
 
@@ -17,7 +17,7 @@ class RecycleBinMixin(Generic[ModelType]):
         self.logger.info(f"Fetching all deleted objects of type {self.endpoint_name} from API")
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/")
         response = self.c.fetch(url)
-        parsed_objects = _parse_models(response.result, self.return_type)
+        parsed_objects = parse_models(response.result, self.return_type)
         assert isinstance(parsed_objects, list)
         return parsed_objects, response.count or 0
 
@@ -30,7 +30,7 @@ class RecycleBinMixin(Generic[ModelType]):
         Args:
             item: The id or object that should be deleted.
         """
-        item_id = _get_id(item)
+        item_id = get_id(item)
 
         self.logger.info(f"Purging object of type {self.endpoint_name} and id {item_id} from recycle bin")
         url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/{item_id}")

@@ -14,7 +14,7 @@ from ..models import (
     MemberMemberGroupUpdate,
 )
 from .mixins.crud import CRUDMixin
-from .mixins.helper import _get_id
+from .mixins.helper import get_id
 
 
 class MemberMemberGroupMixin(
@@ -44,7 +44,7 @@ class MemberMemberGroupMixin(
         Args:
             group: The group object or id to fetch.
         """
-        group_id = _get_id(group)
+        group_id = get_id(group)
         self.logger.info(f"Fetching members of group {group_id}")
 
         search = MemberMemberGroupFilter(memberGroup=group_id)
@@ -61,7 +61,7 @@ class MemberMemberGroupMixin(
             paymentActive: If set to True, the group will be activated for billing purposes
             ignore_existing: If set to False, will raise an exception if the member is already in the group.
         """
-        group_id = _get_id(group)
+        group_id = get_id(group)
         self.logger.info(f"Adding member {self.member_id} to group {group_id}")
 
         # if ignore_existing is set, we'll want to check if the member is already in the group
@@ -80,7 +80,7 @@ class MemberMemberGroupMixin(
         Args:
             group: The group object or id to remove the member from.
         """
-        group_id = _get_id(group)
+        group_id = get_id(group)
         self.logger.info(f"Removing member {self.member_id} from group {group_id}")
 
         membership = self.get_group_membership(group_id)
@@ -98,7 +98,7 @@ class MemberMemberGroupMixin(
         Args:
             group: The group object or id to activate.
         """
-        group_id = _get_id(group)
+        group_id = get_id(group)
         self.logger.info(f"Activating group {group_id} for member {self.member_id}")
 
         membership = self.get_group_membership(group_id)
