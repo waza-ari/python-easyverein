@@ -7,6 +7,7 @@ import logging
 from ..core.client import EasyvereinClient
 from ..core.exceptions import EasyvereinAPIException
 from ..models import (
+    Member,
     MemberGroup,
     MemberMemberGroup,
     MemberMemberGroupCreate,
@@ -25,11 +26,11 @@ class MemberMemberGroupMixin(
         MemberMemberGroupFilter,
     ]
 ):
-    def __init__(self, client: EasyvereinClient, logger: logging.Logger, member_id: int):
+    def __init__(self, client: EasyvereinClient, logger: logging.Logger, member: Member | int):
         self.return_type = MemberMemberGroup
         self.c = client
         self.logger = logger
-        self.member_id = member_id
+        self.member_id = get_id(member)
 
     @property
     def endpoint_name(self) -> str:

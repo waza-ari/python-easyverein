@@ -13,7 +13,9 @@ from .mixins.required_attributes import required_mixin
 class MemberMemberGroupBase(EasyVereinBase):
     """
     This model represents a member group that is associated to a member. In addition
-    to the association, it can be active or not active
+    to the association (which is always valid), it can be active or inactive in billing context,
+    which is controlled by the `paymentActive` attribute and controls whether the billing settings
+    of this group are considered for the member fee calculation.
 
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |

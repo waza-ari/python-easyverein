@@ -10,6 +10,7 @@ with soft-deleted resources.
 
     - invoice
     - member
+    - member-groups
     - contact-details
     - custom-field
     

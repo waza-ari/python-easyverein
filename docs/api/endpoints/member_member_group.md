@@ -1,6 +1,6 @@
-| API Endpoint                       | Namespace                                          | Supported Generics |
-|------------------------------------|----------------------------------------------------|--------------------|
-| `member/<member_id>/custom-fields` | `evclient.member.custom_fields(<member>).<method>` | CRUD               |
+| API Endpoint                | Namespace                                          | Supported Generics |
+|-----------------------------|----------------------------------------------------|--------------------|
+| `member/<member_id>/groups` | `evclient.member.member_groups(<member>).<method>` | CRUD               |
 
 ## Additional parameters
 
@@ -15,13 +15,13 @@ requires the member as constructor argument, to avoid passing it again to all en
 
 | Generic Model     | Invoice Model             |
 |-------------------|---------------------------|
-| `ModelType`       | `MemberCustomField`       |
-| `CreateModelType` | `MemberCustomFieldCreate` |
-| `UpdateModelType` | `MemberCustomFieldUpdate` |
+| `ModelType`       | `MemberMemberGroup`       |
+| `CreateModelType` | `MemberMemberGroupCreate` |
+| `UpdateModelType` | `MemberMemberGroupUpdate` |
 
 ## Additional Methods
 
-::: easyverein.modules.member_custom_field.MemberCustomFieldMixin
+::: easyverein.modules.member_member_group.MemberMemberGroupMixin
     options:
         inherited_members: false
         show_signature: true

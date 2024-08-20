@@ -168,6 +168,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         for some endpoints:
 
         - member
+        - member-group
         - contact-details
         - invoice
         - custom-field

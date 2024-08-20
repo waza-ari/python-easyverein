@@ -7,22 +7,24 @@ import logging
 from ..core.client import EasyvereinClient
 from ..models import (
     CustomField,
+    Member,
     MemberCustomField,
     MemberCustomFieldCreate,
     MemberCustomFieldFilter,
     MemberCustomFieldUpdate,
 )
 from .mixins.crud import CRUDMixin
+from .mixins.helper import get_id
 
 
 class MemberCustomFieldMixin(
     CRUDMixin[MemberCustomField, MemberCustomFieldCreate, MemberCustomFieldUpdate, MemberCustomFieldFilter]
 ):
-    def __init__(self, client: EasyvereinClient, logger: logging.Logger, member_id: int):
+    def __init__(self, client: EasyvereinClient, logger: logging.Logger, member: Member | int):
         self.return_type = MemberCustomField
         self.c = client
         self.logger = logger
-        self.member_id = member_id
+        self.member_id = get_id(member)
 
     @property
     def endpoint_name(self) -> str:
