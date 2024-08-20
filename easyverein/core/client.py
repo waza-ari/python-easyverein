@@ -90,8 +90,7 @@ class EasyvereinClient:
         files: dict[str, BufferedReader] | None = None,
     ) -> tuple[int, dict[str, Any] | requests.Response | None]:
         """
-        Helper method that performs an actual call against the API,
-        fetching the most common errors
+        Helper method that performs an actual call against the API, catching the most common errors
         """
         self.logger.debug("Performing %s request to %s", method, url)
         if data:
@@ -140,6 +139,11 @@ class EasyvereinClient:
                     f"Too many requests, please wait {retry_after} seconds and try again.",
                     retry_after=retry_after,
                 )
+
+        # If API version is v2.0, check if token refresh is required
+        if self.api_version == "v2.0" and res.headers.get("tokenRefreshNeeded", "false") == "True":
+            self.logger.info("Token refresh required")
+            self.api_instance.handle_token_refresh()
 
         if res.status_code == 404:
             self.logger.warning("Request returned status code 404, resource not found")

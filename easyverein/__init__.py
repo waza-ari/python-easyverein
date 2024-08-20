@@ -11,3 +11,4 @@ from .core.exceptions import (  # noqa: F401
     EasyvereinAPINotFoundException,
     EasyvereinAPITooManyRetriesException,
 )
+from .core.responses import BearerToken

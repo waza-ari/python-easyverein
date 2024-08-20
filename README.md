@@ -35,7 +35,9 @@ When saying CRUD, it means the library supports various methods to **C**reate, *
 * `invoice`: CRUD, Soft-Delete, plus some convenience methods
 * `invoice-item`: CRUD
 * `member`: CRUD, Soft-Delete
+* `member-groups`: CRUD, Soft-Delete
 * `member/<id>/custom-fields`: CRUD, plus some convenience methods
+* `member/<id>/member-groups`: CRUD, plus some convenience methods
 * `wastebasket` (its the official name used by the EasyVerein API to reference soft-deleted objects)
 
 In addition to that, the library supports nested queries using the query syntax, included nested model validation.

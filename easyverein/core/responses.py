@@ -9,5 +9,10 @@ class ResponseSchema(BaseModel):
     count: int | None = None
     response_code: int
     response: Response | None = None
+    token_refresh_required: bool = False
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+
+class BearerToken(BaseModel):
+    Bearer: str

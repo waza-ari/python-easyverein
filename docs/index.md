@@ -52,6 +52,16 @@ the hood, so you get auto-completion and a guaranteed interface for these models
     The [model reference](models/base.md) contains important information about the model attributes and their potential values. Most of
     them are not easily available from the EasyVerein documentation, so they might be of use to you.
 
+## API Versions
+
+Currently, the API versions v1.7 and v2.0 are supported. Please note that support for v2.0 is experimental and might
+not work as expected. The library defaults to v1.7, but you can change the version by setting the `api_version` attribute
+of the `EasyvereinAPI` object.
+
+Version 2.0 introduces a change to authentication, it does not allow the ephemeral API keys anymore. Instead,
+a new type of token is used, which expires after 30 days. Please check the usage section on details how to handle
+token expiration.
+
 ## State of the API
 
 This client was written against and tested against the Hexa v1.7 API version of EasyVerein. It may or may not work
@@ -92,14 +102,20 @@ EV_API_KEY=<your-api-key>
 
 ## Contributing
 
-The client is written in pure Python, using `mkdocs` with `mkdocstrings` for documentation. Any changes or 
+The client is written in pure Python, using `mkdocs` with `mkdocstrings` for documentation. Any changes or
 pull requests are more than welcome, but please adhere to the code style:
 
-- Use `black` for code formatting
-- Use `isort` based import sorting
-- Use `ruff` based code linting
+- Use `ruff` based code linting, formatting and styling
+- Use `mypy` for static type checking
 
-A pre-commit hook configuration is supplied as part of the project.
+A pre-commit hook configuration is supplied as part of the project. You can run them prior to your commit using:
+
+```bash
+pre-commit
+
+# Or run them for the entire project
+pre-commit run --all-files
+```
 
 Please make sure that any additions are properly tested. PRs won't get accepted if they don't have test cases to
 cover them.

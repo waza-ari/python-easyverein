@@ -25,6 +25,8 @@ You can optionally specify your own Python `logger`, see the logging section bel
 Once you have the client object, all supported attributes are composed into the client as instance attributes
 
 ```python
+from easyverein import EasyvereinAPI
+
 c = EasyvereinAPI(api_key="your_key")
 
 # Get invoices
@@ -36,6 +38,52 @@ c.member.get()
 ```
 
 The available endpoints are documented in the API Reference section of this documentation.
+
+## Handling Token Refresh
+
+Starting version v2.0, the EasyVerein API enforces token expiration. The token you get from
+the API configuration page is only valid for 30 days and must be refreshed afterwards. This library is not
+responsible for storing the token, but you can pass a callback function that will be called if a token refresh
+is needed. Optionally, you can instruct the library to automatically refresh the token for you and pass it to the
+callback function.
+
+!!! info "Version 2.0 only"
+    Please not that the new token type is only supported in API version 2.0. If you're using API version 1.7, you
+    do not need to configure token refresh, the library will raise an exception if you try.
+
+There are two ways this can be done, one synchronous and one asynchronous option. When using asynchronously,
+the callback will be called without any arguments, just a a trigger for you to refresh and store the token somewhere
+else, for example using an async worker. It does not extend the runtime of the initial request.
+
+```python
+from easyverein import BearerToken, EasyvereinAPI
+
+def handle_token_refresh() -> None:
+    # This merely serves as a trigger for you to refresh and store the token
+    return None
+
+c = EasyvereinAPI(api_key="your_key", api_version="v2.0", token_refresh_callback=handle_token_refresh)
+```
+
+The more convenient way is to use the automatic token refresh. This will automatically refresh the token for you and
+pass it to the callback for you to store. It does so after the initial request is completed (as this is needed to get
+the feedback from the API in the first place) but before the result is returned. It therefore extends the runtime of
+the request by a small amount, which may or may not be acceptable for your use case.
+
+```python
+from easyverein import BearerToken, EasyvereinAPI
+
+def handle_token_refresh(new_token: BearerToken) -> None:
+    print(f"New token: {new_token.Bearer}")
+    return None
+
+c = EasyvereinAPI(
+    api_key="your_key",
+    api_version="v2.0",
+    token_refresh_callback=handle_token_refresh,
+    auto_refresh_token=True
+)
+```
 
 ## Pydantic Models
 

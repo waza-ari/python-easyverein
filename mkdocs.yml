@@ -66,6 +66,7 @@ nav:
     - "Member Groups": models/member_group.md
     - "Member Group Associations": models/member_member_group.md
     - "Member Custom Field Associations": models/member_custom_field.md
+  - "Changelog": changelog.md
 
 watch:
   - docs
