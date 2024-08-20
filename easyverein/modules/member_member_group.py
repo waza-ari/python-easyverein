@@ -51,14 +51,14 @@ class MemberMemberGroupMixin(
         result, _ = self.get(search=search)
         return result[0] if result else None
 
-    def add_to_group(self, group: MemberGroup | int, paymentActive: bool = False, ignore_existing: bool = False):
+    def add_to_group(self, group: MemberGroup | int, payment_active: bool = False, ignore_existing: bool = False):
         """
         Adds a member to a group. Will silently ignore if the member is already in the group,
         unless ignore_existing is set to False.
 
         Args:
             group: The group object or id to add the member to.
-            paymentActive: If set to True, the group will be activated for billing purposes
+            payment_active: If set to True, the group will be activated for billing purposes
             ignore_existing: If set to False, will raise an exception if the member is already in the group.
         """
         group_id = get_id(group)
@@ -70,7 +70,7 @@ class MemberMemberGroupMixin(
             return None
 
         return self.create(
-            MemberMemberGroupCreate(userObject=self.member_id, memberGroup=group_id, paymentActive=paymentActive)
+            MemberMemberGroupCreate(userObject=self.member_id, memberGroup=group_id, paymentActive=payment_active)
         )
 
     def remove_from_group(self, group: MemberGroup | int):
