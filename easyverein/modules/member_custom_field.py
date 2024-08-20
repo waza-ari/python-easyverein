@@ -36,7 +36,6 @@ class MemberCustomFieldMixin(
         Regarding rate limiting, be aware that this method requires at least two API calls.
 
         Args:
-            member_id (int): Member ID whose custom field should be set
             custom_field_id (int): Custom field ID that should be set or changed
             value (str): New value the specified custom field should be set to
         """

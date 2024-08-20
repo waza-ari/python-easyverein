@@ -97,6 +97,7 @@ class MemberMemberGroupMixin(
 
         Args:
             group: The group object or id to activate.
+            new_billing_status: The new billing status for the group.
         """
         group_id = get_id(group)
         self.logger.info(f"Activating group {group_id} for member {self.member_id}")
