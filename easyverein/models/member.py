@@ -89,6 +89,7 @@ class MemberBase(EasyVereinBase):
     # TODO: exact type is not specified in API docs
     integrationDosbSport: list | None = None
     customFields: EasyVereinReference | list[MemberCustomField] | None = None
+    memberGroups: EasyVereinReference | list[MemberMemberGroup] | None = None
 
 
 class Member(MemberBase, EmptyStringsToNone):
@@ -109,8 +110,6 @@ class MemberUpdate(MemberBase):
     chairmanPermissionGroup: str | None = Field(default=None, serialization_alias="_chairmanPermissionGroup")
     isApplication: bool | None = Field(default=None, serialization_alias="_isApplication")
     paymentStartDate: DateTime | None = Field(default=None, serialization_alias="_paymentStartDate")
-
-    pass
 
 
 class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):  # type: ignore
@@ -162,8 +161,18 @@ class MemberFilter(BaseModel):
         default=None, serialization_alias="_applicationWasAcceptedAt__isnull"
     )
     isChairman: bool = Field(default=None, serialization_alias="_isChairman")
-    memberGroups: str | None = None
-    memberGroups__not: str | None = None
+    memberGroups: FilterIntList | None = None
+    """
+    Filter for members that are member of the given group(s)
+    """
+    memberGroups__not: FilterIntList | None = None
+    """
+    Filter for members that are not member in any of the given group(s)
+    """
+    memberGroupsCurrentlyActive: int | None = None
+    """
+    Filter for members that are member of the given group and the group is actively used for billing purposes
+    """
     deleted: bool | None = None
     custom_field_name: str | None = None
     custom_field_value: str | None = None
@@ -181,3 +190,4 @@ class MemberFilter(BaseModel):
 
 from .contact_details import ContactDetails  # noqa: E402
 from .member_custom_field import MemberCustomField  # noqa: E402
+from .member_member_group import MemberMemberGroup  # noqa: E402

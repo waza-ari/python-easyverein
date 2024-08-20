@@ -26,6 +26,12 @@ from .member_custom_field import (
     MemberCustomFieldUpdate,
 )
 from .member_group import MemberGroup, MemberGroupCreate, MemberGroupFilter, MemberGroupUpdate
+from .member_member_group import (
+    MemberMemberGroup,
+    MemberMemberGroupCreate,
+    MemberMemberGroupFilter,
+    MemberMemberGroupUpdate,
+)
 
 ContactDetails.model_rebuild()
 CustomField.model_rebuild()
@@ -34,3 +40,4 @@ InvoiceItem.model_rebuild()
 Member.model_rebuild()
 MemberGroup.model_rebuild()
 MemberCustomField.model_rebuild()
+MemberMemberGroup.model_rebuild()
