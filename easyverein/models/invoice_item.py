@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import BaseModel, PositiveInt, StringConstraints
+from pydantic import BaseModel, Field, PositiveInt
 
 from ..core.types import EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
@@ -37,7 +37,7 @@ class InvoiceItemBase(EasyVereinBase):
     taxName: str | None = None
     # TODO: Add reference to BillingAccount once implemented
     billingAccount: EasyVereinReference | None = None
-    costCentre: Annotated[str, StringConstraints(max_length=8)] | None = None
+    costCentre: Annotated[str, Field(max_length=8)] | None = None
 
 
 class InvoiceItem(InvoiceItemBase, EmptyStringsToNone):
