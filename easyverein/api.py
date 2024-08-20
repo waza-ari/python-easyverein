@@ -3,7 +3,7 @@ Main EasyVerein API class
 """
 
 import logging
-from typing import Callable
+from typing import Callable, cast
 
 from .core.client import EasyvereinClient
 from .core.responses import BearerToken
@@ -83,4 +83,9 @@ class EasyvereinAPI:
             raise ValueError("Refresh token is only available for API v2.0")
 
         response = self.c.fetch_one(self.c.get_url("/refresh-token"))
-        return parse_models(response.result, BearerToken)
+        token = parse_models(response.result, BearerToken)
+        if not token:
+            self.logger.error(f"Error refreshing token: {response.result}")
+            raise ValueError(f"Error refreshing token: {response.result}")
+
+        return cast(BearerToken, token)
