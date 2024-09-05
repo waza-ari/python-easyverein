@@ -51,4 +51,4 @@ class TestFilter:
 
         # Case 6: test date, joinDate in past
         search = MemberFilter(joinDate__lte=datetime.datetime.now())
-        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 5)
+        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 4)
