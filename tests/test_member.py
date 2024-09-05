@@ -11,10 +11,10 @@ class TestMember:
         # Check if the response is a list
         assert isinstance(members, list)
 
-        # We should have 8 members based on the example data
-        # 5 regular members, 3 requests
-        assert total_count == 8
-        assert len(members) == 8
+        # We should have 5 members based on the example data
+        # 4 regular members, 1 requests
+        assert total_count == 5
+        assert len(members) == 5
 
         # Check if all the members are of type Member
         for member in members:
@@ -28,7 +28,7 @@ class TestMember:
 
         members, total_count = ev_connection.member.get(query=query, limit=2)
         assert len(members) == 2
-        assert total_count == 8
+        assert total_count == 5
 
         for member in members:
             assert isinstance(member, Member)

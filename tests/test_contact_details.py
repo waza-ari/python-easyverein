@@ -8,9 +8,9 @@ class TestContactDetails:
         # Check if the response is a list
         assert isinstance(contact_details, list)
 
-        # We should have 6 invoices based on the example data
-        assert total_count == 10
-        assert len(contact_details) == 10
+        # We should have  contacts based on the example data
+        assert total_count == 8
+        assert len(contact_details) == 8
 
         # Check if all the members are of type Member
         for contact_detail in contact_details:

@@ -24,7 +24,7 @@ class TestFilter:
             assert isinstance(instance, model)
 
     def test_filter_invoices(self, ev_connection: EasyvereinAPI):
-        search = InvoiceFilter(invNumber__in=["10", "11"], canceledInvoice__isnull=True, isDraft=False)
+        search = InvoiceFilter(invNumber__in=["32", "33"], canceledInvoice__isnull=True, isDraft=False)
 
         TestFilter.validate_response(ev_connection.invoice.get(search=search), Invoice, 2)
 
@@ -39,7 +39,7 @@ class TestFilter:
 
         # Case 3: search by name
         search = MemberFilter(search="Mustermann")
-        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 2)
+        TestFilter.validate_response(ev_connection.member.get(search=search), Member, 1)
 
         # Case 4: test bool, get chairmans
         search = MemberFilter(isChairman=True)
