@@ -9,7 +9,7 @@
 
 # Python EasyVerein
 
-**Full documentation** is [available at Read The Docs](https://python-easyverein.readthedocs.io/en/latest/)
+**Full documentation** is [available at Read The Docs](https://python-easyverein.readthedocs.io/en/stable/)
 
 This package contains an unofficial API client for [EasyVerein](http://easyverein.com) written in Python. Please note that this
 library is unofficial and therefore not supported in any way by SD Software Design GmbH. If you have issues using this
