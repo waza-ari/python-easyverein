@@ -18,7 +18,7 @@ class InvoiceItemBase(EasyVereinBase):
     """
     | Representative Model Class | Update Model Class | Create Model Class |
     | --- | --- | --- |
-    | `InvoiceItem` | `InvoiceUpdateItem` | `InvoiceItemCreate` |
+    | `InvoiceItem` | `InvoiceItemUpdate` | `InvoiceItemCreate` |
 
     !!! tip "Creating Invoice Items"
         Invoice Items can only be created once the invoice is already created and is still in the draft state.
