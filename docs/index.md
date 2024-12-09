@@ -77,6 +77,7 @@ Not all endpoints offered by the EasyVerein API are supported. For now, only the
 When saying CRUD, it means the library supports various methods to **C**reate, **R**ead, **U**pdate and **D**elete objects. See the API
 reference for details on supported CRUD operations.
 
+* `booking`: CRUD, Soft-Delete
 * `contact-details`: CRUD, Soft-Delete
 * `custom-fields`: CRUD, Soft-Delete
 * `invoice`: CRUD, Soft-Delete, plus some convenience methods

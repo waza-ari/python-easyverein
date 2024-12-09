@@ -3,6 +3,11 @@ version: '3'
 dotenv: ['.env', '{{.ENV}}/.env.', '{{.HOME}}/.env']
 
 tasks:
+
+  docs:
+    cmds:
+      - poetry run mkdocs serve
+
   test:
     cmds:
       - poetry run pytest

@@ -7,6 +7,7 @@ from typing import Callable, cast
 
 from .core.client import EasyvereinClient
 from .core.responses import BearerToken
+from .modules.booking import BookingMixin
 from .modules.contact_details import ContactDetailsMixin
 from .modules.custom_field import CustomFieldMixin
 from .modules.invoice import InvoiceMixin
@@ -57,6 +58,7 @@ class EasyvereinAPI:
         self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self, auto_retry)
 
         # Add methods
+        self.booking = BookingMixin(self.c, self.logger)
         self.contact_details = ContactDetailsMixin(self.c, self.logger)
         self.custom_field = CustomFieldMixin(self.c, self.logger)
         self.invoice = InvoiceMixin(self.c, self.logger)
