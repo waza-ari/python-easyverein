@@ -48,7 +48,7 @@ class Booking(BookingBase, EmptyStringsToNone):
 
 class BookingCreate(
     BookingBase,
-    required_mixin(["title", "quantity", "unitPrice"]),  # type: ignore
+    required_mixin(["receiver", "date"]),  # type: ignore
 ):
     """
     Pydantic model representing a Booking
