@@ -312,14 +312,14 @@ class EasyvereinClient:
                 self.logger.error("Could not fetch paginated API %s, status code %d", url, status_code)
                 self.logger.debug("API response: %s", result)
                 raise EasyvereinAPIException(
-                    f"Could not fetch paginated API {url}, " f"status code {status_code}. API response: {result}"
+                    f"Could not fetch paginated API {url}, status code {status_code}. API response: {result}"
                 )
 
             if not status_code == 200:
                 self.logger.error("Could not fetch paginated API %s, status code %d", url, status_code)
                 self.logger.debug("API response: %s", result)
                 raise EasyvereinAPIException(
-                    f"Could not fetch paginated API {url}, " f"status code {status_code}. API response: {result}"
+                    f"Could not fetch paginated API {url}, status code {status_code}. API response: {result}"
                 )
 
             resources.extend(result["results"])
