@@ -23,7 +23,7 @@ class MemberMemberGroupBase(EasyVereinBase):
     """
 
     userObject: EasyVereinReference | Member | None = None
-    memberGroup: EasyVereinReference | None = None
+    memberGroup: EasyVereinReference | MemberGroup | None = None
     paymentAmount: float | None = None
     paymentActive: bool = False
     start: Any | None = None  # Field not documented
@@ -70,3 +70,4 @@ class MemberMemberGroupFilter(BaseModel):
 
 
 from .member import Member  # noqa: E402
+from .member_group import MemberGroup  # noqa: E402
