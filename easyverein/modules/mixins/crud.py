@@ -129,7 +129,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
-    def update(self: EVClientProtocol[ModelType], target: ModelType | int, data: UpdateModelType) -> ModelType:
+    def update(self: EVClientProtocol[ModelType], target: ModelType | int, data: UpdateModelType, exclude_none: bool = True) -> ModelType:
         """
         Updates (PATCHes) a certain object and returns the updated object. Accepts either an object
         or its id as first argument.
@@ -137,6 +137,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         Args:
             target: Model instance to update or id of the model to update
             data: Pydantic Model holding data to update the model
+            exclude_none: exclude fiels with None, set to False to explicitly unset fields
         """
 
         obj_id = get_id(target)
@@ -144,7 +145,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         self.logger.info(f"Updating object of type {self.endpoint_name} with id {obj_id}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
-        response = self.c.update(url, data)
+        response = self.c.update(url, data, exclude_none=exclude_none)
         assert isinstance(response.result, dict)
         parsed_object = parse_models(response.result, self.return_type)
         assert isinstance(parsed_object, self.return_type)
