@@ -129,7 +129,9 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
-    def update(self: EVClientProtocol[ModelType], target: ModelType | int, data: UpdateModelType, exclude_none: bool = True) -> ModelType:
+    def update(
+        self: EVClientProtocol[ModelType], target: ModelType | int, data: UpdateModelType, exclude_none: bool = True
+    ) -> ModelType:
         """
         Updates (PATCHes) a certain object and returns the updated object. Accepts either an object
         or its id as first argument.
