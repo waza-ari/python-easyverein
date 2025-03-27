@@ -26,8 +26,8 @@ class MemberMemberGroupBase(EasyVereinBase):
     memberGroup: EasyVereinReference | None = None
     paymentAmount: float | None = None
     paymentActive: bool = False
-    start: Any | None = None  # Field not documented
-    end: Any | None = None  # Field not documented
+    start: Date | None = None  # Field not documented
+    end: Date | None = None  # Field not documented
 
 
 class MemberMemberGroup(MemberMemberGroupBase, EmptyStringsToNone):
