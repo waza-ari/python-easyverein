@@ -23,7 +23,7 @@ class MemberMemberGroupBase(EasyVereinBase):
     """
 
     userObject: EasyVereinReference | Member | None = None
-    memberGroup: EasyVereinReference | MemberGroup| None = None
+    memberGroup: EasyVereinReference | MemberGroup | None = None
     paymentAmount: float | None = None
     paymentActive: bool = False
     start: Any | None = None  # Field not documented
