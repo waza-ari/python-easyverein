@@ -8,6 +8,7 @@ from ..core.types import Date, EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
+from member_group import MemberGroup
 
 
 class MemberMemberGroupBase(EasyVereinBase):
@@ -23,7 +24,7 @@ class MemberMemberGroupBase(EasyVereinBase):
     """
 
     userObject: EasyVereinReference | Member | None = None
-    memberGroup: EasyVereinReference | None = None
+    memberGroup: EasyVereinReference | MemberGroup | None = None
     paymentAmount: float | None = None
     paymentActive: bool = False
     start: Any | None = None  # Field not documented
