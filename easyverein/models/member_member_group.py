@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import Any
 
+from member_group import MemberGroup
 from pydantic import BaseModel
 
 from ..core.types import Date, EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
-from member_group import MemberGroup
 
 
 class MemberMemberGroupBase(EasyVereinBase):
