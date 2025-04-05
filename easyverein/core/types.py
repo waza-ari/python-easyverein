@@ -22,8 +22,8 @@ DateTime = Annotated[
     PlainSerializer(lambda x: x.strftime("%Y-%m-%dT%H:%M:%S"), return_type=str),
 ]
 OptionsField = Annotated[
-    list[str] | None,
-    PlainSerializer(lambda x: json.dumps(x), return_type=str),
+    str | list[str] | None,
+    PlainSerializer(lambda x: x if isinstance(x, str) else json.dumps(x), return_type=str),
 ]
 HexColor = Annotated[
     str | None,
