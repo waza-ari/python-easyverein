@@ -139,7 +139,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         Args:
             target: Model instance to update or id of the model to update
             data: Pydantic Model holding data to update the model
-            exclude_none: exclude fiels with None, set to False to explicitly unset fields
+            exclude_none: exclude fields with None, set to False to explicitly unset fields
         """
 
         obj_id = get_id(target)
