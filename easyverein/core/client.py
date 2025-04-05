@@ -191,7 +191,7 @@ class EasyvereinClient:
         """
         return self._handle_response(self._do_request("delete", url), expected_status_code=status_code)
 
-    def update(self, url, data: BaseModel, status_code: int = 200) -> ResponseSchema:
+    def update(self, url, data: BaseModel, status_code: int = 200, exclude_none: bool = True) -> ResponseSchema:
         """
         Method to update an object in the API
         """
@@ -199,7 +199,7 @@ class EasyvereinClient:
             self._do_request(
                 "patch",
                 url,
-                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
+                data=data.model_dump(exclude_none=exclude_none, exclude_unset=True, by_alias=True),
             ),
             expected_status_code=status_code,
         )
