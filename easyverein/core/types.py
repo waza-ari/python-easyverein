@@ -6,7 +6,7 @@ import datetime
 import json
 from typing import Annotated
 
-from pydantic import Field, PlainSerializer, UrlConstraints
+from pydantic import Field, PlainSerializer, PlainValidator, UrlConstraints
 from pydantic_core import Url
 
 AnyHttpURL = Annotated[
@@ -22,7 +22,8 @@ DateTime = Annotated[
     PlainSerializer(lambda x: x.strftime("%Y-%m-%dT%H:%M:%S"), return_type=str),
 ]
 OptionsField = Annotated[
-    str | list[str] | None,
+    list[str] | str | None,
+    PlainValidator(lambda x: json.loads(x) if isinstance(x, str) else x),
     PlainSerializer(lambda x: x if isinstance(x, str) else json.dumps(x), return_type=str),
 ]
 HexColor = Annotated[
