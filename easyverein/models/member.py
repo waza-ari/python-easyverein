@@ -60,7 +60,7 @@ class MemberBase(EasyVereinBase):
     Alias for `_paymentStartDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
     paymentAmount: float | None = None
-    paymentIntervallMonths: PositiveInt | None = None
+    paymentIntervallMonths: PositiveInt | Literal[-1] = 1
     useBalanceForMembershipFee: bool | None = None
     bulletinBoardNewPostNotification: bool | None = None
     integrationDosbGender: Literal["m", "w", "d"] | None = None
