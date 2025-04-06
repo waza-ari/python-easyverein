@@ -8,7 +8,7 @@ class TestContactDetails:
         # Check if the response is a list
         assert isinstance(contact_details, list)
 
-        # We should have  contacts based on the example data
+        # We should have contacts based on the example data
         assert total_count == 8
         assert len(contact_details) == 8
 
