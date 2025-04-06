@@ -8,7 +8,7 @@ Before you can do any requests, you'll need to create the client object first. T
 EasyvereinAPI(
     api_key,
     api_version="v1.7",
-    base_url="https://hexa.easyverein.com/api/",
+    base_url="https://easyverein.com/api/",
     logger=None,
 )
 ```
@@ -218,7 +218,7 @@ detault, the API returns a HTTP link to this model. Consider this partial reply 
 ```json
 {
   "id": 183495599,
-  "relatedAddress": "https://hexa.easyverein.com/api/v1.7/contact-details/113185254",
+  "relatedAddress": "https://easyverein.com/api/v1.7/contact-details/113185254",
   "model": "Invoice"
 }
 ```
