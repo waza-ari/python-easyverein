@@ -13,7 +13,7 @@ def ev_connection():
     api_version = os.getenv("EV_API_VERSION", "v2.0")
     api_key = os.getenv("EV_API_KEY", "")
 
-    return EasyvereinAPI(api_key, base_url=api_url, api_version=api_version)
+    return EasyvereinAPI(api_key, base_url=api_url, api_version=api_version, auto_retry=True)
 
 
 @pytest.fixture(scope="function")
