@@ -32,3 +32,4 @@ def example_custom_field(ev_connection):
     custom_field = ev_connection.custom_field.create(CustomFieldCreate(name="Test-Field", kind="e", settings_type="t"))
     yield custom_field
     ev_connection.custom_field.delete(custom_field)
+    ev_connection.custom_field.purge(custom_field.id)
