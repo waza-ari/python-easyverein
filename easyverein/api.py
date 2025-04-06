@@ -24,7 +24,7 @@ class EasyvereinAPI:
         self,
         api_key,
         api_version="v1.7",
-        base_url: str = "https://hexa.easyverein.com/api/",
+        base_url: str = "https://easyverein.com/api/",
         logger: logging.Logger | None = None,
         auto_retry=False,
         token_refresh_callback: Callable[[BearerToken], None] | Callable[[], None] | None = None,
