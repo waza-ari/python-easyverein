@@ -8,6 +8,9 @@ from easyverein.models.custom_field import (
 
 class TestCustomField:
     def test_create_custom_field(self, ev_connection: EasyvereinAPI):
+        # Get current custom fields
+        _, old_total_count = ev_connection.custom_field.get()
+
         custom_field = ev_connection.custom_field.create(
             CustomFieldCreate(name="Test-Field", kind="e", settings_type="t")
         )
@@ -17,8 +20,7 @@ class TestCustomField:
         # Get all custom fields and check that we've got one more than the 40 built-in now
         custom_fields, total_count = ev_connection.custom_field.get()
         assert isinstance(custom_fields, list)
-        assert total_count == 41
-        assert len(custom_fields) == 10  # Default limit is 10
+        assert total_count == old_total_count + 1
         assert all(isinstance(f, CustomField) for f in custom_fields)
         assert isinstance(custom_field.id, int)
 
@@ -43,8 +45,24 @@ class TestCustomField:
         # Delete custom field again
         ev_connection.custom_field.delete(custom_field)
 
-        # Now there should be the original 40 left
+        # Now there should be the original count left
         custom_fields, total_count = ev_connection.custom_field.get()
         assert isinstance(custom_fields, list)
-        assert total_count == 40
-        assert len(custom_fields) == 10  # Default limit is 10
+        assert total_count == old_total_count
+
+        # There should be one deleted custom field in the recycle bin
+        deleted_custom_fields, _ = ev_connection.custom_field.get_deleted()
+        assert isinstance(deleted_custom_fields, list)
+        assert len(deleted_custom_fields) == 1
+        assert isinstance(deleted_custom_fields[0], CustomField)
+        assert deleted_custom_fields[0].id == custom_field.id
+        assert deleted_custom_fields[0].name == "Changed-Name"
+
+        # Finally purge custom field from wastebasket
+        ev_connection.custom_field.purge(custom_field.id)
+
+        # Get entries from wastebasket
+        deleted_custom_fields, _ = ev_connection.custom_field.get_deleted()
+        assert isinstance(deleted_custom_fields, list)
+        assert len(deleted_custom_fields) == 0
+        assert len(custom_fields) == old_total_count
