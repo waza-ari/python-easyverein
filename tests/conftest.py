@@ -9,7 +9,7 @@ from easyverein.models import CustomFieldCreate
 
 @pytest.fixture(scope="session")
 def ev_connection():
-    api_url = os.getenv("EV_API_URL", "https://hexa.easyverein.com/api/")
+    api_url = os.getenv("EV_API_URL", "https://easyverein.com/api/")
     api_version = os.getenv("EV_API_VERSION", "v1.7")
     api_key = os.getenv("EV_API_KEY", "")
 
