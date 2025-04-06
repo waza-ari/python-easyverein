@@ -248,6 +248,11 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice)
+
         # Check that we're back to 6 invoices
         invoices, _ = ev_connection.invoice.get()
         assert len(invoices) == 6
+
+        # Purge invoice from wastebasket
+        assert invoice.id is not None
+        ev_connection.invoice.purge(invoice.id)
