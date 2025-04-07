@@ -265,6 +265,21 @@ In these cases the library automatically contructs nested objects, so you can ea
 for invoice in invoices:
     print(invoice.relatedAddress.street)
 ```
+
+Example with multiple nesting levels, here we print for each member all groups the member is assigned to
+```python
+allmembers = ev_client.member.get_all(
+    query="{membershipNumber,contactDetails{familyName,firstName,dateOfBirth},memberGroups{memberGroup{short}}}"
+)
+for m in allmembers:
+    print(f"{m.membershipNumber} {m.contactDetails.familyName} {m.contactDetails.firstName} {m.contactDetails.dateOfBirth}")
+    if m.memberGroups is not None:
+        for g in m.memberGroups:
+            print(f"     Group: {g.memberGroup.short}")
+```
+
+
+
 ## Creating Resources
 
 The CRUD endpoints support creating objects and offer accompanying model types to facilitate type checking and rough
