@@ -266,7 +266,8 @@ for invoice in invoices:
     print(invoice.relatedAddress.street)
 ```
 
-Example with multiple nesting levels, here we print for each member all groups the member is assigned to
+Example with multiple nesting levels. For each member, this example will print all groups the member is assigned to:
+
 ```python
 allmembers = ev_client.member.get_all(
     query="{membershipNumber,contactDetails{familyName,firstName,dateOfBirth},memberGroups{memberGroup{short}}}"
@@ -277,8 +278,6 @@ for m in allmembers:
         for g in m.memberGroups:
             print(f"     Group: {g.memberGroup.short}")
 ```
-
-
 
 ## Creating Resources
 
