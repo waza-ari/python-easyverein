@@ -8,12 +8,15 @@ from typing import Callable, cast
 from .core.client import EasyvereinClient
 from .core.responses import BearerToken
 from .modules.booking import BookingMixin
+from .modules.booking_project import BookingProjectModule
 from .modules.contact_details import ContactDetailsMixin
 from .modules.custom_field import CustomFieldMixin
 from .modules.invoice import InvoiceMixin
 from .modules.invoice_item import InvoiceItemMixin
 from .modules.member import MemberMixin
+from .modules.member_custom_field import MemberCustomFieldMixin
 from .modules.member_group import MemberGroupMixin
+from .modules.member_member_group import MemberMemberGroupMixin
 from .modules.mixins.helper import parse_models
 
 SUPPORTED_API_VERSIONS = ["v1.6", "v1.7", "v2.0"]
@@ -56,7 +59,6 @@ class EasyvereinAPI:
         self.token_refresh_callback = token_refresh_callback
         self.auto_refresh_token = auto_refresh_token
         self.c = EasyvereinClient(api_key, api_version, base_url, self.logger, self, auto_retry)
-
         # Add methods
         self.booking = BookingMixin(self.c, self.logger)
         self.contact_details = ContactDetailsMixin(self.c, self.logger)
@@ -65,6 +67,9 @@ class EasyvereinAPI:
         self.invoice_item = InvoiceItemMixin(self.c, self.logger)
         self.member = MemberMixin(self.c, self.logger)
         self.member_group = MemberGroupMixin(self.c, self.logger)
+        self.member_custom_field = MemberCustomFieldMixin(self.c, self.logger)
+        self.member_member_group = MemberMemberGroupMixin(self.c, self.logger)
+        self.booking_project = BookingProjectModule(self.c, self.logger)
 
     def handle_token_refresh(self):
         """
