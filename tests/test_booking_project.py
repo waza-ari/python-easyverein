@@ -4,7 +4,7 @@ Test BookingProject functionality
 
 import pytest
 from easyverein.api import EasyvereinAPI
-from easyverein.models import BookingProject, BookingProjectCreate
+ from easyverein.models import BookingProject, BookingProjectCreate, BookingProjectUpdate, BookingProjectFilter
 
 
 @pytest.fixture
@@ -61,9 +61,10 @@ def test_booking_project_get(api_key):
 def test_booking_project_update(api_key, booking_project_update_data):
     """Test updating a booking project"""
     api = EasyvereinAPI(api_key)
+    update_model = BookingProjectUpdate(**booking_project_update_data)
 
     # Mocked in conftest.py
-    booking_project = api.booking_project.update(123, booking_project_update_data)
+    booking_project = api.booking_project.update(123, update_model)
 
     assert isinstance(booking_project, BookingProject)
     assert booking_project.name == booking_project_update_data["name"]
@@ -74,13 +75,13 @@ def test_booking_project_update(api_key, booking_project_update_data):
 def test_booking_project_filter(api_key):
     """Test filtering booking projects"""
     api = EasyvereinAPI(api_key)
-    filter_params = {
-        "name": "Test",
-        "completed": False,
-    }
+    filter_params = BookingProjectFilter(
+        name="Test",
+        completed=False,
+    )
 
     # Mocked in conftest.py
-    booking_projects = api.booking_project.filter(filter_params)
+    booking_projects, _ = api.booking_project.get(search=filter_params)
 
     assert isinstance(booking_projects, list)
     assert len(booking_projects) > 0
