@@ -60,6 +60,7 @@ class InvoiceBase(EasyVereinBase):
     refNumber: str | None = None
     paymentDifference: float | None = None
     isDraft: bool | None = None
+    isReceipt: bool | None = None
     isTemplate: bool | None = None
     paymentInformation: str | None = None
     isRequest: bool | None = None
