@@ -59,7 +59,7 @@ class ContactDetailsBase(EasyVereinBase):
     street: str | None = Field(default=None, max_length=128)
     city: str | None = Field(default=None, max_length=100)
     state: str | None = Field(default=None, max_length=64)
-    additionalAdressInfo: str | None = Field(default=None, max_length=128)  # Intentionally written wrong, as per API
+    addressSuffix: str | None = Field(default=None, max_length=128)
     zip: str | None = Field(default=None, max_length=20)
     country: str | None = Field(default=None, max_length=50)
     companyStreet: str | None = Field(default=None, max_length=100)

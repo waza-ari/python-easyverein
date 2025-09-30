@@ -67,7 +67,7 @@ class CustomFieldBase(EasyVereinBase):
     It is not even possible to set other fields except the ones mentioned before in the portal,
     so not sure what the other values are meant for.
     """
-    additional: OptionsField = None
+    selectOptions: OptionsField = None
     description: str | None = Field(default=None, max_length=124)
     member_show: bool | None = None
     member_edit: bool | None = None

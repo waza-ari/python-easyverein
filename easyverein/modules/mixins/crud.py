@@ -38,7 +38,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url_params = {"limit": limit, "query": query, "page": page}
+        url_params = {"limit": limit, "query": query, "page": page, "showCount": True}
         if search:
             url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True, by_alias=True)
 
@@ -70,7 +70,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url_params = {"limit": limit_per_page, "query": query}
+        url_params = {"limit": limit_per_page, "query": query, "showCount": True}
         if search:
             url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True, by_alias=True)
 

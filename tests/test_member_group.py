@@ -1,3 +1,5 @@
+import time
+
 from easyverein import EasyvereinAPI
 from easyverein.models.member_group import MemberGroup, MemberGroupCreate, MemberGroupUpdate
 
@@ -24,6 +26,8 @@ class TestMembeGropr:
 
         # Delete member group again
         ev_connection.member_group.delete(member_group)
+
+        time.sleep(1)
 
         # Check waste basket
         member_groups, c = ev_connection.member_group.get_deleted()

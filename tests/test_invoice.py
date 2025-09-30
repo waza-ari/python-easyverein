@@ -76,6 +76,7 @@ class TestInvoices:
             invNumber=random_string,
             receiver="Test Receiver\nTest Street\n Some weird country",
             totalPrice=100,
+            isDraft=True,
         )
 
         invoice = ev_connection.invoice.create(invoice_model)

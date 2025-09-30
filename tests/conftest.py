@@ -16,6 +16,15 @@ def ev_connection():
     return EasyvereinAPI(api_key, base_url=api_url, api_version=api_version, auto_retry=True)
 
 
+@pytest.fixture(scope="module", autouse=True)
+def _clear_wastebaskets(ev_connection: EasyvereinAPI):
+    for module in ["member_group", "custom_field", "contact_details"]:
+        deleted, _ = getattr(ev_connection, module).get_deleted()
+        for d in deleted:
+            getattr(ev_connection, module).purge(d)
+
+
+
 @pytest.fixture(scope="function")
 def random_string():
     return "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(16))
