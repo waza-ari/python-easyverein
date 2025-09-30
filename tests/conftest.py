@@ -24,7 +24,6 @@ def _clear_wastebaskets(ev_connection: EasyvereinAPI):
             getattr(ev_connection, module).purge(d)
 
 
-
 @pytest.fixture(scope="function")
 def random_string():
     return "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(16))
