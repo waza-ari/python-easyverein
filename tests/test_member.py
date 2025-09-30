@@ -2,7 +2,7 @@ import pytest
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPINotFoundException
 from easyverein.models.contact_details import ContactDetails
-from easyverein.models.member import Member
+from easyverein.models.member import Member, MemberFilter
 
 
 class TestMember:
@@ -45,3 +45,8 @@ class TestMember:
         # Expect an Exception
         with pytest.raises(EasyvereinAPINotFoundException):
             ev_connection.member.get_by_id(123)
+
+    def test_member_with_filter(self, ev_connection: EasyvereinAPI):
+        members, total_count = ev_connection.member.get(search=MemberFilter(isChairman=False))
+        assert len(members) == 4
+        assert total_count == 4
