@@ -1,16 +1,15 @@
-import pytest
 from easyverein import EasyvereinAPI
-from easyverein.models import BookingProject, BookingProjectCreate, BookingProjectUpdate, BookingProjectFilter
+from easyverein.models import BookingProject, BookingProjectCreate, BookingProjectFilter, BookingProjectUpdate
 
 
 class TestBookingProject:
     def test_get_booking_projects(self, ev_connection: EasyvereinAPI):
         """Test getting all booking projects"""
         booking_projects, total_count = ev_connection.booking_project.get()
-        
+
         assert isinstance(booking_projects, list)
         assert isinstance(total_count, int)
-        
+
         # Check if all booking projects are of type BookingProject
         for booking_project in booking_projects:
             assert isinstance(booking_project, BookingProject)
@@ -18,13 +17,13 @@ class TestBookingProject:
     def test_get_booking_project_by_id(self, ev_connection: EasyvereinAPI, example_booking_project):
         """Test getting a booking project by ID"""
         booking_project = ev_connection.booking_project.get_by_id(example_booking_project.id)
-        
+
         assert isinstance(booking_project, BookingProject)
         assert booking_project.id == example_booking_project.id
         assert booking_project.name == example_booking_project.name
 
     def test_booking_project_create_and_delete(self, ev_connection: EasyvereinAPI, random_string: str):
-        """Test creating and deleting a booking project"""        
+        """Test creating and deleting a booking project"""
         # Create a new booking project with unique short code (max 4 chars)
         booking_project_data = {
             "name": f"Test Project {random_string}",
@@ -34,7 +33,7 @@ class TestBookingProject:
             "completed": False,
             "projectCostCentre": "90001",
         }
-        
+
         create_model = BookingProjectCreate(**booking_project_data)
         booking_project = ev_connection.booking_project.create(create_model)
 
@@ -85,7 +84,7 @@ class TestBookingProject:
         """Test filtering booking projects"""
         # Get all booking projects first
         all_projects, _ = ev_connection.booking_project.get()
-        
+
         if len(all_projects) > 0:
             # Use the name of the first project for filtering
             first_project = all_projects[0]
@@ -103,6 +102,6 @@ class TestBookingProject:
             # If no projects exist, just test that filtering returns empty list
             filter_params = BookingProjectFilter(name="NonExistentProject")
             booking_projects, _ = ev_connection.booking_project.get(search=filter_params)
-            
+
             assert isinstance(booking_projects, list)
             assert len(booking_projects) == 0
