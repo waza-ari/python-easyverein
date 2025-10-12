@@ -74,7 +74,7 @@ class TestBookingProject:
 
         # Reset the booking project back to original state for other tests
         reset_data = {
-            "name": "Test-Project",
+            "name": example_booking_project.name,  # Use the original name from the fixture
             "color": "#23985d",
             "completed": False,
         }
