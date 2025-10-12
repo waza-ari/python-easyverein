@@ -37,11 +37,16 @@ def example_custom_field(ev_connection):
 
 @pytest.fixture(scope="module")
 def example_booking_project(ev_connection):
+    # Generate unique identifiers using timestamp to avoid collisions
+    import time
+    timestamp = str(int(time.time()))
+    unique_short = timestamp[-4:]  # Use last 4 digits of timestamp
+    unique_name = f"Test-Project-{timestamp[-6:]}"  # Use last 6 digits for name
     booking_project = ev_connection.booking_project.create(
         BookingProjectCreate(
-            name="Test-Project",
+            name=unique_name,
             color="#23985d",
-            short="5001",
+            short=unique_short,
             budget="0.00",
             completed=False,
             projectCostCentre="90001",
