@@ -19,11 +19,11 @@ class BookingBase(EasyVereinBase):
     | `Booking` | `BookingUpdate` | `BookingCreate` |
     """
 
-    amount: float | None = None
-    # TODO: Add reference to BankAccount once implemented
+    amount: float | None = None  # TODO: Add reference to BankAccount once implemented
     bankAccount: EasyVereinReference | None = None
     # TODO: Add reference to BillingAccount once implemented
     billingAccount: EasyVereinReference | None = None
+    bookingProject: EasyVereinReference | None = None
     description: str | None = None
     date: DateTime | None = None
     receiver: str | None = None
@@ -33,7 +33,6 @@ class BookingBase(EasyVereinBase):
     counterpartIban: str | None = None
     counterpartBic: str | None = None
     twingleDonation: bool | None = None
-    bookingProject: str | None = None
     sphere: int | None = None
     relatedInvoice: list[EasyVereinReference] | None = None
 
