@@ -52,6 +52,7 @@ class InvoiceBase(EasyVereinBase):
             "expense",
             "cancel",
             "credit",
+            "selfIssuedReceipt",
         ]
         | None
     ) = None
