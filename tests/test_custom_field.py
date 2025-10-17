@@ -32,6 +32,8 @@ class TestCustomField:
                 data={"name": name, "kind": "e", "settings_type": "t", "description": description},
             )
             assert status == 201, f"Failed to create custom field: {data}"
+            if not isinstance(data, dict):
+                raise TypeError("Response data is not a dict")
             return data["id"]
 
         field_id = create(random_string(max_length_name), random_string(max_length_description))
