@@ -1,8 +1,6 @@
 import random
 import string
 
-from pydantic import ValidationError
-
 from easyverein import EasyvereinAPI
 from easyverein.models.custom_field import (
     CustomField,
@@ -12,10 +10,7 @@ from easyverein.models.custom_field import (
 
 
 class TestCustomField:
-
-
     def test_name_length(self, ev_connection: EasyvereinAPI):
-
         def random_string(length: int = 16) -> str:
             return "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
 
@@ -34,25 +29,17 @@ class TestCustomField:
             status, data = ev_connection.c._do_request(
                 "post",
                 url=ev_connection.c.get_url(f"/{ev_connection.custom_field.endpoint_name}/"),
-                data={
-                    "name": name,
-                    "kind": "e",
-                    "settings_type": "t",
-                    "description": description
-                }
+                data={"name": name, "kind": "e", "settings_type": "t", "description": description},
             )
             assert status == 201, f"Failed to create custom field: {data}"
             return data["id"]
 
-        field_id = create(
-            random_string(max_length_name),
-            random_string(max_length_description)
-        )
+        field_id = create(random_string(max_length_name), random_string(max_length_description))
         ev_connection.custom_field.delete(field_id)
 
         try:
             field_id = create(random_string(max_length_name + 1))
-        except AssertionError as e:
+        except AssertionError:
             pass  # Expected
         else:
             ev_connection.custom_field.delete(field_id)
@@ -60,12 +47,11 @@ class TestCustomField:
 
         try:
             field_id = create(random_string(), description=random_string(max_length_description + 1))
-        except AssertionError as e:
+        except AssertionError:
             pass  # Expected
         else:
             ev_connection.custom_field.delete(field_id)
             assert False, "Expected an exception due to description length"
-
 
     def test_create_custom_field(self, ev_connection: EasyvereinAPI):
         # Get current custom fields
