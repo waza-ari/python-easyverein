@@ -68,7 +68,7 @@ class CustomFieldBase(EasyVereinBase):
     so not sure what the other values are meant for.
     """
     additional: OptionsField = None
-    description: str | None = Field(default=None, max_length=124)
+    description: str | None = Field(default=None, max_length=500)
     member_show: bool | None = None
     member_edit: bool | None = None
     needsAdminApproval: bool | None = None
