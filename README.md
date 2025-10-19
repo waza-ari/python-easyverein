@@ -17,7 +17,7 @@ library, please do not open a support request within EasyVerein but report it to
 
 ## State of the API
 
-This client was written against and tested against the Hexa v1.7 API version of EasyVerein. It may or may not work
+This client was written against and tested against the v2.0 API version of EasyVerein. It may or may not work
 with newer / older API versions, so please use them at your own risk. As the EasyVerein API does not expose model
 information, the models used as part of this library are specific to this library and are based on information obtained
 from the API responses (e.g. required fields when creating an item).

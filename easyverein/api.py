@@ -16,7 +16,7 @@ from .modules.member import MemberMixin
 from .modules.member_group import MemberGroupMixin
 from .modules.mixins.helper import parse_models
 
-SUPPORTED_API_VERSIONS = ["v1.6", "v1.7", "v2.0"]
+SUPPORTED_API_VERSIONS = ["v2.0"]
 
 
 class EasyvereinAPI:

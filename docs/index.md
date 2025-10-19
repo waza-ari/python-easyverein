@@ -54,8 +54,12 @@ the hood, so you get auto-completion and a guaranteed interface for these models
 
 ## API Versions
 
-Currently, the API versions v1.7 and v2.0 are supported. Please note that support for v2.0 is experimental and might
-not work as expected. The library defaults to v1.7, but you can change the version by setting the `api_version` attribute
+The library version 1.x supports version v1.7 of the EasyVerein API, while the 2.x releases only support the v2.0 version
+of the EasyVerein API. Note that EasyVerein is often doing breaking changes within an API version, so if you encounter
+any issues when using this library in a supported configuration (e.g. library 2.x with EV API v2.0), please raise an issue
+here.
+
+The library defaults to v2.0, but you can change the version by setting the `api_version` attribute
 of the `EasyvereinAPI` object.
 
 Version 2.0 introduces a change to authentication, it does not allow the ephemeral API keys anymore. Instead,
@@ -64,7 +68,7 @@ token expiration.
 
 ## State of the API
 
-This client was written against and tested against the Hexa v1.7 API version of EasyVerein. It may or may not work
+This client was written against and tested against the 2.0 API version of EasyVerein. It may or may not work
 with newer / older API versions, so please use them at your own risk. As the EasyVerein API does not expose model
 information, the models used as part of this library are specific to this library and are based on information obtained
 from the API responses (e.g. required fields when creating an item).

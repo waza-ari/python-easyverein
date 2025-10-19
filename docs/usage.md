@@ -7,7 +7,7 @@ Before you can do any requests, you'll need to create the client object first. T
 ```python
 EasyvereinAPI(
     api_key,
-    api_version="v1.7",
+    api_version="v2.0",
     base_url="https://easyverein.com/api/",
     logger=None,
 )
@@ -48,7 +48,7 @@ is needed. Optionally, you can instruct the library to automatically refresh the
 callback function.
 
 !!! info "Version 2.0 only"
-    Please not that the new token type is only supported in API version 2.0. If you're using API version 1.7, you
+    Please not that the new token type is only supported in API version 2.0. If you're using API version 1.x, you
     do not need to configure token refresh, the library will raise an exception if you try.
 
 There are two ways this can be done, one synchronous and one asynchronous option. When using asynchronously,
