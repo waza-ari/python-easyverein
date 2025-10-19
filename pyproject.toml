@@ -23,7 +23,7 @@ mkdocs-material = "^9"
 mkdocstrings = {extras = ["python"], version = "^0"}
 pymdown-extensions = "^10.7"
 pre-commit = "^4"
-pytest-cov = "^6"
+pytest-cov = "^7"
 mypy = "^1.11.1"
 rich = "^14"
 
