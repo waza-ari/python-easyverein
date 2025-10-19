@@ -10,50 +10,6 @@ from easyverein.models.custom_field import (
 
 
 class TestCustomField:
-    def test_name_length(self, ev_connection: EasyvereinAPI):
-        def random_string(length: int = 16) -> str:
-            return "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
-
-        def get_max_length(field: str) -> int:
-            properties = CustomField.model_json_schema()["properties"][field]
-            assert "anyOf" in properties, f"field {field} does not seem to have type str | None"
-            for item in properties["anyOf"]:
-                if item.get("type") == "string":
-                    return item["maxLength"]
-            raise ValueError(f"Could not find string type for field {field}")
-
-        max_length_name = get_max_length("name")
-        max_length_description = get_max_length("description")
-
-        def create(name: str, description: str = "") -> int:
-            status, data = ev_connection.c._do_request(
-                "post",
-                url=ev_connection.c.get_url(f"/{ev_connection.custom_field.endpoint_name}/"),
-                data={"name": name, "kind": "e", "settings_type": "t", "description": description},
-            )
-            assert status == 201, f"Failed to create custom field: {data}"
-            if not isinstance(data, dict):
-                raise TypeError("Response data is not a dict")
-            return data["id"]
-
-        field_id = create(random_string(max_length_name), random_string(max_length_description))
-        ev_connection.custom_field.delete(field_id)
-
-        try:
-            field_id = create(random_string(max_length_name + 1))
-        except AssertionError:
-            pass  # Expected
-        else:
-            ev_connection.custom_field.delete(field_id)
-            assert False, "Expected an exception due to name length"
-
-        try:
-            field_id = create(random_string(), description=random_string(max_length_description + 1))
-        except AssertionError:
-            pass  # Expected
-        else:
-            ev_connection.custom_field.delete(field_id)
-            assert False, "Expected an exception due to description length"
 
     def test_create_custom_field(self, ev_connection: EasyvereinAPI):
         # Get current custom fields
@@ -114,3 +70,49 @@ class TestCustomField:
         assert isinstance(deleted_custom_fields, list)
         assert len(deleted_custom_fields) == 0
         assert len(custom_fields) == old_total_count
+
+    def test_name_length(self, ev_connection: EasyvereinAPI):
+        def random_string(length: int = 16) -> str:
+            return "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+
+        def get_max_length(field: str) -> int:
+            properties = CustomField.model_json_schema()["properties"][field]
+            assert "anyOf" in properties, f"field {field} does not seem to have type str | None"
+            for item in properties["anyOf"]:
+                if item.get("type") == "string":
+                    return item["maxLength"]
+            raise ValueError(f"Could not find string type for field {field}")
+
+        max_length_name = get_max_length("name")
+        max_length_description = get_max_length("description")
+
+        def create(name: str, description: str = "") -> int:
+            status, data = ev_connection.c._do_request(
+                "post",
+                url=ev_connection.c.get_url(f"/{ev_connection.custom_field.endpoint_name}/"),
+                data={"name": name, "kind": "e", "settings_type": "t", "description": description},
+            )
+            assert status == 201, f"Failed to create custom field: {data}"
+            if not isinstance(data, dict):
+                raise TypeError("Response data is not a dict")
+            return data["id"]
+
+        field_id = create(random_string(max_length_name), random_string(max_length_description))
+        ev_connection.custom_field.delete(field_id)
+        ev_connection.custom_field.purge(field_id)
+
+        try:
+            field_id = create(random_string(max_length_name + 1))
+        except AssertionError:
+            pass  # Expected
+        else:
+            ev_connection.custom_field.delete(field_id)
+            assert False, "Expected an exception due to name length"
+
+        try:
+            field_id = create(random_string(), description=random_string(max_length_description + 1))
+        except AssertionError:
+            pass  # Expected
+        else:
+            ev_connection.custom_field.delete(field_id)
+            assert False, "Expected an exception due to description length"
