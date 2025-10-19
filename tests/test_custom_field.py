@@ -10,7 +10,6 @@ from easyverein.models.custom_field import (
 
 
 class TestCustomField:
-
     def test_create_custom_field(self, ev_connection: EasyvereinAPI):
         # Get current custom fields
         _, old_total_count = ev_connection.custom_field.get()
