@@ -26,3 +26,31 @@ tasks:
       - task lint
       - task typecheck
       - task test
+
+  release:
+    desc: "Release a new version - updates version files and creates git commit"
+    vars:
+      VERSION: '{{.VERSION | default ""}}'
+    preconditions:
+      - sh: '[ -n "{{.VERSION}}" ]'
+        msg: "VERSION is required. Usage: task release VERSION=1.1.0"
+      - sh: 'echo "{{.VERSION}}" | grep -E "^[0-9]+\.[0-9]+\.[0-9]+$"'
+        msg: "VERSION must be in format X.Y.Z (e.g. 1.1.0)"
+    cmds:
+      - echo "Releasing version {{.VERSION}}"
+      - |
+        # Update pyproject.toml version
+        sed -i '' 's/^version = ".*"/version = "{{.VERSION}}"/' pyproject.toml
+      - |
+        # Update __init__.py version
+        sed -i '' 's/^__version__ = ".*"/__version__ = "{{.VERSION}}"/' easyverein/__init__.py
+      - |
+        # Add files and create git commit
+        git add pyproject.toml easyverein/__init__.py
+        git commit -m "build: release version {{.VERSION}}"
+      - |
+        # Create git tag and push
+        git tag v{{.VERSION}}
+        git push origin main
+        git push origin v{{.VERSION}}
+      - echo "Successfully released version {{.VERSION}} and pushed to remote"

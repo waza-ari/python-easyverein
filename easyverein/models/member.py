@@ -144,16 +144,16 @@ class MemberFilter(BaseModel):
     joinDate: DateTime | None = None
     joinDate__gte: DateTime | None = None
     joinDate__lte: DateTime | None = None
-    joinDate__isnull: DateTime | None = None
+    joinDate__isnull: bool | None = None
     resignationDate: DateTime | None = None
     resignationDate__gte: DateTime | None = None
     resignationDate__lte: DateTime | None = None
-    resignationDate__isnull: DateTime | None = None
+    resignationDate__isnull: bool | None = None
     isApplication: bool = Field(default=None, serialization_alias="_isApplication")
     applicationDate: Date = Field(default=None, serialization_alias="_applicationDate")
     applicationDate__gte: Date = Field(default=None, serialization_alias="_applicationDate__gte")
     applicationDate__lte: Date = Field(default=None, serialization_alias="_applicationDate__lte")
-    applicationDate__isnull: Date = Field(default=None, serialization_alias="_applicationDate__isnull")
+    applicationDate__isnull: bool = Field(default=None, serialization_alias="_applicationDate__isnull")
     applicationWasAcceptedAt: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt")
     applicationWasAcceptedAt__gte: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt__gte")
     applicationWasAcceptedAt__lte: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt__lte")

@@ -68,7 +68,7 @@ class EasyvereinClient:
 
         if url_params:
             for key, value in url_params.items():
-                if not value:
+                if value in {None, ""}:
                     continue
                 self.logger.debug(f"Adding {key}={value} path parameter to URL")
                 if "?" not in url:

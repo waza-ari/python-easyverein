@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-API_VERSION = "v1.7"
+API_VERSION = "v2.0"
 TYPE_MAPPING = {
     "number": "float",
     "integer": "int",
