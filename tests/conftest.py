@@ -4,7 +4,7 @@ import string
 
 import pytest
 from easyverein import EasyvereinAPI
-from easyverein.models import CustomFieldCreate
+from easyverein.models import BookingProjectCreate, CustomFieldCreate
 
 
 @pytest.fixture(scope="session")
@@ -41,3 +41,30 @@ def example_custom_field(ev_connection):
     yield custom_field
     ev_connection.custom_field.delete(custom_field)
     ev_connection.custom_field.purge(custom_field.id)
+
+
+@pytest.fixture(scope="module")
+def example_booking_project(ev_connection):
+    # Generate unique identifiers using timestamp to avoid collisions
+    import time
+
+    timestamp = str(int(time.time()))
+    unique_short = timestamp[-4:]  # Use last 4 digits of timestamp
+    unique_name = f"Test-Project-{timestamp[-6:]}"  # Use last 6 digits for name
+    booking_project = ev_connection.booking_project.create(
+        BookingProjectCreate(
+            name=unique_name,
+            color="#23985d",
+            short=unique_short,
+            budget="0.00",
+            completed=False,
+            projectCostCentre="90001",
+        )
+    )
+    yield booking_project
+    ev_connection.booking_project.delete(booking_project)
+
+
+@pytest.fixture(scope="function")
+def api_key():
+    return "test_api_key"
