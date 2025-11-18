@@ -77,10 +77,7 @@ class MemberBase(EasyVereinBase):
     Alias for `_applicationWasAcceptedAt` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
     signatureText: str | None = None
-    relatedMember: Member | EasyVereinReference | None = Field(default=None, alias="_relatedMember")
-    """
-    Alias for `_relatedMember` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
-    """
+    relatedMembers: list[Member | EasyVereinReference] | None =None
     editableByRelatedMembers: bool | None = Field(default=None, alias="_editableByRelatedMembers")
     """
     Alias for `_editableByRelatedMembers` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
