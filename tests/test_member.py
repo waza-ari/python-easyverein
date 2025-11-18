@@ -49,14 +49,14 @@ class TestMember:
     def test_related_members(self, ev_connection: EasyvereinAPI):
         member = ev_connection.member.get_by_id(4187730)
 
-        ev_connection.member.update(target=member.id, data=MemberUpdate(relatedMembers=[4187733]))
+        ev_connection.member.update(target=member, data=MemberUpdate(relatedMembers=[4187733]))
 
         updated_member = ev_connection.member.get_by_id(4187730, query="{id,relatedMembers{id}}")
 
         assert updated_member.relatedMembers is not None
-        assert 4187733 in [m.id for m in updated_member.relatedMembers]
+        assert 4187733 in [m.id for m in updated_member.relatedMembers]  # type: ignore[union-attr]
 
         # reset
-        ev_connection.member.update(target=member.id, data=MemberUpdate(relatedMembers=[]))
+        ev_connection.member.update(target=member, data=MemberUpdate(relatedMembers=[]))
         reset_member = ev_connection.member.get_by_id(4187730, query="{id,relatedMembers{id}}")
-        assert reset_member.relatedMembers is None
+        assert reset_member.relatedMembers == []
