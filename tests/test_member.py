@@ -63,3 +63,5 @@ class TestMember:
 
         # reset
         ev_connection.member.update(target=member.id, data=MemberUpdate(relatedMembers=[]))
+        reset_member = ev_connection.member.get_by_id(4187730, query="{id,relatedMembers{id}}")
+        assert reset_member.relatedMembers is None
