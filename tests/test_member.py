@@ -2,7 +2,7 @@ import pytest
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPINotFoundException
 from easyverein.models.contact_details import ContactDetails
-from easyverein.models.member import Member, MemberFilter
+from easyverein.models.member import Member, MemberFilter, MemberUpdate
 
 
 class TestMember:
@@ -50,3 +50,16 @@ class TestMember:
         members, total_count = ev_connection.member.get(search=MemberFilter(isChairman=False))
         assert len(members) == 4
         assert total_count == 4
+
+    def test_related_members(self, ev_connection: EasyvereinAPI):
+        member = ev_connection.member.get_by_id(4187730)
+
+        ev_connection.member.update(target=member.id, data=MemberUpdate(relatedMembers=[4187733]))
+
+        updated_member = ev_connection.member.get_by_id(4187730, query="{id,relatedMembers{id}}")
+
+        assert updated_member.relatedMembers is not None
+        assert 4187733 in [m.id for m in updated_member.relatedMembers]
+
+        # reset
+        ev_connection.member.update(target=member.id, data=MemberUpdate(relatedMembers=[]))
