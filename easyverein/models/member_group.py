@@ -41,7 +41,7 @@ class MemberGroupBase(EasyVereinBase):
     assignmentDeleteAfterBooking: bool | None = None
     usePaymentFormula: bool | None = None
     paymentFormula: str | None = Field(default=None, max_length=512)
-    paymentInterval: PositiveInt | None = None
+    paymentInterval: PositiveInt | Literal[-1] | None = None
     nameOnInvoice: str | None = Field(default=None, max_length=256)
     descriptionOnInvoice: str | None = None
     showInApplicationform: bool | None = None
