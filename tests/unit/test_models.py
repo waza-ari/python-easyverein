@@ -1,9 +1,8 @@
 """Unit tests for Pydantic model validation (no API connection required)."""
 
 import pytest
-from pydantic import ValidationError
-
 from easyverein.models.member_group import MemberGroup
+from pydantic import ValidationError
 
 
 class TestMemberGroupModel:
