@@ -8,6 +8,7 @@ from typing import Callable, cast
 from .core.client import EasyvereinClient
 from .core.responses import BearerToken
 from .modules.booking import BookingMixin
+from .modules.booking_project import BookingProjectMixin
 from .modules.contact_details import ContactDetailsMixin
 from .modules.custom_field import CustomFieldMixin
 from .modules.invoice import InvoiceMixin
@@ -65,6 +66,7 @@ class EasyvereinAPI:
         self.invoice_item = InvoiceItemMixin(self.c, self.logger)
         self.member = MemberMixin(self.c, self.logger)
         self.member_group = MemberGroupMixin(self.c, self.logger)
+        self.booking_project = BookingProjectMixin(self.c, self.logger)
 
     def handle_token_refresh(self):
         """
