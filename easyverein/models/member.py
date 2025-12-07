@@ -85,8 +85,8 @@ class MemberBase(EasyVereinBase):
     sepaMandateFile: AnyHttpURL | str | None = None
     # TODO: exact type is not specified in API docs
     integrationDosbSport: list | None = None
-    customFields: EasyVereinReference | list[MemberCustomField] | None = None
-    memberGroups: EasyVereinReference | list[MemberMemberGroup] | None = None
+    customFields: list[EasyVereinReference] | list[MemberCustomField] | None = None
+    memberGroups: list[EasyVereinReference] | list[MemberMemberGroup] | None = None
 
 
 class Member(MemberBase, EmptyStringsToNone):
