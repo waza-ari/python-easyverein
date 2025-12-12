@@ -47,7 +47,6 @@ class TestMember:
             ev_connection.member.get_by_id(123)
 
     def test_related_members(self, ev_connection: EasyvereinAPI):
-
         # Get all members
         members, total_count = ev_connection.member.get()
         assert total_count == 5
@@ -55,15 +54,24 @@ class TestMember:
 
         # Update member
         owner_member = members[0]
+        assert isinstance(owner_member, Member)
         related_member = members[1]
+        assert isinstance(related_member, Member)
         ev_connection.member.update(target=owner_member, data=MemberUpdate(relatedMembers=[related_member.id]))
 
         # Get updated member
+        assert isinstance(owner_member.id, int)
         updated_member = ev_connection.member.get_by_id(owner_member.id, query="{id,relatedMembers{id}}")
+        assert isinstance(updated_member, Member)
         assert updated_member.relatedMembers is not None
+        assert isinstance(updated_member.relatedMembers, list)
+        assert isinstance(updated_member.relatedMembers[0], Member)
         assert related_member.id in [m.id for m in updated_member.relatedMembers]
 
         # Reset
         ev_connection.member.update(target=owner_member, data=MemberUpdate(relatedMembers=[]))
+        assert isinstance(owner_member.id, int)
         reset_member = ev_connection.member.get_by_id(owner_member.id, query="{id,relatedMembers{id}}")
+        assert isinstance(reset_member, Member)
+        assert isinstance(reset_member.relatedMembers, list)
         assert reset_member.relatedMembers == []
