@@ -47,16 +47,23 @@ class TestMember:
             ev_connection.member.get_by_id(123)
 
     def test_related_members(self, ev_connection: EasyvereinAPI):
-        member = ev_connection.member.get_by_id(4187730)
 
-        ev_connection.member.update(target=member, data=MemberUpdate(relatedMembers=[4187733]))
+        # Get all members
+        members, total_count = ev_connection.member.get()
+        assert total_count == 5
+        assert len(members) == 5
 
-        updated_member = ev_connection.member.get_by_id(4187730, query="{id,relatedMembers{id}}")
+        # Update member
+        owner_member = members[0]
+        related_member = members[1]
+        ev_connection.member.update(target=owner_member, data=MemberUpdate(relatedMembers=[related_member.id]))
 
+        # Get updated member
+        updated_member = ev_connection.member.get_by_id(owner_member.id, query="{id,relatedMembers{id}}")
         assert updated_member.relatedMembers is not None
-        assert 4187733 in [m.id for m in updated_member.relatedMembers]  # type: ignore[union-attr]
+        assert related_member.id in [m.id for m in updated_member.relatedMembers]
 
-        # reset
-        ev_connection.member.update(target=member, data=MemberUpdate(relatedMembers=[]))
-        reset_member = ev_connection.member.get_by_id(4187730, query="{id,relatedMembers{id}}")
+        # Reset
+        ev_connection.member.update(target=owner_member, data=MemberUpdate(relatedMembers=[]))
+        reset_member = ev_connection.member.get_by_id(owner_member.id, query="{id,relatedMembers{id}}")
         assert reset_member.relatedMembers == []
