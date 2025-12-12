@@ -14,13 +14,13 @@ email-validator = "^2"
 
 
 [tool.poetry.group.dev.dependencies]
-sphinx = "^8"
+sphinx = "^9"
 sphinx-rtd-theme = "^3"
 ruff = "*"
-pytest = "^8"
+pytest = "^9"
 pytest-dotenv = "^0"
 mkdocs-material = "^9"
-mkdocstrings = {extras = ["python"], version = "^0"}
+mkdocstrings = {extras = ["python"], version = "^1"}
 pymdown-extensions = "^10.7"
 pre-commit = "^4"
 pytest-cov = "^7"
