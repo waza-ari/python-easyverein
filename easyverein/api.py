@@ -23,7 +23,7 @@ class EasyvereinAPI:
     def __init__(
         self,
         api_key,
-        api_version="v1.7",
+        api_version="v2.0",
         base_url: str = "https://easyverein.com/api/",
         logger: logging.Logger | None = None,
         auto_retry=False,
