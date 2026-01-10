@@ -48,7 +48,7 @@ class MemberGroupBase(EasyVereinBase):
     agePermission: PositiveIntWithZero | None = None
     nextGroup: EasyVereinReference | None = None
     taxRate: float | None = None
-    billingAccount: EasyVereinReference | None = None
+    billingAccount: BillingAccount | EasyVereinReference | None = None
     costCentre: str | None = Field(default=None, max_length=8)
     isOnlyVisibleToAdmins: bool | None = None
     user_shares: Literal["n", "a", "d"] | None = None
@@ -153,3 +153,6 @@ class MemberGroupFilter(BaseModel):
     kind: str | None = None
     deleted: bool | None = None
     ordering: str | None = None
+
+
+from .billing_account import BillingAccount  # noqa: E402

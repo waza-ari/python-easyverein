@@ -18,7 +18,7 @@ def ev_connection():
 
 @pytest.fixture(scope="module", autouse=True)
 def _clear_wastebaskets(ev_connection: EasyvereinAPI):
-    for module in ["member_group", "custom_field", "contact_details"]:
+    for module in ["member_group", "custom_field", "contact_details", "billing_account"]:
         deleted, _ = getattr(ev_connection, module).get_deleted()
         for d in deleted:
             getattr(ev_connection, module).purge(d)

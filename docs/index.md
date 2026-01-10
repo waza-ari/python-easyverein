@@ -82,6 +82,7 @@ When saying CRUD, it means the library supports various methods to **C**reate, *
 reference for details on supported CRUD operations.
 
 * `booking`: CRUD, Soft-Delete
+* `billing_account`: CRUD, Soft-Delete
 * `contact-details`: CRUD, Soft-Delete
 * `custom-fields`: CRUD, Soft-Delete
 * `invoice`: CRUD, Soft-Delete, plus some convenience methods

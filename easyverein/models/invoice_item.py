@@ -35,8 +35,7 @@ class InvoiceItemBase(EasyVereinBase):
     taxRate: float | None = None
     gross: bool | None = None
     taxName: str | None = None
-    # TODO: Add reference to BillingAccount once implemented
-    billingAccount: EasyVereinReference | None = None
+    billingAccount: BillingAccount | EasyVereinReference | None = None
     costCentre: Annotated[str, Field(max_length=8)] | None = None
 
 
@@ -85,4 +84,5 @@ class InvoiceItemFilter(BaseModel):
     search: str | None = None
 
 
+from .billing_account import BillingAccount  # noqa: E402
 from .invoice import Invoice  # noqa: E402

@@ -55,8 +55,7 @@ class InvoiceBase(EasyVereinBase):
         ]
         | None
     ) = None
-    # TODO: Add reference to BillingAccount once implemented
-    selectionAcc: EasyVereinReference | None = None
+    selectionAcc: BillingAccount | EasyVereinReference | None = None
     refNumber: str | None = None
     paymentDifference: float | None = None
     isDraft: bool | None = None
@@ -148,6 +147,7 @@ class InvoiceFilter(BaseModel):
     search: str | None = None
 
 
+from .billing_account import BillingAccount  # noqa: E402
 from .contact_details import ContactDetails  # noqa: E402
 from .invoice_item import InvoiceItem  # noqa: E402
 from .member import Member  # noqa: E402
