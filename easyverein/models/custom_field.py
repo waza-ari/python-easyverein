@@ -111,6 +111,6 @@ class CustomFieldFilter(BaseModel):
     kind: str | None = None
     member_edit: bool | None = None
     member_show: bool | None = None
-    deletedBy__isnull: bool = Field(default=None, serialization_alias="_deletedBy__isnull")
+    deletedBy__isnull: bool | None = Field(default=None, serialization_alias="_deletedBy__isnull")
     deleted: bool | None = None
     ordering: str | None = None

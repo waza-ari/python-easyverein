@@ -148,7 +148,7 @@ class ContactDetailsFilter(BaseModel):
 
     id__in: FilterIntList | None = None
     country: str | None = None
-    isCompany: bool = Field(default=None, serialization_alias="_isCompany")
+    isCompany: bool | None = Field(default=None, serialization_alias="_isCompany")
     preferredCommunicationWay: str | None = None
     contactDetailsGroups: str | None = None
     contactDetailsGroups__not: str | None = None

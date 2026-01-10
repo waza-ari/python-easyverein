@@ -135,9 +135,9 @@ class MemberFilter(BaseModel):
     contactDetails__country: str | None = None
     membershipNumber: str | None = None
     membershipNumber__in: FilterStrList | None = None
-    deletedBy: int = Field(default=None, serialization_alias="_deletedBy")
-    deletedBy__ne: int = Field(default=None, serialization_alias="_deletedBy__ne")
-    deletedBy__isnull: bool = Field(default=None, serialization_alias="_deletedBy__isnull")
+    deletedBy: int | None = Field(default=None, serialization_alias="_deletedBy")
+    deletedBy__ne: int | None = Field(default=None, serialization_alias="_deletedBy__ne")
+    deletedBy__isnull: bool | None = Field(default=None, serialization_alias="_deletedBy__isnull")
     joinDate: DateTime | None = None
     joinDate__gte: DateTime | None = None
     joinDate__lte: DateTime | None = None
@@ -146,18 +146,22 @@ class MemberFilter(BaseModel):
     resignationDate__gte: DateTime | None = None
     resignationDate__lte: DateTime | None = None
     resignationDate__isnull: bool | None = None
-    isApplication: bool = Field(default=None, serialization_alias="_isApplication")
-    applicationDate: Date = Field(default=None, serialization_alias="_applicationDate")
-    applicationDate__gte: Date = Field(default=None, serialization_alias="_applicationDate__gte")
-    applicationDate__lte: Date = Field(default=None, serialization_alias="_applicationDate__lte")
-    applicationDate__isnull: bool = Field(default=None, serialization_alias="_applicationDate__isnull")
-    applicationWasAcceptedAt: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt")
-    applicationWasAcceptedAt__gte: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt__gte")
-    applicationWasAcceptedAt__lte: Date = Field(default=None, serialization_alias="_applicationWasAcceptedAt__lte")
-    applicationWasAcceptedAt__isnull: bool = Field(
+    isApplication: bool | None = Field(default=None, serialization_alias="_isApplication")
+    applicationDate: Date | None = Field(default=None, serialization_alias="_applicationDate")
+    applicationDate__gte: Date | None = Field(default=None, serialization_alias="_applicationDate__gte")
+    applicationDate__lte: Date | None = Field(default=None, serialization_alias="_applicationDate__lte")
+    applicationDate__isnull: bool | None = Field(default=None, serialization_alias="_applicationDate__isnull")
+    applicationWasAcceptedAt: Date | None = Field(default=None, serialization_alias="_applicationWasAcceptedAt")
+    applicationWasAcceptedAt__gte: Date | None = Field(
+        default=None, serialization_alias="_applicationWasAcceptedAt__gte"
+    )
+    applicationWasAcceptedAt__lte: Date | None = Field(
+        default=None, serialization_alias="_applicationWasAcceptedAt__lte"
+    )
+    applicationWasAcceptedAt__isnull: bool | None = Field(
         default=None, serialization_alias="_applicationWasAcceptedAt__isnull"
     )
-    isChairman: bool = Field(default=None, serialization_alias="_isChairman")
+    isChairman: bool | None = Field(default=None, serialization_alias="_isChairman")
     memberGroups: FilterIntList | None = None
     """
     Filter for members that are member of the given group(s)
