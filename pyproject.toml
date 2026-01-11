@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "python-easyverein"
-version = "2.1.2"
+version = "2.2.0"
 description = "Python library to interact with the EasyVerein API"
 authors = ["Daniel Herrmann <daniel.herrmann1@gmail.com>"]
 readme = "README.md"
