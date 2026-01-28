@@ -1,0 +1,88 @@
+[tool.poetry]
+name = "python-easyverein"
+version = "2.2.1"
+description = "Python library to interact with the EasyVerein API"
+authors = ["Daniel Herrmann <daniel.herrmann1@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "easyverein" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydantic = "^2"
+requests = "^2"
+email-validator = "^2"
+
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^9"
+sphinx-rtd-theme = "^3"
+ruff = "*"
+pytest = "^9"
+pytest-dotenv = "^0"
+mkdocs-material = "^9"
+mkdocstrings = {extras = ["python"], version = "^1"}
+pymdown-extensions = "^10.7"
+pre-commit = "^4"
+pytest-cov = "^7"
+mypy = "^1.11.1"
+rich = "^14"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+target-version = "py37"
+line-length = 120
+fix = true
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    # https://docs.astral.sh/ruff/rules/#pyflakes-f
+    "F", # Pyflakes
+    # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+    "E", # pycodestyle
+    "W", # Warning
+    # https://docs.astral.sh/ruff/rules/#flake8-comprehensions-c4
+    # https://docs.astral.sh/ruff/rules/#mccabe-c90
+    "C", # Complexity (mccabe+) & comprehensions
+    # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "UP", # pyupgrade
+    # https://docs.astral.sh/ruff/rules/#isort-i
+    "I", # isort
+]
+ignore = [
+    # https://docs.astral.sh/ruff/rules/#pycodestyle-e-w
+    "E402", # module level import not at top of file
+    # https://docs.astral.sh/ruff/rules/#pyupgrade-up
+    "UP006", # use-pep585-annotation
+    "UP007", # use-pep604-annotation
+    "E741",  # Ambiguous variable name
+    # "UP035", # deprecated-assertion
+    "PLE1205"  # PLE1205 due to custom logger implementation
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 24
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.isort]
+case-sensitive = true
+detect-same-package = true
+known-first-party = ["backend"]
+
+[tool.ruff.lint.per-file-ignores]
+# Ignore `E402` and `F401` (import violations) in all `__init__.py` files
+"__init__.py" = ["E402", "F401"]
+
+[tool.pytest.ini_options]
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+
+[tool.mypy]
+disable_error_code = "import-untyped"

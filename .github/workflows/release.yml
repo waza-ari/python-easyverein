@@ -1,0 +1,30 @@
+name: Package Release
+on:
+  push:
+    tags:
+      - "v*.*.*"
+jobs:
+  build-test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.16
+        with:
+          pypi_token: ${{ secrets.TEST_PYPI_TOKEN }}
+          repository_name: "python-easyverein"
+          repository_url: "https://test.pypi.org/legacy/"
+          python_version: "3.11"
+          poetry_version: "==1.6.1"
+  release:
+    runs-on: ubuntu-22.04
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and publish to pypi
+        uses: JRubics/poetry-publish@v1.16
+        with:
+          pypi_token: ${{ secrets.PYPI_TOKEN }}
+          repository_name: "python-easyverein"
+          python_version: "3.11"
+          poetry_version: "==1.6.1"

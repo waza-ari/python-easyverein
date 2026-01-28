@@ -1,0 +1,79 @@
+site_name: Python Easyverein Documentation
+repo_url: https://github.com/waza-ari/python-easyverein
+docs_dir: docs
+theme:
+  name: "material"
+  features:
+    - content.tabs.link
+    - content.code.annotate
+    - content.code.copy
+    - announce.dismiss
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_bases: false
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+            separate_signature: true
+            unwrap_annotated: true
+
+markdown_extensions:
+  - admonition
+  - tables
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - toc:
+      toc_depth: 4
+      permalink: true
+      title: Page contents
+
+nav:
+  - index.md
+  - usage.md
+  - "API Reference":
+    - "CRUD Operations": api/crud.md
+    - "Recycle Bin / Soft Delete": api/recycle_bin.md
+    - "Endpoint Specific":
+        - "Booking": api/endpoints/booking.md
+        - "Billing Account": api/endpoints/billing_account.md
+        - "Booking Project": api/endpoints/booking_project.md
+        - "Contact Details": api/endpoints/contact_details.md
+        - "Custom Field": api/endpoints/custom_field.md
+        - "Invoice": api/endpoints/invoice.md
+        - "Invoice Item": api/endpoints/invoice_item.md
+        - "Member":
+          - "Member": api/endpoints/member.md
+          - "Custom Field Associations": api/endpoints/member_custom_field.md
+          - "Member Group Associations": api/endpoints/member_member_group.md
+        - "Member Group": api/endpoints/member_group.md
+  - "Model Reference":
+    - "Base Model": models/base.md
+    - "Booking": models/booking.md
+    - "Billing Account": models/billing_account.md
+    - "Booking Project": models/booking_project.md
+    - "Contact Details": models/contact_details.md
+    - "Custom Field": models/custom_field.md
+    - "Invoice": models/invoice.md
+    - "Invoice Item": models/invoice_item.md
+    - "Member": models/member.md
+    - "Member Groups": models/member_group.md
+    - "Member Group Associations": models/member_member_group.md
+    - "Member Custom Field Associations": models/member_custom_field.md
+  - "Changelog": changelog.md
+
+watch:
+  - docs
+  - easyverein
