@@ -1,4 +1,5 @@
 import datetime
+from typing import Generator
 
 import pytest
 from _pytest.fixtures import FixtureRequest
@@ -9,6 +10,14 @@ from easyverein.models.invoice_item import InvoiceItem, InvoiceItemCreate
 from easyverein.models.member import Member
 from pydantic_core import Url
 from requests.structures import CaseInsensitiveDict
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _remove_test_invoices(ev_connection: EasyvereinAPI) -> Generator[None, None, None]:
+    yield
+    for i in ev_connection.invoice.get_all(query="{id,invNumber}"):
+        if i.invNumber and i.invNumber.lower().startswith("test_"):
+            ev_connection.invoice.delete(i, delete_from_recycle_bin=True)
 
 
 class TestInvoices:
@@ -257,3 +266,67 @@ class TestInvoices:
         # Purge invoice from wastebasket
         assert invoice.id is not None
         ev_connection.invoice.purge(invoice.id)
+
+
+class TestInvoiceBulk:
+    def test_bulk_create(self, ev_connection: EasyvereinAPI, random_string: str):
+        name = random_string
+        invoice_data = [
+            InvoiceCreate(
+                invNumber=f"test_{name}1",
+                receiver="Test Receiver 1",
+                totalPrice=100,
+                isDraft=True,
+            ),
+            InvoiceCreate(
+                invNumber=f"test_{name}2",
+                receiver="Test Receiver 2",
+                totalPrice=200,
+                isDraft=True,
+            ),
+        ]
+
+        successes = ev_connection.invoice.bulk_create(invoice_data)
+        assert successes == [True, True]
+
+        created_invoices = [
+            i
+            for i in ev_connection.invoice.get_all(query="{id,invNumber}")
+            if i.invNumber and i.invNumber.startswith(f"test_{name}")
+        ]
+
+        assert len(created_invoices) == 2
+
+    def test_bulk_update(self, ev_connection: EasyvereinAPI, random_string: str):
+        # Create two invoices
+        name = random_string
+        i1 = ev_connection.invoice.create(
+            InvoiceCreate(
+                invNumber=f"test_{name}3",
+                receiver="Test Receiver 3",
+                totalPrice=300,
+                isDraft=True,
+            )
+        )
+        i2 = ev_connection.invoice.create(
+            InvoiceCreate(
+                invNumber=f"test_{name}4",
+                receiver="Test Receiver 4",
+                totalPrice=400,
+                isDraft=True,
+            )
+        )
+
+        update_data = [
+            InvoiceUpdate(id=i1.id, description="Updated Description 1"),
+            InvoiceUpdate(id=i2.id, description="Updated Description 2"),
+        ]
+
+        successes = ev_connection.invoice.bulk_update(update_data)
+        assert successes == [True, True]
+
+        updated_i1 = ev_connection.invoice.get_by_id(i1.id)  # type: ignore
+        updated_i2 = ev_connection.invoice.get_by_id(i2.id)  # type: ignore
+
+        assert updated_i1.description == "Updated Description 1"
+        assert updated_i2.description == "Updated Description 2"

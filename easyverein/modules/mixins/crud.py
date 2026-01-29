@@ -194,3 +194,69 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             self.logger.info(f"Deleting object of type {self.endpoint_name} with id {obj_id} from wastebasket")
             purge: Callable = getattr(self, "purge")
             purge(obj_id)
+
+
+class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
+    """
+    Mixin providing bulk create and update functionality for endpoints that support it.
+    Currently only supported for the `member` and `contact-details` endpoints.
+    """
+
+    def bulk_create(self: EVClientProtocol[ModelType], data: list[CreateModelType]) -> list[bool]:
+        """
+        Creates multiple objects in a single API request and returns the created objects.
+
+        **Example**:
+
+        ```py
+        from easyverein import EasyvereinAPI
+
+        ev_client = EasyvereinAPI("your_api_key")
+
+        contact_details = ev_client.contact_details.bulk_create([
+            ContactDetailsCreate(fistName="example1", lastName="Example1", isCompany=False),
+            ContactDetailsCreate(fistName="example2", lastName="Example2", isCompany=False),
+        ])
+        ```
+
+        Args:
+            data: List of Pydantic models containing the data for the objects to be created.
+        """
+        self.logger.info(f"Creating object of type {self.endpoint_name}")
+
+        url = self.c.get_url(f"/{self.endpoint_name}/bulk-create")
+        response = self.c.bulk_create(url, data)
+        return [r["data"]["success"] for r in response.result]  # type: ignore
+
+    def bulk_update(
+        self: EVClientProtocol[ModelType],
+        data: list[UpdateModelType],
+        exclude_none: bool = True,
+    ) -> list[bool]:
+        """
+        Updates multiple objects in a single API request and returns the updated objects.
+
+        Note that the update models must include the `id` of the objects to be updated.
+
+        **Example**:
+
+        ```py
+        from easyverein import EasyvereinAPI
+
+        ev_client = EasyvereinAPI("your_api_key")
+
+        updated_members = ev_client.member.bulk_update([
+            MemberUpdate(id=1, membershipNumber="M1"),
+            MemberUpdate(id=2, membershipNumber="M2"),
+        ])
+        ```
+
+        Args:
+            data: List of Pydantic models containing the data to update.
+            exclude_none: If True, fields with None values will be excluded from the update.
+        """
+        self.logger.info(f"Bulk updating objects of type {self.endpoint_name}")
+
+        url = self.c.get_url(f"/{self.endpoint_name}/bulk-update")
+        response = self.c.bulk_update(url, data, exclude_none=exclude_none)
+        return [r["data"]["success"] for r in response.result]  # type: ignore

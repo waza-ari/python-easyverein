@@ -8,7 +8,7 @@ None
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model       |
+| Generic Model     | CustomField Model   |
 |-------------------|---------------------|
 | `ModelType`       | `CustomField`       |
 | `CreateModelType` | `CustomFieldCreate` |

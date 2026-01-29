@@ -19,7 +19,7 @@ from .invoice_item import (
     InvoiceItemFilter,
     InvoiceItemUpdate,
 )
-from .member import Member, MemberCreate, MemberFilter, MemberUpdate
+from .member import Member, MemberCreate, MemberFilter, MemberSetDosb, MemberSetLsb, MemberUpdate
 from .member_custom_field import (
     MemberCustomField,
     MemberCustomFieldCreate,

@@ -24,7 +24,10 @@ class TestFilter:
             assert isinstance(instance, model)
 
     def test_filter_invoices(self, ev_connection: EasyvereinAPI):
-        search = InvoiceFilter(invNumber__in=["1", "2"], canceledInvoice__isnull=True, isDraft=False)
+        inv_numbers = [iv.invNumber for iv in ev_connection.invoice.get_all()[:2]]
+        assert [ivn is not None for ivn in inv_numbers]
+
+        search = InvoiceFilter(invNumber__in=inv_numbers, canceledInvoice__isnull=True, isDraft=False)
 
         TestFilter.validate_response(ev_connection.invoice.get(search=search), Invoice, 2)
 

@@ -1,5 +1,16 @@
+from typing import Generator
+
+import pytest
 from easyverein import EasyvereinAPI
 from easyverein.models import ContactDetails, ContactDetailsCreate, ContactDetailsUpdate
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _remove_test_contacts(ev_connection: EasyvereinAPI) -> Generator[None, None, None]:
+    yield
+    for c in ev_connection.contact_details.get_all(query="{id,firstName}"):
+        if c.firstName and c.firstName.lower().startswith("test_"):
+            ev_connection.contact_details.delete(c, delete_from_recycle_bin=True)
 
 
 class TestContactDetails:
@@ -69,3 +80,48 @@ class TestContactDetails:
 
         # Delete the contact details again
         ev_connection.contact_details.delete(contact_details, delete_from_recycle_bin=True)
+
+
+class TestContactDetailsBulk:
+    def test_bulk_create(self, ev_connection: EasyvereinAPI, random_string: str):
+        name = random_string
+        contact_details_data = [
+            ContactDetailsCreate(firstName=f"test_{name}1", familyName="Person", isCompany=False),
+            ContactDetailsCreate(firstName=f"test_{name}2", familyName="Person", isCompany=False),
+        ]
+
+        successes = ev_connection.contact_details.bulk_create(contact_details_data)
+        assert successes == [True, True]
+
+        created_contacts = [
+            c
+            for c in ev_connection.contact_details.get_all(query="{id,firstName}")
+            if c.firstName and c.firstName.startswith(f"test_{name}")
+        ]
+
+        assert isinstance(created_contacts, list)
+        assert len(created_contacts) == 2
+
+    def test_bulk_update(self, ev_connection: EasyvereinAPI, random_string: str):
+        # We need some contacts to update. Let's create two.
+        name = random_string
+        c1 = ev_connection.contact_details.create(
+            ContactDetailsCreate(firstName=f"test_{name}3", familyName="Person", isCompany=False)
+        )
+        c2 = ev_connection.contact_details.create(
+            ContactDetailsCreate(firstName=f"test_{name}4", familyName="Person", isCompany=False)
+        )
+
+        update_data = [
+            ContactDetailsUpdate(id=c1.id, street="Test Street 1"),
+            ContactDetailsUpdate(id=c2.id, street="Test Street 2"),
+        ]
+
+        successes = ev_connection.contact_details.bulk_update(update_data)
+        assert successes == [True, True]
+
+        updated_c1 = ev_connection.contact_details.get_by_id(c1.id)  # type: ignore
+        updated_c2 = ev_connection.contact_details.get_by_id(c2.id)  # type: ignore
+
+        assert updated_c1.street == "Test Street 1"
+        assert updated_c2.street == "Test Street 2"

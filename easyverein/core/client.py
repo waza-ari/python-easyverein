@@ -204,6 +204,38 @@ class EasyvereinClient:
             expected_status_code=status_code,
         )
 
+    def bulk_create(self, url, data: list[BaseModel], status_code: int = 201) -> ResponseSchema:
+        """
+        Method to create multiple objects in the API
+        """
+        return self._handle_response(
+            self._do_request(
+                "post",
+                url,
+                data={"entries": [d.model_dump(exclude_none=True, exclude_unset=True, by_alias=True) for d in data]},
+            ),
+            expected_status_code=status_code,
+        )
+
+    def bulk_update(
+        self, url, data: list[BaseModel], status_code: int = 200, exclude_none: bool = True
+    ) -> ResponseSchema:
+        """
+        Method to update multiple objects in the API
+        """
+        return self._handle_response(
+            self._do_request(
+                "patch",
+                url,
+                data={
+                    "entries": [
+                        d.model_dump(exclude_none=exclude_none, exclude_unset=True, by_alias=True) for d in data
+                    ]
+                },
+            ),
+            expected_status_code=status_code,
+        )
+
     def upload(
         self,
         url: str,
