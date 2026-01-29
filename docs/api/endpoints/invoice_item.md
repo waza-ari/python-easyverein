@@ -8,7 +8,7 @@ None
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model       |
+| Generic Model     | InvoiceItem Model   |
 |-------------------|---------------------|
 | `ModelType`       | `InvoiceItem`       |
 | `CreateModelType` | `InvoiceItemCreate` |

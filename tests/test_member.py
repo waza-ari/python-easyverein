@@ -1,8 +1,21 @@
+from datetime import date, datetime, timedelta
+from typing import Generator
+
 import pytest
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPINotFoundException
-from easyverein.models.contact_details import ContactDetails
-from easyverein.models.member import Member, MemberUpdate
+from easyverein.models.contact_details import ContactDetails, ContactDetailsCreate
+from easyverein.models.member import Member, MemberCreate, MemberSetDosb, MemberSetLsb, MemberUpdate
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _remove_test_members_and_cas(ev_connection: EasyvereinAPI) -> Generator[None, None, None]:
+    yield
+
+    for m in ev_connection.member.get_all(query="{id,contactDetails{firstName,id}}"):
+        if not isinstance(m.contactDetails.firstName, str) and m.contactDetails.firstName.lower().startswith("test_"):  # type: ignore
+            ev_connection.member.delete(m, delete_from_recycle_bin=True)
+            ev_connection.contact_details.delete(m.contactDetails, delete_from_recycle_bin=True)  # type: ignore
 
 
 class TestMember:
@@ -75,3 +88,99 @@ class TestMember:
         assert isinstance(reset_member, Member)
         assert isinstance(reset_member.relatedMembers, list)
         assert reset_member.relatedMembers == []
+
+
+class TestMemberSetLsb:
+    def test_set_lsb(self, ev_connection: EasyvereinAPI, example_member: Member):
+        assert example_member.id
+
+        # Set a LSB sport
+        ev_connection.member.set_lsb(example_member.id, MemberSetLsb(lsbSport=["1"]))
+
+        # Verify
+        member = ev_connection.member.get_by_id(example_member.id, query="{id,integrationLsbSport{id}}")
+        assert member.integrationLsbSport is not None
+        assert len(member.integrationLsbSport) > 0
+
+        # Unset it again
+        ev_connection.member.set_lsb(example_member.id, MemberSetLsb(lsbSport=[]))
+
+        # Verify
+        member = ev_connection.member.get_by_id(example_member.id, query="{id,integrationLsbSport{id}}")
+        assert member.integrationLsbSport == []
+
+
+class TestMemberSetDosb:
+    def test_set_dosb(self, ev_connection: EasyvereinAPI, example_member: Member):
+        assert example_member.id
+
+        # Set a DOSB sport
+        ev_connection.member.set_dosb(example_member.id, MemberSetDosb(dosb_sport=["1"]))
+
+        # Verify
+        member = ev_connection.member.get_by_id(example_member.id, query="{id,integrationDosbSport{id}}")
+        assert member.integrationDosbSport is not None
+        assert len(member.integrationDosbSport) > 0
+
+        # Unset
+        ev_connection.member.set_dosb(example_member.id, MemberSetDosb(dosb_sport=[]))
+
+        # Verify
+        member = ev_connection.member.get_by_id(example_member.id, query="{id,integrationDosbSport{id}}")
+        assert member.integrationDosbSport == []
+
+
+class TestMemberBulk:
+    def test_bulk_create(self, ev_connection: EasyvereinAPI, example_member: Member, random_string: str):
+        name = random_string
+        ev_connection.contact_details.bulk_create(
+            [
+                ContactDetailsCreate(firstName=f"test_{name}1", familyName="Member", isCompany=False),
+                ContactDetailsCreate(firstName=f"test_{name}2", familyName="Member", isCompany=False),
+            ]
+        )
+        cds = [
+            c
+            for c in ev_connection.contact_details.get_all(query="{id,firstName}")
+            if c.firstName and c.firstName.startswith(f"test_{name}")
+        ]
+
+        member_data = [
+            MemberCreate(emailOrUserName=f"test_{name}1@example.com", contactDetails=cds[0].id),
+            MemberCreate(emailOrUserName=f"test_{name}2@example.com", contactDetails=cds[1].id),
+        ]
+
+        successes = ev_connection.member.bulk_create(member_data)
+        assert successes == [True, True]
+
+        created_members = [
+            m
+            for m in ev_connection.member.get_all(query="{id,contactDetails{firstName}}")
+            if m.contactDetails.firstName and m.contactDetails.firstName.startswith(f"test_{name}")  # type: ignore
+        ]
+
+        assert isinstance(created_members, list)
+        assert len(created_members) == 2
+
+    def test_bulk_update(self, ev_connection: EasyvereinAPI):
+        members = ev_connection.member.get_all(query="{id,joinDate}")[:2]
+
+        dates_before: list[datetime | None] = [m.joinDate for m in members]
+        dates_after = [d + timedelta(days=1) if d else date(1970, 1, 1) for d in dates_before]
+
+        update_data = [MemberUpdate(id=m.id, joinDate=d) for m, d in zip(members, dates_after)]
+
+        ev_connection.member.bulk_update(update_data)
+
+        updated_members = ev_connection.member.get_all(query="{id,joinDate}")[:2]
+
+        assert isinstance(updated_members, list)
+        assert len(updated_members) == 2
+        assert [m.joinDate for m in updated_members] == dates_after
+
+        # reset data
+        ev_connection.member.bulk_update(
+            [MemberUpdate(id=m.id, joinDate=d) for m, d in zip(members, dates_before)], exclude_none=False
+        )
+        reset_members = ev_connection.member.get_all(query="{id,joinDate}")[:2]
+        assert [m.joinDate for m in reset_members] == dates_before

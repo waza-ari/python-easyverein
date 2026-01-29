@@ -16,7 +16,7 @@ from ..core.types import (
     FilterIntList,
     FilterStrList,
 )
-from .base import EasyVereinBase
+from .base import EasyVereinBase, LsbDosbSport
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -63,7 +63,6 @@ class MemberBase(EasyVereinBase):
     paymentIntervallMonths: PositiveInt | Literal[-1] = 1
     useBalanceForMembershipFee: bool | None = None
     bulletinBoardNewPostNotification: bool | None = None
-    integrationDosbGender: Literal["m", "w", "d"] | None = None
     isApplication: bool | None = Field(default=None, alias="_isApplication")
     """
     Alias for `_isApplication` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
@@ -83,8 +82,10 @@ class MemberBase(EasyVereinBase):
     Alias for `_editableByRelatedMembers` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
     sepaMandateFile: AnyHttpURL | str | None = None
-    # TODO: exact type is not specified in API docs
-    integrationDosbSport: list | None = None
+    integrationLsbSport: list[EasyVereinReference] | list[LsbDosbSport] | None = None
+    integrationLsbGender: Literal["m", "w", "d"] | None = None
+    integrationDosbSport: list[EasyVereinReference] | list[LsbDosbSport] | None = None
+    integrationDosbGender: Literal["m", "w", "d"] | None = None
     customFields: list[EasyVereinReference] | list[MemberCustomField] | None = None
     memberGroups: list[EasyVereinReference] | list[MemberMemberGroup] | None = None
 
@@ -187,6 +188,27 @@ class MemberFilter(BaseModel):
     isCopy: bool | None = None
     hasCopy: bool | None = None
     search: str | None = None
+
+
+class MemberSetLsb(BaseModel):
+    """
+    Pydantic model used to set LSB sports for a member
+
+    Does not match the documentation, but works (with v2.0 in january 2026 at least)
+    """
+
+    lsbSport: list[str]
+
+
+class MemberSetDosb(BaseModel):
+    """
+    Pydantic model used to set DOSB sports for a member
+
+    Does not match the documentation, but works (with v2.0 in january 2026 at least)
+    And for some reason, has another format than the set-lsb endpoint
+    """
+
+    dosb_sport: list[str]
 
 
 from .contact_details import ContactDetails  # noqa: E402

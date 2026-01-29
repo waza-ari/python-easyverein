@@ -8,7 +8,7 @@ None
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model          |
+| Generic Model     | BillingAccount Model   |
 |-------------------|------------------------|
 | `ModelType`       | `BillingAccount`       |
 | `CreateModelType` | `BillingAccountCreate` |

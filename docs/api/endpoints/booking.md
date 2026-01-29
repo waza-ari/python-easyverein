@@ -8,8 +8,8 @@ None
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model          |
-|-------------------|------------------------|
+| Generic Model     | Booking Model   |
+|-------------------|-----------------|
 | `ModelType`       | `Booking`       |
 | `CreateModelType` | `BookingCreate` |
 | `UpdateModelType` | `BookingUpdate` |

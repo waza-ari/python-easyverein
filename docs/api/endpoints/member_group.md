@@ -8,9 +8,9 @@ None
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model  |
-|-------------------|----------------|
-| `ModelType`       | `MemberGroup`  |
+| Generic Model     | Invoice Model       |
+|-------------------|---------------------|
+| `ModelType`       | `MemberGroup`       |
 | `CreateModelType` | `MemberGroupCreate` |
 | `UpdateModelType` | `MemberGroupUpdate` |
 

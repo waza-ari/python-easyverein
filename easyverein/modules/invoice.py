@@ -11,12 +11,13 @@ from ..core.client import EasyvereinClient
 from ..core.exceptions import EasyvereinAPIException
 from ..models.invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
 from ..models.invoice_item import InvoiceItemCreate
-from .mixins.crud import CRUDMixin
+from .mixins.crud import BulkUpdateCreateMixin, CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
 
 class InvoiceMixin(
     CRUDMixin[Invoice, InvoiceCreate, InvoiceUpdate, InvoiceFilter],
+    BulkUpdateCreateMixin[Invoice, InvoiceCreate, InvoiceUpdate],
     RecycleBinMixin[Invoice],
 ):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):

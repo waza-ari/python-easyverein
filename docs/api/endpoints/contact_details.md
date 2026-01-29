@@ -8,7 +8,7 @@ None
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model          |
+| Generic Model     | ContactDetails Model   |
 |-------------------|------------------------|
 | `ModelType`       | `ContactDetails`       |
 | `CreateModelType` | `ContactDetailsCreate` |

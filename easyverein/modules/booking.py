@@ -11,12 +11,13 @@ from ..models.booking import (
     BookingFilter,
     BookingUpdate,
 )
-from .mixins.crud import CRUDMixin
+from .mixins.crud import BulkUpdateCreateMixin, CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
 
 class BookingMixin(
     CRUDMixin[Booking, BookingCreate, BookingUpdate, BookingFilter],
+    BulkUpdateCreateMixin[Booking, BookingCreate, BookingUpdate],
     RecycleBinMixin[Booking],
 ):
     def __init__(self, client: EasyvereinClient, logger: logging.Logger):

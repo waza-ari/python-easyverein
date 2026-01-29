@@ -13,7 +13,7 @@ requires the member as constructor argument, to avoid passing it again to all en
 
 ## Generic Model Mappings
 
-| Generic Model     | Invoice Model             |
+| Generic Model     | MemberMemberGroup Model   |
 |-------------------|---------------------------|
 | `ModelType`       | `MemberMemberGroup`       |
 | `CreateModelType` | `MemberMemberGroupCreate` |
