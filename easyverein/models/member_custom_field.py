@@ -32,6 +32,7 @@ class MemberCustomFieldBase(EasyVereinBase):
     customField: EasyVereinReference | CustomField | None = None
     value: str | None = None
     requestedValue: str | None = None  # Purpose of this field is not documented
+    selectedOptions: list[CustomFieldSelectOption | EasyVereinReference] | None = None
 
 
 class MemberCustomField(MemberCustomFieldBase, EmptyStringsToNone):
@@ -42,7 +43,7 @@ class MemberCustomField(MemberCustomFieldBase, EmptyStringsToNone):
     pass
 
 
-class MemberCustomFieldCreate(MemberCustomFieldBase, required_mixin(["customField", "value"])):  # type: ignore
+class MemberCustomFieldCreate(MemberCustomFieldBase, required_mixin(["customField"])):  # type: ignore
     """
     Pydantic model for creating a new member
     """
@@ -76,4 +77,5 @@ class MemberCustomFieldFilter(BaseModel):
 
 
 from .custom_field import CustomField  # noqa: E402
+from .custom_field_select_option import CustomFieldSelectOption  # noqa: E402
 from .member import Member  # noqa: E402

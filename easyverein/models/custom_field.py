@@ -1,20 +1,10 @@
-"""
-Member related models
-"""
-
 from __future__ import annotations
 
 from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from ..core.types import (
-    EasyVereinReference,
-    FilterIntList,
-    HexColor,
-    OptionsField,
-    PositiveIntWithZero,
-)
+from ..core.types import EasyVereinReference, FilterIntList, HexColor, PositiveIntWithZero
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -67,7 +57,7 @@ class CustomFieldBase(EasyVereinBase):
     It is not even possible to set other fields except the ones mentioned before in the portal,
     so not sure what the other values are meant for.
     """
-    selectOptions: OptionsField = None
+    selectOptions: list[CustomFieldSelectOption | EasyVereinReference] | None = None
     description: str | None = Field(default=None, max_length=500)
     member_show: bool | None = None
     member_edit: bool | None = None
@@ -114,3 +104,6 @@ class CustomFieldFilter(BaseModel):
     deletedBy__isnull: bool | None = Field(default=None, serialization_alias="_deletedBy__isnull")
     deleted: bool | None = None
     ordering: str | None = None
+
+
+from .custom_field_select_option import CustomFieldSelectOption  # noqa: E402

@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Generator
 
 import pytest
@@ -170,7 +170,7 @@ class TestMemberBulk:
 
         # Update the joinDate for the two members
         dates_before = [m.joinDate for m in members]
-        dates_after = [d + timedelta(days=1) for d in dates_before]
+        dates_after = [d + timedelta(days=1) if d else datetime.now() for d in dates_before]
         update_data = [MemberUpdate(id=m.id, joinDate=d) for m, d in zip(members, dates_after)]
         ev_connection.member.bulk_update(update_data)
 

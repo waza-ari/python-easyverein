@@ -17,7 +17,6 @@ from ..core.types import (
     FilterStrList,
 )
 from .base import EasyVereinBase
-from .lsb_dosb_sport import LsbDosbSport
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -213,5 +212,6 @@ class MemberSetDosb(BaseModel):
 
 
 from .contact_details import ContactDetails  # noqa: E402
+from .lsb_dosb_sport import LsbDosbSport  # noqa: E402
 from .member_custom_field import MemberCustomField  # noqa: E402
 from .member_member_group import MemberMemberGroup  # noqa: E402

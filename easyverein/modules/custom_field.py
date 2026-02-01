@@ -11,6 +11,7 @@ from ..models.custom_field import (
     CustomFieldFilter,
     CustomFieldUpdate,
 )
+from .custom_field_select_option import CustomFieldSelectOptionMixin
 from .mixins.crud import CRUDMixin
 from .mixins.recycle_bin import RecycleBinMixin
 
@@ -25,3 +26,6 @@ class CustomFieldMixin(
         self.return_type = CustomField
         self.c = client
         self.logger = logger
+
+    def select_option(self, custom_field_id: int) -> CustomFieldSelectOptionMixin:
+        return CustomFieldSelectOptionMixin(self.c, self.logger, custom_field_id)

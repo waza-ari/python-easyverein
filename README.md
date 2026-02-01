@@ -34,6 +34,7 @@ When saying CRUD, it means the library supports various methods to **C**reate, *
 * `billing-account`: CRUD, Soft-Delete
 * `contact-details`: CRUD, Bulk Create and Update, Soft-Delete
 * `custom-fields`: CRUD, Soft-Delete
+* `custom-fields/<id>/select-options`: CRUD
 * `invoice`: CRUD, Bulk Create and Update, Soft-Delete, plus some convenience methods
 * `invoice-item`: CRUD
 * `member`: CRUD, Bulk Create and Update, Soft-Delete

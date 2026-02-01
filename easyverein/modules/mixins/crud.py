@@ -233,9 +233,7 @@ class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]
         return [r["data"]["success"] for r in response.result]  # type: ignore
 
     def bulk_update(
-        self: EVClientProtocol[ModelType],
-        data: list[UpdateModelType],
-        exclude_none: bool = True,
+        self: EVClientProtocol[ModelType], data: list[UpdateModelType], exclude_none: bool = True
     ) -> list[bool]:
         """
         Updates multiple objects in a single API request and returns the updated objects.

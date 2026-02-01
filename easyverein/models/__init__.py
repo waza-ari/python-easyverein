@@ -12,6 +12,12 @@ from .custom_field import (
     CustomFieldFilter,
     CustomFieldUpdate,
 )
+from .custom_field_select_option import (
+    CustomFieldSelectOption,
+    CustomFieldSelectOptionCreate,
+    CustomFieldSelectOptionFilter,
+    CustomFieldSelectOptionUpdate,
+)
 from .invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
 from .invoice_item import (
     InvoiceItem,
@@ -37,6 +43,7 @@ from .member_member_group import (
 Booking.model_rebuild()
 ContactDetails.model_rebuild()
 CustomField.model_rebuild()
+CustomFieldSelectOption.model_rebuild()
 Invoice.model_rebuild()
 InvoiceItem.model_rebuild()
 Member.model_rebuild()
