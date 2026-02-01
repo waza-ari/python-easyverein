@@ -13,6 +13,7 @@ from ..core.types import (
     FilterIntList,
     HexColor,
     PositiveIntWithZero,
+    Sphere,
 )
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
@@ -130,6 +131,7 @@ class MemberGroupBase(EasyVereinBase):
     - a: allowed
     - d: forbidden
     """
+    sphere: Sphere | None = None
 
 
 class MemberGroup(MemberGroupBase, EmptyStringsToNone):

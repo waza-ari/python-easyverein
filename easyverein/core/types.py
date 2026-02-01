@@ -4,7 +4,7 @@ Custom types used for model validation
 
 import datetime
 import json
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import Field, PlainSerializer, PlainValidator, UrlConstraints
 from pydantic_core import Url
@@ -40,3 +40,5 @@ FilterStrList = Annotated[
     list[str],
     PlainSerializer(lambda x: ",".join(x), return_type=str),
 ]
+
+Sphere = Annotated[Literal[1, 2, 3, 4, 9]]

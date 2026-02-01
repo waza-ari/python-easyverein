@@ -8,7 +8,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, Field, PositiveInt
 
-from ..core.types import EasyVereinReference, FilterIntList
+from ..core.types import EasyVereinReference, FilterIntList, Sphere
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -35,6 +35,7 @@ class InvoiceItemBase(EasyVereinBase):
     taxRate: float | None = None
     gross: bool | None = None
     taxName: str | None = None
+    sphere: Sphere | None = None
     billingAccount: BillingAccount | EasyVereinReference | None = None
     costCentre: Annotated[str, Field(max_length=8)] | None = None
 

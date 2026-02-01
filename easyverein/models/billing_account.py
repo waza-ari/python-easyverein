@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, PositiveInt
 
-from ..core.types import EasyVereinReference, FilterIntList, FilterStrList, PositiveIntWithZero
+from ..core.types import EasyVereinReference, FilterIntList, FilterStrList, PositiveIntWithZero, Sphere
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -18,7 +18,7 @@ class BillingAccountBase(EasyVereinBase):
     name: str | None = None
     excludeInEur: bool | None = None
     number: PositiveInt | None = None
-    defaultSphere: PositiveInt | None = None
+    defaultSphere: Sphere | None = None
 
 
 class BillingAccount(BillingAccountBase, EmptyStringsToNone):

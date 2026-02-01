@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from ..core.types import DateTime, EasyVereinReference, FilterIntList
+from ..core.types import DateTime, EasyVereinReference, FilterIntList, Sphere
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -33,7 +33,7 @@ class BookingBase(EasyVereinBase):
     counterpartBic: str | None = None
     twingleDonation: bool | None = None
     bookingProject: str | None = None
-    sphere: int | None = None
+    sphere: Sphere | None = None
     relatedInvoice: list[EasyVereinReference] | None = None
 
 
