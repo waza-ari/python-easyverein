@@ -199,7 +199,11 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]):
     """
     Mixin providing bulk create and update functionality for endpoints that support it.
-    Currently only supported for the `member` and `contact-details` endpoints.
+    Currently only supported for the following endpoints:
+    - booking
+    - contact-details
+    - member
+    - invoice
     """
 
     def bulk_create(self: EVClientProtocol[ModelType], data: list[CreateModelType]) -> list[bool]:

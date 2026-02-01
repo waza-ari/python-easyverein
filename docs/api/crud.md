@@ -31,3 +31,15 @@ models for the specific endpoint.
         show_signature_annotations: true
         show_root_toc_entry: false
         separate_signature: true
+
+## Bulk Methods
+
+Some endpoints allow bulk operations for creating and updating multiple objects at the same time.
+
+::: easyverein.modules.mixins.crud.BulkUpdateCreateMixin
+    options:
+        heading_level: 3
+        show_signature: true
+        show_signature_annotations: true
+        show_root_toc_entry: false
+        separate_signature: true

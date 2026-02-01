@@ -336,6 +336,51 @@ ev_client.custom_field.update(
 )
 ```
 
+## Bulk-Creating and Bulk-Updating
+
+For selected endpoints, EasyVerein supports **bulk create** and **bulk update** operations, allowing you to efficiently create or update multiple objects in a single API request. This is currently supported for the following endpoints in this library:
+
+- booking
+- contact-details
+- member
+- invoice
+
+For those endpoints, you can simply provide a list of the respective Create or Update model instances, and the API will return a list of booleans indicating whether each operation was successful.
+
+**Bulk create example:**
+
+```python
+from easyverein import EasyvereinAPI
+from easyverein.models import ContactDetailsCreate
+
+ev_client = EasyvereinAPI("<your-token>")
+
+results = ev_client.contact_details.bulk_create([
+    ContactDetailsCreate(firstName="example1", lastName="Example1", isCompany=False),
+    ContactDetailsCreate(firstName="example2", lastName="Example2", isCompany=False),
+])
+
+print(results)  # [True, True] if both were created successfully
+```
+
+**Bulk update example:**
+
+```python
+from easyverein import EasyvereinAPI
+from easyverein.models import MemberUpdate
+
+ev_client = EasyvereinAPI("<your-token>")
+
+results = ev_client.member.bulk_update([
+    MemberUpdate(id=1, membershipNumber="M1"),
+    MemberUpdate(id=2, membershipNumber="M2"),
+])
+
+print(results)  # [True, True] if both were updated successfully
+```
+
+Note: For bulk updates, each update model must include the `id` of the object to be updated.
+
 ## Deleting Resources
 
 Depending on the resource type (endpoint), resources can be deleted immediately or are soft-deleted. If they're
