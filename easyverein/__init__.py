@@ -2,7 +2,7 @@
 Middleware for FastAPI that supports authenticating users against Keycloak
 """
 
-__version__ = "2.2.0"
+__version__ = "2.3.0"
 
 # Export EasyVerein API directly
 from .api import EasyvereinAPI  # noqa: F401
