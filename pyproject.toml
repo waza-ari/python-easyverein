@@ -1,26 +1,28 @@
-[tool.poetry]
+[project]
 name = "python-easyverein"
 version = "2.2.0"
 description = "Python library to interact with the EasyVerein API"
-authors = ["Daniel Herrmann <daniel.herrmann1@gmail.com>"]
+authors = [{ name = "Daniel Herrmann", email = "daniel.herrmann1@gmail.com" }]
 readme = "README.md"
-packages = [{ include = "easyverein" }]
+requires-python = ">=3.11,<4"
+license = { file = "LICENSE" }
+dependencies = ["pydantic>=2,<3", "requests>=2,<3", "email-validator>=2,<3"]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-pydantic = "^2"
-requests = "^2"
-email-validator = "^2"
+[tool.poetry]
+packages = [{ include = "easyverein" }]
 
 
 [tool.poetry.group.dev.dependencies]
-sphinx = "^9"
+sphinx = [
+    { version = "^9,<9.1", markers = "python_version < '3.12'" },
+    { version = "^9", markers = "python_version >= '3.12'" },
+]
 sphinx-rtd-theme = "^3"
 ruff = "*"
 pytest = "^9"
 pytest-dotenv = "^0"
 mkdocs-material = "^9"
-mkdocstrings = {extras = ["python"], version = "^1"}
+mkdocstrings = { extras = ["python"], version = "^1" }
 pymdown-extensions = "^10.7"
 pre-commit = "^4"
 pytest-cov = "^7"
@@ -60,7 +62,7 @@ ignore = [
     "UP007", # use-pep604-annotation
     "E741",  # Ambiguous variable name
     # "UP035", # deprecated-assertion
-    "PLE1205"  # PLE1205 due to custom logger implementation
+    "PLE1205", # PLE1205 due to custom logger implementation
 ]
 
 [tool.ruff.lint.mccabe]
