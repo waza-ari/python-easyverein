@@ -1,11 +1,11 @@
-from datetime import date, datetime, timedelta
+from datetime import timedelta
 from typing import Generator
 
 import pytest
 from easyverein import EasyvereinAPI
 from easyverein.core.exceptions import EasyvereinAPINotFoundException
 from easyverein.models.contact_details import ContactDetails, ContactDetailsCreate
-from easyverein.models.member import Member, MemberCreate, MemberSetDosb, MemberSetLsb, MemberUpdate
+from easyverein.models.member import Member, MemberCreate, MemberFilter, MemberSetDosb, MemberSetLsb, MemberUpdate
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -164,24 +164,25 @@ class TestMemberBulk:
         assert len(created_members) == 2
 
     def test_bulk_update(self, ev_connection: EasyvereinAPI):
-        members = ev_connection.member.get_all(query="{id,joinDate}")[:2]
+        # Fetch two members already having a joinDate
+        filter = MemberFilter(joinDate__isnull=False)
+        members = ev_connection.member.get_all(query="{id,joinDate}", search=filter)[:2]
 
-        dates_before: list[datetime | None] = [m.joinDate for m in members]
-        dates_after = [d + timedelta(days=1) if d else date(1970, 1, 1) for d in dates_before]
-
+        # Update the joinDate for the two members
+        dates_before = [m.joinDate for m in members]
+        dates_after = [d + timedelta(days=1) for d in dates_before]
         update_data = [MemberUpdate(id=m.id, joinDate=d) for m, d in zip(members, dates_after)]
-
         ev_connection.member.bulk_update(update_data)
 
-        updated_members = ev_connection.member.get_all(query="{id,joinDate}")[:2]
-
+        # Verify the updates
+        updated_members = ev_connection.member.get_all(query="{id,joinDate}", search=filter)[:2]
         assert isinstance(updated_members, list)
         assert len(updated_members) == 2
         assert [m.joinDate for m in updated_members] == dates_after
 
-        # reset data
+        # Reset data
         ev_connection.member.bulk_update(
             [MemberUpdate(id=m.id, joinDate=d) for m, d in zip(members, dates_before)], exclude_none=False
         )
-        reset_members = ev_connection.member.get_all(query="{id,joinDate}")[:2]
+        reset_members = ev_connection.member.get_all(query="{id,joinDate}", search=filter)[:2]
         assert [m.joinDate for m in reset_members] == dates_before
