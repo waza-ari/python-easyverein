@@ -16,7 +16,8 @@ from ..core.types import (
     FilterIntList,
     FilterStrList,
 )
-from .base import EasyVereinBase, LsbDosbSport
+from .base import EasyVereinBase
+from .lsb_dosb_sport import LsbDosbSport
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
