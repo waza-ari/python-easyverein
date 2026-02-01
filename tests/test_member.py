@@ -13,9 +13,10 @@ def _remove_test_members_and_cas(ev_connection: EasyvereinAPI) -> Generator[None
     yield
 
     for m in ev_connection.member.get_all(query="{id,contactDetails{firstName,id}}"):
-        if not isinstance(m.contactDetails.firstName, str) and m.contactDetails.firstName.lower().startswith("test_"):  # type: ignore
+        assert isinstance(m.contactDetails, ContactDetails)
+        if isinstance(m.contactDetails.firstName, str) and m.contactDetails.firstName.lower().startswith("test_"):
             ev_connection.member.delete(m, delete_from_recycle_bin=True)
-            ev_connection.contact_details.delete(m.contactDetails, delete_from_recycle_bin=True)  # type: ignore
+            ev_connection.contact_details.delete(m.contactDetails, delete_from_recycle_bin=True)
 
 
 class TestMember:
