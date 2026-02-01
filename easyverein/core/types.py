@@ -41,4 +41,4 @@ FilterStrList = Annotated[
     PlainSerializer(lambda x: ",".join(x), return_type=str),
 ]
 
-Sphere = Annotated[Literal[1, 2, 3, 4, 9]]
+Sphere = Literal[1, 2, 3, 4, 9]
