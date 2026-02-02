@@ -7,6 +7,7 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 from ..core.types import DateTime, EasyVereinReference, FilterIntList, Sphere
+from . import BookingProject
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -32,9 +33,9 @@ class BookingBase(EasyVereinBase):
     counterpartIban: str | None = None
     counterpartBic: str | None = None
     twingleDonation: bool | None = None
-    bookingProject: str | None = None
+    bookingProject: BookingProject | EasyVereinReference | None = None
     sphere: Sphere | None = None
-    relatedInvoice: list[EasyVereinReference] | None = None
+    relatedInvoice: list[Invoice] | list[EasyVereinReference] | None = None
 
 
 class Booking(BookingBase, EmptyStringsToNone):
@@ -100,3 +101,4 @@ class BookingFilter(BaseModel):
 
 
 from .billing_account import BillingAccount  # noqa: E402
+from .invoice import Invoice  # noqa: E402

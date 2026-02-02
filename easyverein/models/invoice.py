@@ -70,7 +70,7 @@ class InvoiceBase(EasyVereinBase):
     accnumber: PositiveIntWithZero | None = None
     guid: str | None = None
     # TODO: Add reference to Booking once implemented
-    relatedBookings: list[EasyVereinReference] | None = None
+    relatedBookings: list[Booking] | list[EasyVereinReference] | None = None
     invoiceItems: list[InvoiceItem] | list[EasyVereinReference] | None = None
 
 
@@ -147,6 +147,7 @@ class InvoiceFilter(BaseModel):
     search: str | None = None
 
 
+from . import Booking  # noqa: E402
 from .billing_account import BillingAccount  # noqa: E402
 from .contact_details import ContactDetails  # noqa: E402
 from .invoice_item import InvoiceItem  # noqa: E402
