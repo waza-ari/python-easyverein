@@ -91,5 +91,10 @@ class EasyvereinAPI:
         if not token:
             self.logger.error(f"Error refreshing token: {response.result}")
             raise ValueError(f"Error refreshing token: {response.result}")
+        
+        token = cast(BearerToken, token)
+        # update API and Client instances to use new token
+        self.api_token = token.Bearer
+        self.c.api_key = token.Bearer
 
-        return cast(BearerToken, token)
+        return token
