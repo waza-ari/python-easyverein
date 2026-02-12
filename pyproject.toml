@@ -1,6 +1,6 @@
 [project]
 name = "python-easyverein"
-version = "2.3.0"
+version = "2.4.0"
 description = "Python library to interact with the EasyVerein API"
 authors = [{ name = "Daniel Herrmann", email = "daniel.herrmann1@gmail.com" }]
 readme = "README.md"
