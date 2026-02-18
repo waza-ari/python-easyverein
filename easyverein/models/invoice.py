@@ -28,7 +28,8 @@ class InvoiceBase(EasyVereinBase):
     """
 
     gross: bool | None = None
-    canceledInvoice: str | None = None
+    canceledInvoice: EasyVereinReference | Invoice | None = None
+    cancelInvoice: EasyVereinReference | Invoice | None = None
     cancellationDescription: str | None = None
     templateName: str | None = None
     date: Date | None = None
@@ -147,8 +148,8 @@ class InvoiceFilter(BaseModel):
     search: str | None = None
 
 
-from . import Booking  # noqa: E402
 from .billing_account import BillingAccount  # noqa: E402
+from .booking import Booking  # noqa: E402
 from .contact_details import ContactDetails  # noqa: E402
 from .invoice_item import InvoiceItem  # noqa: E402
 from .member import Member  # noqa: E402
