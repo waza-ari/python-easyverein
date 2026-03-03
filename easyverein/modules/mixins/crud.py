@@ -75,7 +75,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
             url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True, by_alias=True)
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
-        response = self.c.fetch_paginated(url, limit_per_page)
+        response = self.c.fetch_paginated(url)
         parsed_objects = parse_models(response.result, self.return_type)
         assert isinstance(parsed_objects, list)
         return parsed_objects

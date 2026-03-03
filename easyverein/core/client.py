@@ -316,26 +316,17 @@ class EasyvereinClient:
 
         return reply
 
-    def fetch_paginated(self, url, limit=100) -> ResponseSchema:
+    def fetch_paginated(self, url) -> ResponseSchema:
         """
         Helper method that fetches all pages of a paginated API call
 
         Only supports GET endpoints
         """
-
-        self.logger.debug("Fetching paginated API call %s, limit is %d", url, limit)
-
-        # Add limit parameter to URL
-        if "?" not in url:
-            url += f"?limit={limit}"
-        else:
-            url += f"&limit={limit}"
-
         resources = []
         status_code: int = 0
 
         while url is not None:
-            self.logger.debug("Fetching page of paginated API call %s", url)
+            self.logger.debug("Fetching paginated API at %s", url)
 
             status_code, result = self._do_request("get", url)
             self.logger.debug("Request returned status code %d", status_code)
