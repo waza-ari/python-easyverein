@@ -329,7 +329,6 @@ class EasyvereinClient:
             self.logger.debug("Fetching paginated API at %s", url)
 
             status_code, result = self._do_request("get", url)
-            self.logger.debug("Request returned status code %d", status_code)
 
             if not isinstance(result, dict):
                 self.logger.error("Could not fetch paginated API %s, status code %d", url, status_code)
