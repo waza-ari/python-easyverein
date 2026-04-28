@@ -19,6 +19,16 @@ from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
+InvoiceKind = Literal[
+    "balance",
+    "donation",
+    "membership",
+    "revenue",
+    "expense",
+    "cancel",
+    "credit",
+]
+
 
 class InvoiceBase(EasyVereinBase):
     """
@@ -44,18 +54,7 @@ class InvoiceBase(EasyVereinBase):
     taxName: str | None = None
     relatedAddress: ContactDetails | EasyVereinReference | None = None
     path: EasyVereinReference | None = None
-    kind: (
-        Literal[
-            "balance",
-            "donation",
-            "membership",
-            "revenue",
-            "expense",
-            "cancel",
-            "credit",
-        ]
-        | None
-    ) = None
+    kind: InvoiceKind | None = None
     selectionAcc: BillingAccount | EasyVereinReference | None = None
     refNumber: str | None = None
     paymentDifference: float | None = None
@@ -127,7 +126,7 @@ class InvoiceFilter(BaseModel):
     totalPrice: float | None = None
     totalPrice__gte: float | None = None
     totalPrice__lte: float | None = None
-    kind: str | None = None
+    kind: InvoiceKind | None = None
     kind__in: FilterStrList | None = None
     refNumber: str | None = None
     paymentDifference: float | None = None
