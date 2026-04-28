@@ -2,7 +2,7 @@ from typing import Generator
 
 import pytest
 from easyverein import EasyvereinAPI
-from easyverein.models import ContactDetails, ContactDetailsCreate, ContactDetailsUpdate
+from easyverein.models import ContactDetails, ContactDetailsCreate, ContactDetailsFilter, ContactDetailsUpdate
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -23,9 +23,17 @@ class TestContactDetails:
         assert total_count == 8
         assert len(contact_details) == 8
 
-        # Check if all the members are of type Member
+        # Check if all the contact_details are of type ContactDetails
         for contact_detail in contact_details:
             assert isinstance(contact_detail, ContactDetails)
+
+    def test_get_contact_details_with_non_ascii(self, ev_connection: EasyvereinAPI):
+        contact_details = ev_connection.contact_details.get(
+            search=ContactDetailsFilter(companyName="Mustermann & Co. KG")
+        )[0]
+
+        assert len(contact_details) == 1
+        assert contact_details[0].companyName == "Mustermann & Co. KG"
 
     def test_create_minimal_company_contact_details(self, ev_connection: EasyvereinAPI):
         contact_details = ev_connection.contact_details.create(
