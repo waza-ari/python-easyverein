@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, Field
 
 from ..core.types import EasyVereinReference, FilterIntList, Sphere
 from .base import EasyVereinBase
@@ -27,7 +27,7 @@ class InvoiceItemBase(EasyVereinBase):
     """
 
     relatedInvoice: Invoice | EasyVereinReference | None = None
-    quantity: PositiveInt | None = None
+    quantity: float | None = None
     unitPrice: float | None = None
     totalPrice: float | None = None
     title: str | None = None
