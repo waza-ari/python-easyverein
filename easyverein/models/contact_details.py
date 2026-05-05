@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
-from ..core.types import Date, DateTime, FilterIntList
+from ..core.types import Date, DateTime, EasyVereinReference, FilterIntList
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -86,6 +86,7 @@ class ContactDetailsBase(EasyVereinBase):
     - 3: cash
     - 4: other
     """
+    # TODO: Actual get method returns a string, f.e. "Lastschrift" (in german)
     datevAccountNumber: int | None = None
     # TODO: Refine once available from API description
     copiedFromParent: Any | None = Field(default=None, alias="_copiedFromParent")
@@ -123,7 +124,7 @@ class ContactDetails(ContactDetailsBase, EmptyStringsToNone):
     Pydantic model for contact details
     """
 
-    pass
+    member: EasyVereinReference | Member | None = None
 
 
 class ContactDetailsUpdate(ContactDetailsBase):
@@ -167,3 +168,6 @@ class ContactDetailsFilter(BaseModel):
     hasCopy: bool | None = None
     ordering: str | None = None
     search: str | None = None
+
+
+from .member import Member
