@@ -230,7 +230,7 @@ class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]
         self.logger.info(f"Creating object of type {self.endpoint_name}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/bulk-create")
-        response = self.c.bulk_create(url, data)
+        response = self.c.bulk_create(url, data)  # type: ignore[arg-type]
         return [r["data"]["success"] for r in response.result]  # type: ignore
 
     def bulk_update(
@@ -261,5 +261,5 @@ class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]
         self.logger.info(f"Bulk updating objects of type {self.endpoint_name}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/bulk-update")
-        response = self.c.bulk_update(url, data, exclude_none=exclude_none)
+        response = self.c.bulk_update(url, data, exclude_none=exclude_none)  # type: ignore[arg-type]
         return [r["data"]["success"] for r in response.result]  # type: ignore
