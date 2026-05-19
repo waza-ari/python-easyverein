@@ -37,6 +37,7 @@ class InvoiceBase(EasyVereinBase):
     invNumber: str | None = None
     receiver: str | None = None
     description: str | None = None
+    closingDescription: str | None = None
     totalPrice: float | None = None
     tax: float | None = None
     taxRate: float | None = None
