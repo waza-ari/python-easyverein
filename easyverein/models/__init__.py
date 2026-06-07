@@ -12,6 +12,12 @@ from .contact_details import (
     ContactDetailsFilter,
     ContactDetailsUpdate,
 )
+from .contact_details_group import (
+    ContactDetailsGroup,
+    ContactDetailsGroupCreate,
+    ContactDetailsGroupFilter,
+    ContactDetailsGroupUpdate,
+)
 from .custom_field import (
     CustomField,
     CustomFieldCreate,
@@ -49,6 +55,7 @@ from .member_member_group import (
 Booking.model_rebuild()
 BookingProject.model_rebuild()
 ContactDetails.model_rebuild()
+ContactDetailsGroup.model_rebuild()
 CustomField.model_rebuild()
 CustomFieldSelectOption.model_rebuild()
 Invoice.model_rebuild()
