@@ -11,6 +11,7 @@ from .modules.billing_account import BillingAccountMixin
 from .modules.booking import BookingMixin
 from .modules.booking_project import BookingProjectMixin
 from .modules.contact_details import ContactDetailsMixin
+from .modules.contact_details_group import ContactDetailsGroupMixin
 from .modules.custom_field import CustomFieldMixin
 from .modules.invoice import InvoiceMixin
 from .modules.invoice_item import InvoiceItemMixin
@@ -64,6 +65,7 @@ class EasyvereinAPI:
         self.booking_project = BookingProjectMixin(self.c, self.logger)
         self.billing_account = BillingAccountMixin(self.c, self.logger)
         self.contact_details = ContactDetailsMixin(self.c, self.logger)
+        self.contact_details_group = ContactDetailsGroupMixin(self.c, self.logger)
         self.custom_field = CustomFieldMixin(self.c, self.logger)
         self.invoice = InvoiceMixin(self.c, self.logger)
         self.invoice_item = InvoiceItemMixin(self.c, self.logger)
