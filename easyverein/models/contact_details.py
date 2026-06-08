@@ -25,6 +25,7 @@ class ContactDetailsBase(EasyVereinBase):
         are required to have a contact details object linked.
     """
 
+    contactDetailsGroups: list[ContactDetailsGroup | EasyVereinReference] | None = Field(default=None)
     isCompany: bool | None = Field(default=None, alias="_isCompany")
     """Alias for `_isCompany` field. See [Pydantic Models](../usage.md#pydantic-models) for details."""
     salutation: Literal["", "Herr", "Frau"] | None = None
@@ -170,4 +171,5 @@ class ContactDetailsFilter(BaseModel):
     search: str | None = None
 
 
+from .contact_details_group import ContactDetailsGroup
 from .member import Member
