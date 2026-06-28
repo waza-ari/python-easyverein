@@ -54,19 +54,20 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         self: EVClientProtocol[ModelType],
         query: str = "",
         search: FilterType | None = None,
-        limit_per_page: int = 10,
+        limit_per_page: int = 100,
     ) -> list[ModelType]:
         """
         Convenient method that fetches all objects from the EV API, abstracting away the need to handle pagination.
 
-        Will fetch all pages of objects and return a single list. The default has been chosen to match the limit
-        of the API. It is advisable to set a higher limit to avoid many API calls. The maximum page size is 100.
+        Will fetch all pages of objects and return a single list. The default has been chosen to match the maximum
+        page size of the API, minimizing the number of API calls needed to fetch all objects.
 
         Args:
             query: Query to use with API. Defaults to None. Refer to the EV API help for more
                                     information on how to use queries
             search: Filter to use with API. Refer to the EV API help for more information on how to use filters
-            limit_per_page: Defines how many resources to return. Defaults to 10.
+            limit_per_page: Defines how many resources to return per page. Defaults to 100, the maximum page size
+                            supported by the API.
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
