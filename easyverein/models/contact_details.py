@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
-from ..core.types import Date, DateTime, FilterIntList
+from ..core.types import Date, FilterIntList
 from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
@@ -73,7 +73,7 @@ class ContactDetailsBase(EasyVereinBase):
     bic: str | None = Field(default=None, max_length=100)
     bankAccountOwner: str | None = Field(default=None, max_length=128)
     sepaMandate: str | None = Field(default=None, max_length=60)
-    sepaDate: DateTime | None = None
+    sepaDate: Date | None = None
     methodOfPayment: int | None = None
     """
     Defines the method of payment preferred by the user.

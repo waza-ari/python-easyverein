@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field, PositiveInt
 from ..core.types import (
     AnyHttpURL,
     Date,
-    DateTime,
     EasyVereinReference,
     FilterIntList,
     FilterStrList,
@@ -40,8 +39,9 @@ class MemberBase(EasyVereinBase):
     """
     Alias for `_profilePicture` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
-    joinDate: DateTime | None = None
-    resignationDate: DateTime | None = None
+    joinDate: Date | None = None
+    resignationDate: Date | None = None
+    resignationNoticeDate: Date | None = None
     isChairman: bool | None = Field(default=None, alias="_isChairman")
     """
     Alias for `_isChairman` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
@@ -55,7 +55,7 @@ class MemberBase(EasyVereinBase):
     declarationOfConsent: AnyHttpURL | str | None = None
     membershipNumber: str | None = None
     contactDetails: ContactDetails | EasyVereinReference | None = None
-    paymentStartDate: DateTime | None = Field(default=None, alias="_paymentStartDate")
+    paymentStartDate: Date | None = Field(default=None, alias="_paymentStartDate")
     """
     Alias for `_paymentStartDate` field. See [Pydantic Models](../usage.md#pydantic-models) for details.
     """
@@ -107,7 +107,7 @@ class MemberUpdate(MemberBase):
     isChairman: bool | None = Field(default=None, serialization_alias="_isChairman")
     chairmanPermissionGroup: str | None = Field(default=None, serialization_alias="_chairmanPermissionGroup")
     isApplication: bool | None = Field(default=None, serialization_alias="_isApplication")
-    paymentStartDate: DateTime | None = Field(default=None, serialization_alias="_paymentStartDate")
+    paymentStartDate: Date | None = Field(default=None, serialization_alias="_paymentStartDate")
 
 
 class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):  # type: ignore
@@ -139,13 +139,13 @@ class MemberFilter(BaseModel):
     deletedBy: int | None = Field(default=None, serialization_alias="_deletedBy")
     deletedBy__ne: int | None = Field(default=None, serialization_alias="_deletedBy__ne")
     deletedBy__isnull: bool | None = Field(default=None, serialization_alias="_deletedBy__isnull")
-    joinDate: DateTime | None = None
-    joinDate__gte: DateTime | None = None
-    joinDate__lte: DateTime | None = None
+    joinDate: Date | None = None
+    joinDate__gte: Date | None = None
+    joinDate__lte: Date | None = None
     joinDate__isnull: bool | None = None
-    resignationDate: DateTime | None = None
-    resignationDate__gte: DateTime | None = None
-    resignationDate__lte: DateTime | None = None
+    resignationDate: Date | None = None
+    resignationDate__gte: Date | None = None
+    resignationDate__lte: Date | None = None
     resignationDate__isnull: bool | None = None
     isApplication: bool | None = Field(default=None, serialization_alias="_isApplication")
     applicationDate: Date | None = Field(default=None, serialization_alias="_applicationDate")
