@@ -32,9 +32,9 @@ class BookingBase(EasyVereinBase):
     counterpartIban: str | None = None
     counterpartBic: str | None = None
     twingleDonation: bool | None = None
-    bookingProject: str | None = None
+    bookingProject: BookingProject | EasyVereinReference | None = None
     sphere: Sphere | None = None
-    relatedInvoice: list[EasyVereinReference] | None = None
+    relatedInvoice: list[Invoice] | list[EasyVereinReference] | None = None
 
 
 class Booking(BookingBase, EmptyStringsToNone):
@@ -100,3 +100,5 @@ class BookingFilter(BaseModel):
 
 
 from .billing_account import BillingAccount  # noqa: E402
+from .booking_project import BookingProject  # noqa: E402
+from .invoice import Invoice  # noqa: E402

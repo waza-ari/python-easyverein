@@ -4,7 +4,6 @@ from typing import Generator
 import pytest
 from _pytest.fixtures import FixtureRequest
 from easyverein import EasyvereinAPI
-from easyverein.core.exceptions import EasyvereinAPIException
 from easyverein.models.invoice import Invoice, InvoiceCreate, InvoiceUpdate
 from easyverein.models.invoice_item import InvoiceItem, InvoiceItemCreate
 from easyverein.models.member import Member
@@ -79,10 +78,9 @@ class TestInvoices:
         assert len(attachment) == int(headers["Content-Length"])
         assert len(attachment2) == int(headers2["Content-Length"])
 
-    def test_create_invoice_minimal(self, ev_connection: EasyvereinAPI, random_string: str):
-        # Create a minimal invoice
+    def test_create_invoice_minimal(self, ev_connection: EasyvereinAPI):
+        # Create a minimal invoice now without invNumber
         invoice_model = InvoiceCreate(
-            invNumber=random_string,
             receiver="Test Receiver\nTest Street\n Some weird country",
             totalPrice=100,
             isDraft=True,
@@ -96,10 +94,6 @@ class TestInvoices:
 
         # Delete invoice - should now be in recycle bin
         ev_connection.invoice.delete(invoice)
-
-        # Try to create same invoice again, this should yield an error
-        with pytest.raises(EasyvereinAPIException):
-            ev_connection.invoice.create(invoice_model)
 
         # Get entries from wastebasket
         deleted_invoices, _ = ev_connection.invoice.get_deleted()

@@ -9,6 +9,7 @@ from io import BufferedReader
 from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING, Any
+from urllib.parse import urlencode
 
 import requests
 from pydantic import BaseModel
@@ -67,14 +68,11 @@ class EasyvereinClient:
         self.logger.debug(f"Base URL is {url}")
 
         if url_params:
-            for key, value in url_params.items():
-                if value in {None, ""}:
-                    continue
-                self.logger.debug(f"Adding {key}={value} path parameter to URL")
-                if "?" not in url:
-                    url += f"?{key}={value}"
-                else:
-                    url += f"&{key}={value}"
+            params_ = {key: value for key, value in url_params.items() if value not in {None, ""}}
+            if params_:
+                self.logger.debug(f"Adding URL parameters: {params_}")
+                first_separator = "&" if "?" in url else "?"
+                url += first_separator + urlencode(params_)
 
         self.logger.debug(f"Final constructed URL is {url}")
 

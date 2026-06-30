@@ -1,10 +1,22 @@
 # noqa: F401
 from .booking import Booking, BookingCreate, BookingFilter, BookingUpdate
+from .booking_project import (
+    BookingProject,
+    BookingProjectCreate,
+    BookingProjectFilter,
+    BookingProjectUpdate,
+)
 from .contact_details import (
     ContactDetails,
     ContactDetailsCreate,
     ContactDetailsFilter,
     ContactDetailsUpdate,
+)
+from .contact_details_group import (
+    ContactDetailsGroup,
+    ContactDetailsGroupCreate,
+    ContactDetailsGroupFilter,
+    ContactDetailsGroupUpdate,
 )
 from .custom_field import (
     CustomField,
@@ -41,7 +53,9 @@ from .member_member_group import (
 )
 
 Booking.model_rebuild()
+BookingProject.model_rebuild()
 ContactDetails.model_rebuild()
+ContactDetailsGroup.model_rebuild()
 CustomField.model_rebuild()
 CustomFieldSelectOption.model_rebuild()
 Invoice.model_rebuild()

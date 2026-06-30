@@ -19,6 +19,16 @@ from .base import EasyVereinBase
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
+InvoiceKind = Literal[
+    "balance",
+    "donation",
+    "membership",
+    "revenue",
+    "expense",
+    "cancel",
+    "credit",
+]
+
 
 class InvoiceBase(EasyVereinBase):
     """
@@ -28,7 +38,8 @@ class InvoiceBase(EasyVereinBase):
     """
 
     gross: bool | None = None
-    canceledInvoice: str | None = None
+    canceledInvoice: EasyVereinReference | Invoice | None = None
+    cancelInvoice: EasyVereinReference | Invoice | None = None
     cancellationDescription: str | None = None
     templateName: str | None = None
     date: Date | None = None
@@ -44,18 +55,7 @@ class InvoiceBase(EasyVereinBase):
     taxName: str | None = None
     relatedAddress: ContactDetails | EasyVereinReference | None = None
     path: EasyVereinReference | None = None
-    kind: (
-        Literal[
-            "balance",
-            "donation",
-            "membership",
-            "revenue",
-            "expense",
-            "cancel",
-            "credit",
-        ]
-        | None
-    ) = None
+    kind: InvoiceKind | None = None
     selectionAcc: BillingAccount | EasyVereinReference | None = None
     refNumber: str | None = None
     paymentDifference: float | None = None
@@ -71,7 +71,7 @@ class InvoiceBase(EasyVereinBase):
     accnumber: PositiveIntWithZero | None = None
     guid: str | None = None
     # TODO: Add reference to Booking once implemented
-    relatedBookings: list[EasyVereinReference] | None = None
+    relatedBookings: list[Booking] | list[EasyVereinReference] | None = None
     invoiceItems: list[InvoiceItem] | list[EasyVereinReference] | None = None
 
 
@@ -85,7 +85,7 @@ class Invoice(InvoiceBase, EmptyStringsToNone):
 
 class InvoiceCreate(
     InvoiceBase,
-    required_mixin(["invNumber", "totalPrice", ["relatedAddress", "receiver"]]),  # type: ignore
+    required_mixin(["totalPrice", ["relatedAddress", "receiver"]]),  # type: ignore
 ):
     """
     Pydantic model representing an Invoice
@@ -127,7 +127,7 @@ class InvoiceFilter(BaseModel):
     totalPrice: float | None = None
     totalPrice__gte: float | None = None
     totalPrice__lte: float | None = None
-    kind: str | None = None
+    kind: InvoiceKind | None = None
     kind__in: FilterStrList | None = None
     refNumber: str | None = None
     paymentDifference: float | None = None
@@ -149,6 +149,7 @@ class InvoiceFilter(BaseModel):
 
 
 from .billing_account import BillingAccount  # noqa: E402
+from .booking import Booking  # noqa: E402
 from .contact_details import ContactDetails  # noqa: E402
 from .invoice_item import InvoiceItem  # noqa: E402
 from .member import Member  # noqa: E402
