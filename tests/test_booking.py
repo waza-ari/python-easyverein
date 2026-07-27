@@ -21,7 +21,6 @@ class TestBooking:
 
     def test_create_booking_minimal(self, ev_connection: EasyvereinAPI, random_string: str):
         booking_model = BookingCreate(
-            receiver=f"test_{random_string}",
             date=datetime.date.today(),
             amount=100.0,
         )
