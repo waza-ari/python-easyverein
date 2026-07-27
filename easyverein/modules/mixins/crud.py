@@ -40,7 +40,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         url_params = {"limit": limit, "query": query, "page": page, "showCount": True}
         if search:
-            url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True, by_alias=True)
+            url_params |= search.model_dump(exclude_unset=True, exclude_none=True, by_alias=True)
 
         self.logger.debug(f"Computed URL params for this request: {url_params}")
 
