@@ -1,5 +1,5 @@
 """
-All methods related to contact details
+All methods related to booking projects
 """
 
 import logging

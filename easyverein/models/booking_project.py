@@ -1,6 +1,6 @@
 from pydantic import BaseModel, PositiveInt
 
-from easyverein.core.types import FilterIntList
+from easyverein.core.types import FilterIntList, HexColor
 from easyverein.models.base import EasyVereinBase
 from easyverein.models.mixins.empty_strings_mixin import EmptyStringsToNone
 
@@ -14,9 +14,9 @@ class BookingProjectBase(EasyVereinBase):
     | `BookingProject` | `BookingProjectUpdate` | `BookingProjectCreate` |
     """
 
-    name: str
+    name: str | None = None
     short: str | None = None
-    color: str | None = None
+    color: HexColor = None
     budget: float | None = None
     completed: bool | None = None
     projectCostCentre: str | None = None
@@ -36,7 +36,7 @@ class BookingProjectUpdate(BookingProjectBase):
     """
 
 
-class BookingProjectCreate(BookingProjectUpdate, required_mixin(["short"])):  # type: ignore
+class BookingProjectCreate(BookingProjectUpdate, required_mixin(["name", "short"])):  # type: ignore
     """
     Pydantic model for creating new booking project
     """
