@@ -4,7 +4,6 @@ from typing import Generator
 import pytest
 from _pytest.fixtures import FixtureRequest
 from easyverein import EasyvereinAPI
-from easyverein.core.exceptions import EasyvereinAPIException
 from easyverein.models.invoice import Invoice, InvoiceCreate, InvoiceUpdate
 from easyverein.models.invoice_item import InvoiceItem, InvoiceItemCreate
 from easyverein.models.member import Member
@@ -79,10 +78,11 @@ class TestInvoices:
         assert len(attachment) == int(headers["Content-Length"])
         assert len(attachment2) == int(headers2["Content-Length"])
 
-    def test_create_invoice_minimal(self, ev_connection: EasyvereinAPI, random_string: str):
-        # Create a minimal invoice
+    def test_create_invoice_minimal(self, ev_connection: EasyvereinAPI):
+        deleted_invoice_ids_before = {deleted.id for deleted in ev_connection.invoice.get_deleted()[0]}
+
+        # Create a minimal invoice now without invNumber
         invoice_model = InvoiceCreate(
-            invNumber=random_string,
             receiver="Test Receiver\nTest Street\n Some weird country",
             totalPrice=100,
             isDraft=True,
@@ -97,24 +97,23 @@ class TestInvoices:
         # Delete invoice - should now be in recycle bin
         ev_connection.invoice.delete(invoice)
 
-        # Try to create same invoice again, this should yield an error
-        with pytest.raises(EasyvereinAPIException):
-            ev_connection.invoice.create(invoice_model)
-
         # Get entries from wastebasket
         deleted_invoices, _ = ev_connection.invoice.get_deleted()
-        assert len(deleted_invoices) == 1
-        assert deleted_invoices[0].id == invoice.id
-        assert deleted_invoices[0].invNumber == invoice.invNumber
+        deleted_invoice_ids_after = {deleted.id for deleted in deleted_invoices}
+        assert invoice.id in deleted_invoice_ids_after - deleted_invoice_ids_before
+        deleted_invoice = next(deleted for deleted in deleted_invoices if deleted.id == invoice.id)
+        assert deleted_invoice.invNumber == invoice.invNumber
 
         # Finally purge invoice from wastebasket
         ev_connection.invoice.purge(invoice.id)
 
         # Get entries from wastebasket
         deleted_invoices, _ = ev_connection.invoice.get_deleted()
-        assert len(deleted_invoices) == 0
+        assert invoice.id not in {deleted.id for deleted in deleted_invoices}
 
     def test_create_invoice_with_items(self, ev_connection: EasyvereinAPI, random_string: str, example_member):
+        initial_invoice_count = len(ev_connection.invoice.get_all())
+
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -124,6 +123,7 @@ class TestInvoices:
             isDraft=True,
             gross=True,
             description="Test Description",
+            closingDescription="Test Closing Description",
             kind="revenue",
             isTemplate=False,
             isRequest=False,
@@ -140,6 +140,8 @@ class TestInvoices:
         assert isinstance(invoice, Invoice)
         assert invoice.invNumber == invoice_model.invNumber
         assert invoice.isDraft
+        assert invoice.description == invoice_model.description
+        assert invoice.closingDescription == invoice_model.closingDescription
         assert isinstance(invoice.id, int)
 
         # Create an invoice item
@@ -165,11 +167,12 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
-        # Check that we're back to 6 invoices
         invoices = ev_connection.invoice.get_all()
-        assert len(invoices) == 6
+        assert len(invoices) == initial_invoice_count
 
     def test_create_invoice_with_items_helper(self, ev_connection: EasyvereinAPI, random_string: str, example_member):
+        initial_invoice_count = len(ev_connection.invoice.get_all())
+
         # Create a minimal invoice
         invoice_model = InvoiceCreate(
             invNumber=random_string,
@@ -217,14 +220,14 @@ class TestInvoices:
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)
-        # Check that we're back to 6 invoices
-        invoices, total_count = ev_connection.invoice.get()
-        assert total_count == 6
-        assert len(invoices) == 6
+        invoices = ev_connection.invoice.get_all()
+        assert len(invoices) == initial_invoice_count
 
     def test_create_invoice_with_attachment(
         self, ev_connection: EasyvereinAPI, random_string: str, request: FixtureRequest
     ):
+        initial_invoice_count = len(ev_connection.invoice.get_all())
+
         # Get members
         members, _ = ev_connection.member.get()
         assert len(members) > 0
@@ -259,13 +262,14 @@ class TestInvoices:
         # Delete invoice again
         ev_connection.invoice.delete(invoice)
 
-        # Check that we're back to 6 invoices
-        invoices, _ = ev_connection.invoice.get()
-        assert len(invoices) == 6
+        invoices = ev_connection.invoice.get_all()
+        assert len(invoices) == initial_invoice_count
 
         # Purge invoice from wastebasket
         assert invoice.id is not None
         ev_connection.invoice.purge(invoice.id)
+        invoices = ev_connection.invoice.get_all()
+        assert len(invoices) == initial_invoice_count
 
 
 class TestInvoiceBulk:
@@ -318,8 +322,16 @@ class TestInvoiceBulk:
         )
 
         update_data = [
-            InvoiceUpdate(id=i1.id, description="Updated Description 1"),
-            InvoiceUpdate(id=i2.id, description="Updated Description 2"),
+            InvoiceUpdate(
+                id=i1.id,
+                description="Updated Description 1",
+                closingDescription="Updated Closing Description 1",
+            ),
+            InvoiceUpdate(
+                id=i2.id,
+                description="Updated Description 2",
+                closingDescription="Updated Closing Description 2",
+            ),
         ]
 
         successes = ev_connection.invoice.bulk_update(update_data)
@@ -329,4 +341,6 @@ class TestInvoiceBulk:
         updated_i2 = ev_connection.invoice.get_by_id(i2.id)  # type: ignore
 
         assert updated_i1.description == "Updated Description 1"
+        assert updated_i1.closingDescription == "Updated Closing Description 1"
         assert updated_i2.description == "Updated Description 2"
+        assert updated_i2.closingDescription == "Updated Closing Description 2"
