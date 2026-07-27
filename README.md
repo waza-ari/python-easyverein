@@ -31,8 +31,10 @@ When saying CRUD, it means the library supports various methods to **C**reate, *
 **D**elete objects. See the API reference for details on supported CRUD operations.
 
 * `booking`: CRUD, Bulk Create and Update, Soft-Delete
+* `booking-project`: CRUD, Soft-Delete
 * `billing-account`: CRUD, Soft-Delete
 * `contact-details`: CRUD, Bulk Create and Update, Soft-Delete
+* `contact-details-group`: CRUD, Soft-Delete
 * `custom-fields`: CRUD, Soft-Delete
 * `custom-fields/<id>/select-options`: CRUD
 * `invoice`: CRUD, Bulk Create and Update, Soft-Delete, plus some convenience methods

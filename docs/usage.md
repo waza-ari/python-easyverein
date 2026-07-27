@@ -421,9 +421,14 @@ are only supported on endpoints which make use of the soft-delete pattern.
 !!! info "Endpoints supporting soft-delete"
     As of today, only the following endpoints are implemented by this library and support the soft-delete pattern:
 
+    - booking
+    - booking-project
+    - billing-account
     - invoice
     - member
+    - member-group
     - contact-details
+    - contact-details-group
     - custom-field
 
 For these endpoints, three additional methods are provided. Refer to the API documentation for details.
