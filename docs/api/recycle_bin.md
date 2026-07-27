@@ -8,10 +8,14 @@ with soft-deleted resources.
     Note that not all endpoints support the soft-delete pattern. Using this Client, only the following
     endpoints are supported for now:
 
+    - booking
+    - booking-project
+    - billing-account
     - invoice
     - member
     - member-groups
     - contact-details
+    - contact-details-group
     - custom-field
     
     Please refer to the offical API documentation for a full list endpoints supporting soft-delete.
