@@ -49,7 +49,7 @@ class ContactDetailsGroupUpdate(ContactDetailsGroupBase):
 class ContactDetailsGroupFilter(BaseModel):
     id__in: FilterIntList | None = None
     name: str | None = None
-    color: HexColor | None = None
+    color: HexColor = None
     short: str | None = None
     deleted: bool | None = None
     ordering: str | None = None

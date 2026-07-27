@@ -1,5 +1,5 @@
 """
-All methods related to custom fields
+All methods related to contact details groups
 """
 
 import logging

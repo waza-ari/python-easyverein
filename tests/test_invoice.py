@@ -147,7 +147,7 @@ class TestInvoices:
         # Create an invoice item
         invoice_item_model = InvoiceItemCreate(
             title="Test Invoice Item",
-            quantity=5,
+            quantity=0.5,
             unitPrice=10.12,
             relatedInvoice=invoice.id,
             taxRate=0,
