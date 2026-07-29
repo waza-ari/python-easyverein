@@ -53,10 +53,10 @@ class InvoiceBase(EasyVereinBase):
     tax: float | None = None
     taxRate: float | None = None
     taxName: str | None = None
-    relatedAddress: ContactDetails | EasyVereinReference | None = None
+    relatedAddress: EasyVereinReference | ContactDetails | None = None
     path: EasyVereinReference | None = None
     kind: InvoiceKind | None = None
-    selectionAcc: BillingAccount | EasyVereinReference | None = None
+    selectionAcc: EasyVereinReference | BillingAccount | None = None
     refNumber: str | None = None
     paymentDifference: float | None = None
     isDraft: bool | None = None
@@ -64,15 +64,15 @@ class InvoiceBase(EasyVereinBase):
     isTemplate: bool | None = None
     paymentInformation: str | None = None
     isRequest: bool | None = None
-    payedFromUser: Member | EasyVereinReference | None = None
-    approvedFromAdmin: Member | EasyVereinReference | None = None
+    payedFromUser: EasyVereinReference | Member | None = None
+    approvedFromAdmin: EasyVereinReference | Member | None = None
     actualCallStateName: str | None = None
     callStateDelayDays: PositiveIntWithZero | None = None
     accnumber: PositiveIntWithZero | None = None
     guid: str | None = None
     # TODO: Add reference to Booking once implemented
-    relatedBookings: list[Booking] | list[EasyVereinReference] | None = None
-    invoiceItems: list[InvoiceItem] | list[EasyVereinReference] | None = None
+    relatedBookings: list[EasyVereinReference] | list[Booking] | None = None
+    invoiceItems: list[EasyVereinReference] | list[InvoiceItem] | None = None
 
 
 class Invoice(InvoiceBase, EmptyStringsToNone):
