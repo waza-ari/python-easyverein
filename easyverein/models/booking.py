@@ -32,9 +32,9 @@ class BookingBase(EasyVereinBase):
     counterpartIban: str | None = None
     counterpartBic: str | None = None
     twingleDonation: bool | None = None
-    bookingProject: BookingProject | EasyVereinReference | None = None
+    bookingProject: EasyVereinReference | BookingProject | None = None
     sphere: Sphere | None = None
-    relatedInvoice: list[Invoice] | list[EasyVereinReference] | None = None
+    relatedInvoice: list[EasyVereinReference] | list[Invoice] | None = None
 
 
 class Booking(BookingBase, EmptyStringsToNone):
