@@ -32,9 +32,9 @@ class BookingBase(EasyVereinBase):
     counterpartIban: str | None = None
     counterpartBic: str | None = None
     twingleDonation: bool | None = None
-    bookingProject: str | None = None
+    bookingProject: EasyVereinReference | BookingProject | None = None
     sphere: Sphere | None = None
-    relatedInvoice: list[EasyVereinReference] | None = None
+    relatedInvoice: list[EasyVereinReference] | list[Invoice] | None = None
 
 
 class Booking(BookingBase, EmptyStringsToNone):
@@ -47,11 +47,13 @@ class Booking(BookingBase, EmptyStringsToNone):
 
 class BookingCreate(
     BookingBase,
-    required_mixin(["receiver", "date"]),  # type: ignore
+    required_mixin(["date"]),  # type: ignore
 ):
     """
     Pydantic model representing a Booking
     """
+
+    receiver: str | None = ""
 
 
 class BookingUpdate(BookingBase):
@@ -100,3 +102,5 @@ class BookingFilter(BaseModel):
 
 
 from .billing_account import BillingAccount  # noqa: E402
+from .booking_project import BookingProject  # noqa: E402
+from .invoice import Invoice  # noqa: E402

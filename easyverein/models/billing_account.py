@@ -28,8 +28,8 @@ class BillingAccount(BillingAccountBase, EmptyStringsToNone):
 
     skr: str | None = None
     accountingPlans: list[EasyVereinReference] | None = None
-    numberLength: PositiveIntWithZero
-    linkedBookings: PositiveIntWithZero
+    numberLength: PositiveIntWithZero | None = None
+    linkedBookings: PositiveIntWithZero | None = None
 
 
 class BillingAccountCreate(

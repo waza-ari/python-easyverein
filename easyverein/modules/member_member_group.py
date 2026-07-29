@@ -1,5 +1,5 @@
 """
-All methods related to invoices
+All methods related to member group memberships
 """
 
 import logging

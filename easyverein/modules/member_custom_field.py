@@ -83,12 +83,14 @@ class MemberCustomFieldMixin(
 
         if existing_custom_field:
             # It's already there, we need to patch the existing field
-            patch = MemberCustomFieldUpdate(value=payload_value, selectedOptions=payload_selected_options)
+            patch = MemberCustomFieldUpdate(value=payload_value, selectedOptions=payload_selected_options)  # type: ignore[arg-type]
             assert existing_custom_field.id
             return self.update(existing_custom_field.id, patch)
         else:
             # It's not there, we need to create it
             create = MemberCustomFieldCreate(
-                customField=custom_field_id, value=payload_value, selectedOptions=payload_selected_options
+                customField=custom_field_id,
+                value=payload_value,
+                selectedOptions=payload_selected_options,  # type: ignore[arg-type]
             )
             return self.create(create)

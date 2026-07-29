@@ -48,8 +48,10 @@ nav:
     - "Recycle Bin / Soft Delete": api/recycle_bin.md
     - "Endpoint Specific":
         - "Booking": api/endpoints/booking.md
+        - "Booking Project": api/endpoints/booking_project.md
         - "Billing Account": api/endpoints/billing_account.md
         - "Contact Details": api/endpoints/contact_details.md
+        - "Contact Details Group": api/endpoints/contact_details_group.md
         - "Custom Fields":
           - "Custom Field": api/endpoints/custom_field.md
           - "Custom Field Select Options": api/endpoints/custom_field_select_option.md
@@ -63,8 +65,10 @@ nav:
   - "Model Reference":
     - "Base Model": models/base.md
     - "Booking": models/booking.md
+    - "Booking Project": models/booking_project.md
     - "Billing Account": models/billing_account.md
     - "Contact Details": models/contact_details.md
+    - "Contact Details Group": models/contact_details_group.md
     - "Custom Field": models/custom_field.md
     - "Custom Field Select Options": models/custom_field_select_option.md
     - "Invoice": models/invoice.md

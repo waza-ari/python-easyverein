@@ -1,5 +1,5 @@
 """
-All methods related to custom fields
+All methods related to member group
 """
 
 import logging
