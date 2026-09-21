@@ -68,7 +68,7 @@ This simple example shows how to setup the library and retrieve all invoices:
 import os
 from easyverein import EasyvereinAPI
 
-api_key = os.getenv('EV_API_KEY', '')
+api_key = os.getenv("EV_API_KEY", "")
 
 ev_client = EasyvereinAPI(api_key)
 
