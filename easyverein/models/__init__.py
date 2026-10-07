@@ -1,4 +1,5 @@
 # noqa: F401
+from .billing_account import BillingAccount, BillingAccountCreate, BillingAccountFilter, BillingAccountUpdate
 from .booking import Booking, BookingCreate, BookingFilter, BookingUpdate
 from .booking_project import (
     BookingProject,
@@ -37,6 +38,7 @@ from .invoice_item import (
     InvoiceItemFilter,
     InvoiceItemUpdate,
 )
+from .lsb_dosb_sport import LsbDosbSport
 from .member import Member, MemberCreate, MemberFilter, MemberSetDosb, MemberSetLsb, MemberUpdate
 from .member_custom_field import (
     MemberCustomField,
@@ -52,6 +54,7 @@ from .member_member_group import (
     MemberMemberGroupUpdate,
 )
 
+BillingAccount.model_rebuild()
 Booking.model_rebuild()
 BookingProject.model_rebuild()
 ContactDetails.model_rebuild()
@@ -60,6 +63,7 @@ CustomField.model_rebuild()
 CustomFieldSelectOption.model_rebuild()
 Invoice.model_rebuild()
 InvoiceItem.model_rebuild()
+LsbDosbSport.model_rebuild()
 Member.model_rebuild()
 MemberGroup.model_rebuild()
 MemberCustomField.model_rebuild()
