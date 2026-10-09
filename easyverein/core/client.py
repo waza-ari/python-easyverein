@@ -5,6 +5,7 @@ Main EasyVerein API class
 from __future__ import annotations
 
 import logging
+from collections.abc import Sequence
 from io import BufferedReader
 from pathlib import Path
 from time import sleep
@@ -113,13 +114,13 @@ class EasyvereinClient:
         self.logger.debug("Request returned status code %d", res.status_code)
 
         if res.status_code == 429:
-            retry_after = res.headers["Retry-After"]
+            retry_after_header = res.headers["Retry-After"]
 
             try:
-                retry_after = int(retry_after)
+                retry_after = int(retry_after_header)
             except ValueError:
                 self.logger.error("Unable to parse Retry-After header while handling 429 response code.")
-                self.logger.debug("Retry-After header: %s", retry_after)
+                self.logger.debug("Retry-After header: %s", retry_after_header)
                 retry_after = 0
 
             self.logger.warning(
@@ -204,7 +205,7 @@ class EasyvereinClient:
             expected_status_code=status_code,
         )
 
-    def bulk_create(self, url, data: list[BaseModel], status_code: int = 201) -> ResponseSchema:
+    def bulk_create(self, url, data: Sequence[BaseModel], status_code: int = 201) -> ResponseSchema:
         """
         Method to create multiple objects in the API
         """
@@ -218,7 +219,7 @@ class EasyvereinClient:
         )
 
     def bulk_update(
-        self, url, data: list[BaseModel], status_code: int = 200, exclude_none: bool = True
+        self, url, data: Sequence[BaseModel], status_code: int = 200, exclude_none: bool = True
     ) -> ResponseSchema:
         """
         Method to update multiple objects in the API

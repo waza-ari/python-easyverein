@@ -5,6 +5,7 @@ All methods related to invoices
 import logging
 
 from ..core.client import EasyvereinClient
+from ..core.types import EasyVereinReference
 from ..models import (
     CustomField,
     CustomFieldSelectOption,
@@ -61,7 +62,7 @@ class MemberCustomFieldMixin(
             if missing:
                 raise ValueError(f"No select option(s) with value(s) {missing!r} for custom field {custom_field_id}")
             payload_value = None
-            payload_selected_options: list[int] | None = option_ids
+            payload_selected_options: list[CustomFieldSelectOption | EasyVereinReference] | None = list(option_ids)
         else:
             assert isinstance(value, str), "Value must be a string for non-select custom fields"
             payload_value = value
