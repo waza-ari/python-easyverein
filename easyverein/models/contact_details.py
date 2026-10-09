@@ -27,7 +27,7 @@ class ContactDetailsBase(EasyVereinBase):
 
     isCompany: bool | None = Field(default=None, alias="_isCompany")
     """Alias for `_isCompany` field. See [Pydantic Models](../usage.md#pydantic-models) for details."""
-    salutation: Literal["", "Herr", "Frau"] | None = None
+    salutation: str | None = None
     firstName: str | None = Field(default=None, max_length=128)
     familyName: str | None = Field(default=None, max_length=128)
     nameAffix: str | None = Field(default=None, max_length=100)
