@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from pydantic import BaseModel, PositiveInt
+from pydantic import PositiveInt
 
 from ..core.types import EasyVereinReference, FilterIntList, FilterStrList, PositiveIntWithZero, Sphere
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -47,7 +47,7 @@ class BillingAccountUpdate(BillingAccountBase):
     """
 
 
-class BillingAccountFilter(BaseModel):
+class BillingAccountFilter(EasyVereinFilter):
     """
     Pydantic model used to filter billing accounts
     """

@@ -4,13 +4,13 @@ ContactDetailsGroup related models
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from ..core.types import (
     FilterIntList,
     HexColor,
 )
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -46,7 +46,7 @@ class ContactDetailsGroupUpdate(ContactDetailsGroupBase):
     pass
 
 
-class ContactDetailsGroupFilter(BaseModel):
+class ContactDetailsGroupFilter(EasyVereinFilter):
     id__in: FilterIntList | None = None
     name: str | None = None
     color: HexColor = None

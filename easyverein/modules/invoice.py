@@ -12,6 +12,7 @@ from ..core.exceptions import EasyvereinAPIException
 from ..models.invoice import Invoice, InvoiceCreate, InvoiceFilter, InvoiceUpdate
 from ..models.invoice_item import InvoiceItemCreate
 from .mixins.crud import BulkUpdateCreateMixin, CRUDMixin
+from .mixins.helper import parse_models
 from .mixins.recycle_bin import RecycleBinMixin
 
 
@@ -85,25 +86,24 @@ class InvoiceMixin(
         invoice: InvoiceCreate,
         items: List[InvoiceItemCreate],
         set_draft_state: bool = True,
-    ):
+    ) -> Invoice:
         """
-        The EV API doesn't support passing the InvoiceItems directly when creating an invoice,
-        so this client exposes this helper method to simplify creation of invoices.
+        Creates an invoice together with its invoice items in a single API request and returns the created invoice.
 
-        Note that this endpoint performs multiple API requests, depending on the number of items and the final draft
-        state. At least, the invoice needs to be created in draft state. Then the items have to be added (one
-        API request per item, as the API does not support a bulk create endpoint here). Finally, if
-        `set_draft_state` is set to `True` and the models attribute `isDraft` equals `False`, a final request
-        is performed afterward to remove the draft state.
+        The request is atomic: if the invoice or any of the items fails validation, the API returns an error
+        and nothing is created. The `relatedInvoice` attribute of the items is ignored, as the items are
+        attached to the newly created invoice.
 
         !!! note "PDF generation"
-            Starting with the Hexa v1.7 API, the API will automatically generate a PDF attachment based
-            on the provided data and the settings configured in the realm settings.
+            If the invoice is not created as a draft, the API automatically generates the PDF based on the
+            provided data and the settings configured in the organization. The returned invoice contains
+            its `path` already.
 
         Args:
             invoice: Invoice to create
             items: List of invoice items to add to the invoice
-            set_draft_state: Whether to convert the invoice from draft state to an actual invoice after adding items
+            set_draft_state: If `True` (default), the invoice is created as final invoice (`isDraft=False`),
+                otherwise it is created as draft. Passing `False` requires `invoice.isDraft` to be `True`.
         """
 
         if not set_draft_state and not invoice.isDraft:
@@ -112,23 +112,20 @@ class InvoiceMixin(
                 "we're also instructed not to modify the draft state."
             )
 
-        # Set draft to True. If it was false, it will be set back later
-        invoice.isDraft = True
+        api_version = self.c.api_version
+        related_invoice_key = InvoiceItemCreate.wire_name("relatedInvoice", api_version)
+        items_key = InvoiceCreate.wire_name("invoiceItems", api_version)
+        assert related_invoice_key and items_key
 
-        inv = self.create(invoice)
-        if not inv.id:
-            raise EasyvereinAPIException("Failed to create invoice")
+        payload = self.c.serialize(invoice.model_copy(update={"isDraft": not set_draft_state}))
+        payload[items_key] = [
+            {k: v for k, v in self.c.serialize(item).items() if k != related_invoice_key} for item in items
+        ]
 
-        for item in items:
-            item.relatedInvoice = inv.id
-            self.c.api_instance.invoice_item.create(item)
-
-        if set_draft_state:
-            self.update(inv.id, InvoiceUpdate(isDraft=False))
-            # We need to fetch new invoice details to obtain the path of the generated PDF
-            inv = self.get_by_id(inv.id)
-
-        return inv
+        self.logger.info(f"Creating object of type {self.endpoint_name} with {len(items)} items")
+        response = self.c.create(self.c.get_url(f"/{self.endpoint_name}/create-invoice"), payload)
+        assert isinstance(response.result, dict)
+        return parse_models(response.result, Invoice, self.c.context)
 
     def get_attachment(self, invoice: Invoice | int) -> tuple[bytes, CaseInsensitiveDict[str]]:
         """

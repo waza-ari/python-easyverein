@@ -13,8 +13,8 @@ EasyvereinAPI(
 )
 ```
 
-The only mandatory parameter is the `api_key`, which you can get from your EasyVerein portal. It is not recommended
-to change `api_version` or `base_url`, as the default values are the values this library is written and tested against.
+The only mandatory parameter is the `api_key`, which you can get from your EasyVerein portal. `api_version` can be
+either `v2.0` (default) or `v3.0`, see [API v3.0](#api-v30) below. It is not recommended to change `base_url`.
 You can optionally specify your own Python `logger`, see the logging section below.
 
 !!! info "Authentication"
@@ -41,15 +41,15 @@ The available endpoints are documented in the API Reference section of this docu
 
 ## Handling Token Refresh
 
-Starting version v2.0, the EasyVerein API enforces token expiration. The token you get from
+Starting with version v2.0, the EasyVerein API enforces token expiration. The token you get from
 the API configuration page is only valid for 30 days and must be refreshed afterwards. This library is not
 responsible for storing the token, but you can pass a callback function that will be called if a token refresh
 is needed. Optionally, you can instruct the library to automatically refresh the token for you and pass it to the
 callback function.
 
-!!! info "Version 2.0 only"
-    Please not that the new token type is only supported in API version 2.0. If you're using API version 1.x, you
-    do not need to configure token refresh, the library will raise an exception if you try.
+!!! info "Supported API versions"
+    Token refresh works the same way for API v2.0 and v3.0. The library checks the header the respective version
+    uses to signal a required refresh (`tokenRefreshNeeded` in v2.0, `token_refresh_needed` in v3.0).
 
 There are two ways this can be done, one synchronous and one asynchronous option. When using asynchronously,
 the callback will be called without any arguments, just a a trigger for you to refresh and store the token somewhere
@@ -84,6 +84,45 @@ c = EasyvereinAPI(
     auto_refresh_token=True
 )
 ```
+
+## API v3.0
+
+API v3.0 of EasyVerein introduced a number of breaking changes compared to v2.0. This library hides them, so the
+same code works with both API versions - only the `api_version` passed to `EasyvereinAPI` changes:
+
+```python
+from easyverein import EasyvereinAPI
+from easyverein.models import InvoiceFilter
+
+ev_client = EasyvereinAPI("<your-token>", api_version="v3.0")
+
+invoices, total_count = ev_client.invoice.get(
+    query="{id,invNumber,relatedAddress{firstName,_isCompany}}",
+    search=InvoiceFilter(isDraft=False, ordering="-invNumber"),
+)
+print(invoices[0].invNumber)
+```
+
+The following differences are handled by the library:
+
+- **Field names**: v3.0 renamed every field to snake_case and removed leading underscores (`invNumber` becomes
+  `inv_number`, `_isCompany` becomes `is_company`). The attributes of the models keep their v2.0 names for both
+  API versions, the library translates them when sending and receiving data.
+- **Queries and ordering**: field names in `query` and in the `ordering` filter are translated, too. You can write
+  them in either the v2.0 (camelCase) or the v3.0 (snake_case) style.
+- **Filters**: filter attributes keep their v2.0 names and are translated to their v3.0 counterparts, including the
+  filters v3.0 renamed (e.g. `memberGroups__not` becomes `member_groups__ne`). The `deleted` filter was removed in v3.0,
+  using it raises an error. Use the [recycle bin methods](#dealing-with-soft-deleted-resources) instead.
+- **Sub endpoints**: v3.0 replaced `member/<id>/custom-fields`, `member/<id>/groups` and
+  `custom-field/<id>/select-options` by the top level endpoints `member-custom-field-assignment`,
+  `member-group-assignment` and `select-option`. `ev_client.member.custom_field(<id>)`,
+  `ev_client.member.member_group(<id>)` and `ev_client.custom_field.select_option(<id>)` use the right endpoint
+  automatically.
+
+!!! warning "Scope of the translation"
+    Only names are translated: model attributes, filters, queries and orderings. Values are sent as they are, for
+    example the free text `search` filter or the values of custom fields. Fields that are not part of the models of
+    this library are dropped when parsing responses, regardless of the API version.
 
 ## Pydantic Models
 
@@ -218,7 +257,7 @@ detault, the API returns a HTTP link to this model. Consider this partial reply 
 ```json
 {
   "id": 183495599,
-  "relatedAddress": "https://easyverein.com/api/v1.7/contact-details/113185254",
+  "relatedAddress": "https://easyverein.com/api/v2.0/contact-details/113185254",
   "model": "Invoice"
 }
 ```

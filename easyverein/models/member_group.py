@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import Field, PositiveInt
 
 from ..core.types import (
     EasyVereinReference,
@@ -15,7 +15,7 @@ from ..core.types import (
     PositiveIntWithZero,
     Sphere,
 )
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -146,7 +146,7 @@ class MemberGroupUpdate(MemberGroupBase):
     pass
 
 
-class MemberGroupFilter(BaseModel):
+class MemberGroupFilter(EasyVereinFilter):
     id__in: FilterIntList | None = None
     name: str | None = None
     paymentAmount: float | None = None

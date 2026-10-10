@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 from ..core.types import EasyVereinReference, FilterIntList
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -57,7 +55,7 @@ class MemberCustomFieldUpdate(MemberCustomFieldBase):
     pass
 
 
-class MemberCustomFieldFilter(BaseModel):
+class MemberCustomFieldFilter(EasyVereinFilter):
     """
     Pydantic model used to filter members custom fields
     """

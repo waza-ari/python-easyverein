@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import Field
 
 from ..core.types import (
     Date,
@@ -15,7 +15,7 @@ from ..core.types import (
     FilterStrList,
     PositiveIntWithZero,
 )
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -100,10 +100,15 @@ class InvoiceUpdate(InvoiceBase):
     """
 
 
-class InvoiceFilter(BaseModel):
+class InvoiceFilter(EasyVereinFilter):
     """
     Pydantic model used to filter invoices
     """
+
+    __v3_names__ = {
+        "customfilter": "custom_filter",
+        "usesessionfilter": "use_session_filter",
+    }
 
     id__in: FilterIntList | None = None
     relatedAddress: int | None = None
@@ -119,9 +124,10 @@ class InvoiceFilter(BaseModel):
     date: Date | None = None
     date__gt: Date | None = None
     date__lt: Date | None = None
-    dateItHappened: Date | None = None
-    dateItHappened__gt: Date | None = None
-    dateItHappened__lt: Date | None = None
+    dateItHappened: Date | None = Field(default=None, serialization_alias="dateItHappend")
+    """Filters on the `dateItHappend` field (the API spells it this way)."""
+    dateItHappened__gt: Date | None = Field(default=None, serialization_alias="dateItHappend__gt")
+    dateItHappened__lt: Date | None = Field(default=None, serialization_alias="dateItHappend__lt")
     invNumber__in: FilterStrList | None = None
     receiver: str | None = None
     totalPrice: float | None = None

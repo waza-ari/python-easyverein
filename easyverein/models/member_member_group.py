@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 from ..core.types import Date, EasyVereinReference, FilterIntList
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -50,7 +48,7 @@ class MemberMemberGroupUpdate(MemberMemberGroupBase):
     pass
 
 
-class MemberMemberGroupFilter(BaseModel):
+class MemberMemberGroupFilter(EasyVereinFilter):
     id__in: FilterIntList | None = None
     paymentActive: bool | None = None
     start__gte: Date | None = None

@@ -21,7 +21,7 @@ Run a single test: `poetry run pytest tests/test_invoice.py::TestInvoices::test_
 
 ### Tests require a live API
 
-There are **no mocks** — the entire `tests/` suite runs against a real EasyVerein tenant. Set `EV_API_KEY` (read via `pytest-dotenv` from `.env`, or as an env var) to a **dedicated demo account**, not a production one, because tests create and delete real objects. Tests assume specific seeded example data (e.g. `test_get_invoices` asserts exactly 6 invoices exist). `tests/unit/` is the only mock-free-but-offline portion (pure model validation).
+There are **no mocks** — the entire `tests/` suite runs against a real EasyVerein tenant. Set `EV_API_KEY` (read via `pytest-dotenv` from `.env`, or as an env var) to a **dedicated demo account**, not a production one, because tests create and delete real objects. Tests assume specific seeded example data (e.g. `test_get_invoices` asserts exactly 6 invoices exist). `tests/unit/` is the only mock-free-but-offline portion (pure model validation and v2/v3 name translation). Set `EV_API_VERSION=v3.0` to run the live suite against v3.0; never run both versions concurrently against the same tenant.
 
 ## Architecture
 
@@ -49,7 +49,18 @@ A resource mixin is wired up by subclassing the generic mixins with concrete typ
 `easyverein/core/client.py` (`EasyvereinClient`) is the single layer that talks HTTP via `requests`. It builds URLs, attaches the bearer token, serializes Pydantic models (`model_dump(exclude_none=..., exclude_unset=True, by_alias=True)`), and parses responses into `ResponseSchema` (`core/responses.py`). It handles:
 
 - **429 rate limiting** — honors `Retry-After`; sleeps and retries only if `auto_retry=True`, otherwise raises `EasyvereinAPITooManyRetriesException`.
-- **Token refresh** — when the API sets the `tokenRefreshNeeded` header, `EasyvereinAPI.handle_token_refresh()` fires; with `auto_refresh_token=True` it calls `/refresh-token` and swaps the in-use key. A `token_refresh_callback` lets callers persist the new `BearerToken`. v2.0 only.
+- **Token refresh** — when the API sets the `tokenRefreshNeeded` (v3.0: `token_refresh_needed`) header, `EasyvereinAPI.handle_token_refresh()` fires; with `auto_refresh_token=True` it calls `/refresh-token` and swaps the in-use key. A `token_refresh_callback` lets callers persist the new `BearerToken`.
+
+### API versions (v2.0 and v3.0)
+
+Both API versions are supported with **one set of models**; `api_version` defaults to `v2.0` (v1.7 is rejected). v3.0 renamed every field, filter and query name to snake_case, so the Python attribute names stay the v2.0 names and the translation happens on the wire:
+
+- `core/api_version.py` — naming rules (`to_snake_case`, `translate_query`), version-specific parameter / header names (`COUNT_PARAM`, `TOKEN_REFRESH_HEADER`).
+- `models/mixins/versioned.py` — `VersionedModel` (base of `EasyVereinBase`, `EasyVereinFilter` and action models) renames keys in a before-validator and a wrap serializer when the Pydantic context contains `{"api_version": "v3.0"}`. Exceptions to the derived snake_case name go into a `__v3_names__` class dict (`None` = unsupported in v3.0, e.g. the `deleted` filter).
+- The client passes that context everywhere: always serialize via `client.serialize()`, build list URLs via `client.list_params()`, translate `query` strings via `translate_query()` and parse via `parse_models(..., self.c.context)`.
+- Sub endpoints that v3.0 turned into top level endpoints (member custom fields, member groups, select options) switch `endpoint_name` per version, scope list requests via the `scope_params` property and inject the parent reference on `create`.
+
+The v3.0 changelog is unreliable (see `KNOWN_ISSUES.md`); verify filter names against the `parameters` of the v3.0 OpenAPI spec embedded in the HTML documentation, which matched the live API.
 
 ### Custom field types
 
@@ -65,7 +76,7 @@ A resource mixin is wired up by subclassing the generic mixins with concrete typ
 
 ### Filter generation
 
-`dev/generate_filter.py` generates the `XYZFilter` Pydantic field definitions from an EasyVerein swagger spec (`dev/api/<version>.json`). Filters are not hand-maintained from scratch — regenerate from the spec when the API changes.
+`dev/generate_filter.py` generates the `XYZFilter` Pydantic field definitions from an EasyVerein swagger spec (`dev/api/<version>.json`). Filters are not hand-maintained from scratch — regenerate from the v2.0 spec when the API changes and add `__v3_names__` overrides where the v3.0 name is not the snake_case version of the v2.0 name.
 
 ## Conventions
 

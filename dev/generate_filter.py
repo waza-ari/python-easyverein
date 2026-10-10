@@ -38,9 +38,9 @@ def create_pydantic_fields(params: list[Any]) -> None:
 
         name = param["name"]
 
-        try:
-            vartype = param["type"]
-        except KeyError:
+        # v2.0 specs define the type directly, v3.0 specs within a schema
+        vartype = param.get("type") or param.get("schema", {}).get("type")
+        if not vartype:
             print(f"Missing type for parameter {name}")
             continue
 
@@ -73,10 +73,13 @@ def create_pydantic_fields(params: list[Any]) -> None:
 if __name__ == "__main__":
     # Read model from CLI we should be handling
     if len(sys.argv) < 2:
-        print("Usage: python generate_filter.py <model>")
+        print("Usage: python generate_filter.py <model> [api_version]")
+        print("Filter attributes use the v2.0 names, v3.0 names are derived from them (see VersionedModel).")
         exit(1)
 
     model = sys.argv[1]
+    if len(sys.argv) > 2:
+        API_VERSION = sys.argv[2]
     print(model)
 
     try:

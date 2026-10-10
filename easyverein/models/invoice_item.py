@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from ..core.types import EasyVereinReference, FilterIntList, Sphere
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -21,9 +21,10 @@ class InvoiceItemBase(EasyVereinBase):
     | `InvoiceItem` | `InvoiceItemUpdate` | `InvoiceItemCreate` |
 
     !!! tip "Creating Invoice Items"
-        Invoice Items can only be created once the invoice is already created and is still in the draft state.
-        Also note that the tax and gross settings must match those of the invoice this item is being attached to,
-        otherwise invoice generation (setting `isDraft` to `False`) will fail on EV API side.
+        Invoice Items can either be created together with the invoice using `invoice.create_with_items`, or
+        added to an existing invoice that is still in the draft state. In the latter case, the tax and gross
+        settings must match those of the invoice this item is being attached to, otherwise invoice generation
+        (setting `isDraft` to `False`) will fail on EV API side.
     """
 
     relatedInvoice: Invoice | EasyVereinReference | None = None
@@ -63,10 +64,15 @@ class InvoiceItemUpdate(InvoiceItemBase):
     """
 
 
-class InvoiceItemFilter(BaseModel):
+class InvoiceItemFilter(EasyVereinFilter):
     """
     Pydantic model used to filter invoice items
     """
+
+    __v3_names__ = {
+        "relatedInvoice__not": "related_invoice__ne",
+        "billingAccount__not": "billing_account__ne",
+    }
 
     id__in: FilterIntList | None = None
     title: str | None = None

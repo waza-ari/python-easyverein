@@ -1,9 +1,11 @@
 """
-All methods related to invoices
+All methods related to custom field values of members
 """
 
 import logging
+from typing import Any
 
+from ..core.api_version import API_V3
 from ..core.client import EasyvereinClient
 from ..core.types import EasyVereinReference
 from ..models import (
@@ -30,7 +32,24 @@ class MemberCustomFieldMixin(
 
     @property
     def endpoint_name(self) -> str:
+        if self.c.api_version == API_V3:
+            return "member-custom-field-assignment"
         return f"member/{self.member_id}/custom-fields"
+
+    @property
+    def scope_params(self) -> dict[str, Any]:
+        return {"user_object": self.member_id} if self.c.api_version == API_V3 else {}
+
+    def create(self, data: MemberCustomFieldCreate) -> MemberCustomField:
+        """
+        Creates a custom field value for this member and returns the created object.
+
+        Args:
+            data: Object to be created. `userObject` is set to this member if not given (required by API v3.0).
+        """
+        if self.c.api_version == API_V3 and data.userObject is None:
+            data = data.model_copy(update={"userObject": self.member_id})
+        return super().create(data)
 
     def ensure_set(self, custom_field_id: int, value: str | list[str]) -> MemberCustomField:
         """

@@ -1,6 +1,11 @@
 | API Endpoint                       | Namespace                                          | Supported Generics |
 |------------------------------------|----------------------------------------------------|--------------------|
-| `custom-field/<custom_field_id>/select-options` | `evclient.custom_field.select_options(<custom_field>).<method>` | CRUD               |
+| `custom-field/<custom_field_id>/select-options` | `evclient.custom_field.select_option(<custom_field>).<method>` | CRUD               |
+
+!!! info "API v3.0"
+    API v3.0 replaced the sub endpoint by the top level endpoint `select-option`. When using v3.0, the library
+    transparently uses the new endpoint, filters it by the given custom field (`custom_field`) and sets `customField`
+    when creating new options. The usage of this namespace is identical for both API versions.
 
 ## Additional parameters
 
@@ -36,3 +41,4 @@ requires the custom field or its ID as constructor argument, to avoid passing it
             - "!^logger$"
             - "!^endpoint_name"
             - "!^return_type"
+            - "!^scope_params"

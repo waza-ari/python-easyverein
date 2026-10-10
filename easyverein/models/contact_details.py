@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import EmailStr, Field
 
 from ..core.types import Date, EasyVereinReference, FilterIntList
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -142,10 +142,15 @@ class ContactDetailsCreate(ContactDetailsUpdate, required_mixin(["isCompany"])):
     """
 
 
-class ContactDetailsFilter(BaseModel):
+class ContactDetailsFilter(EasyVereinFilter):
     """
     Pydantic model used to filter contact details
     """
+
+    __v3_names__ = {
+        "contactDetailsGroups__not": "contact_details_groups__ne",
+        "isReferencedByOrgUser": "is_referenced_by_member",
+    }
 
     id__in: FilterIntList | None = None
     country: str | None = None

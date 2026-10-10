@@ -5,6 +5,7 @@ Main EasyVerein API class
 import logging
 from typing import Callable, cast
 
+from .core.api_version import DEFAULT_API_VERSION, REMOVED_API_VERSIONS, SUPPORTED_API_VERSIONS
 from .core.client import EasyvereinClient
 from .core.responses import BearerToken
 from .modules.billing_account import BillingAccountMixin
@@ -19,14 +20,12 @@ from .modules.member import MemberMixin
 from .modules.member_group import MemberGroupMixin
 from .modules.mixins.helper import parse_models
 
-SUPPORTED_API_VERSIONS = ["v2.0"]
-
 
 class EasyvereinAPI:
     def __init__(
         self,
         api_key,
-        api_version="v2.0",
+        api_version: str = DEFAULT_API_VERSION,
         base_url: str = "https://easyverein.com/api/",
         logger: logging.Logger | None = None,
         auto_retry=False,
@@ -34,7 +33,17 @@ class EasyvereinAPI:
         auto_refresh_token: bool = False,
     ):
         """
-        Constructor setting API key and logger. Test
+        Creates the API client.
+
+        Args:
+            api_key: API token of the organization
+            api_version: EasyVerein API version to use, either `v2.0` (default) or `v3.0`. The models and
+                methods of this library are identical for both versions, see the usage documentation for details.
+            base_url: Base URL of the API
+            logger: Logger to use, defaults to a logger named `easyverein`
+            auto_retry: Whether to automatically wait and retry when hitting the rate limit
+            token_refresh_callback: Callback invoked when the API indicates that the token should be refreshed
+            auto_refresh_token: Whether to automatically refresh the token and pass it to the callback
         """
 
         super().__init__()
@@ -45,6 +54,10 @@ class EasyvereinAPI:
             self.logger = logging.getLogger("easyverein")
 
         # Check parameters
+        if api_version in REMOVED_API_VERSIONS:
+            self.logger.error(REMOVED_API_VERSIONS[api_version])
+            raise ValueError(REMOVED_API_VERSIONS[api_version])
+
         if api_version not in SUPPORTED_API_VERSIONS:
             self.logger.error(
                 f"API version {api_version} is not supported. Supported versions are {SUPPORTED_API_VERSIONS}"
@@ -52,9 +65,6 @@ class EasyvereinAPI:
             raise ValueError(
                 f"API version {api_version} is not supported. Supported versions are {SUPPORTED_API_VERSIONS}"
             )
-
-        if (auto_refresh_token or token_refresh_callback) and api_version != "v2.0":
-            raise ValueError("Token refresh is only supported in API version v2.0")
 
         self.token_refresh_callback = token_refresh_callback
         self.auto_refresh_token = auto_refresh_token
@@ -83,12 +93,8 @@ class EasyvereinAPI:
 
     def refresh_token(self) -> BearerToken:
         """
-        Refreshes the bearer token (only valid for API v2.0)
+        Refreshes the bearer token and makes the client use the new token.
         """
-
-        if not self.c.api_version == "v2.0":
-            self.logger.error("Refresh token is only available for API v2.0")
-            raise ValueError("Refresh token is only available for API v2.0")
 
         response = self.c.fetch_one(self.c.get_url("/refresh-token"))
         token = parse_models(response.result, BearerToken)

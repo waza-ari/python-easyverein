@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
-
-from ..core.types import FilterIntList, FilterStrList, PositiveIntWithZero
-from .base import EasyVereinBase
+from ..core.types import EasyVereinReference, FilterIntList, FilterStrList, PositiveIntWithZero
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -21,6 +19,11 @@ class CustomFieldSelectOptionBase(EasyVereinBase):
     value: str
     orderSequence: PositiveIntWithZero | None = None
     availableForAssignment: bool | None = None
+    customField: EasyVereinReference | None = None
+    """
+    Custom field this option belongs to. Set automatically when creating options via
+    `custom_field.select_option(<id>)`, which API v3.0 requires.
+    """
 
 
 class CustomFieldSelectOption(CustomFieldSelectOptionBase, EmptyStringsToNone):
@@ -45,7 +48,7 @@ class CustomFieldSelectOptionUpdate(CustomFieldSelectOptionBase):
     pass
 
 
-class CustomFieldSelectOptionFilter(BaseModel):
+class CustomFieldSelectOptionFilter(EasyVereinFilter):
     """
     Pydantic model used to filter custom field select options
     """

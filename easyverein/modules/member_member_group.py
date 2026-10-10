@@ -3,7 +3,9 @@ All methods related to member group memberships
 """
 
 import logging
+from typing import Any
 
+from ..core.api_version import API_V3
 from ..core.client import EasyvereinClient
 from ..core.exceptions import EasyvereinAPIException
 from ..models import (
@@ -34,7 +36,24 @@ class MemberMemberGroupMixin(
 
     @property
     def endpoint_name(self) -> str:
+        if self.c.api_version == API_V3:
+            return "member-group-assignment"
         return f"member/{self.member_id}/groups"
+
+    @property
+    def scope_params(self) -> dict[str, Any]:
+        return {"user_object": self.member_id} if self.c.api_version == API_V3 else {}
+
+    def create(self, data: MemberMemberGroupCreate) -> MemberMemberGroup:
+        """
+        Creates a group membership for this member and returns the created object.
+
+        Args:
+            data: Object to be created. `userObject` is set to this member if not given (required by API v3.0).
+        """
+        if self.c.api_version == API_V3 and data.userObject is None:
+            data = data.model_copy(update={"userObject": self.member_id})
+        return super().create(data)
 
     def get_group_membership(self, group: MemberGroup | int) -> MemberMemberGroup | None:
         """

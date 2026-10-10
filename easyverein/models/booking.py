@@ -4,10 +4,8 @@ Invoice Item model
 
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 from ..core.types import DateTime, EasyVereinReference, FilterIntList, Sphere
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -60,10 +58,17 @@ class BookingUpdate(BookingBase):
     """
 
 
-class BookingFilter(BaseModel):
+class BookingFilter(EasyVereinFilter):
     """
     Pydantic model used to filter bookings
     """
+
+    __v3_names__ = {
+        "billingId__isempty": "billing_id",
+        "bookingprojectassignment": "booking_project_assignment",
+        # Single underscore is correct, this is how API v3.0 names this filter
+        "bookingprojectassignment__not": "booking_project_assignment_ne",
+    }
 
     id__in: FilterIntList | None = None
     blocked: bool | None = None

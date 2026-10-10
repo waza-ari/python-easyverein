@@ -15,9 +15,9 @@ class RecycleBinMixin(Generic[ModelType]):
         Fetches all deleted resources from the recycle bin and returns a list.
         """
         self.logger.info(f"Fetching all deleted objects of type {self.endpoint_name} from API")
-        url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/", url_params={"showCount": True})
+        url = self.c.get_url(f"/wastebasket/{self.endpoint_name}/", url_params=self.c.list_params())
         response = self.c.fetch(url)
-        parsed_objects = parse_models(response.result, self.return_type)
+        parsed_objects = parse_models(response.result, self.return_type, self.c.context)
         assert isinstance(parsed_objects, list)
         return parsed_objects, response.count or 0
 

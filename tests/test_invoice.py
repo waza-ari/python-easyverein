@@ -5,7 +5,7 @@ import pytest
 from _pytest.fixtures import FixtureRequest
 from easyverein import EasyvereinAPI
 from easyverein.models.invoice import Invoice, InvoiceCreate, InvoiceUpdate
-from easyverein.models.invoice_item import InvoiceItem, InvoiceItemCreate
+from easyverein.models.invoice_item import InvoiceItem, InvoiceItemCreate, InvoiceItemFilter
 from easyverein.models.member import Member
 from pydantic_core import Url
 from requests.structures import CaseInsensitiveDict
@@ -217,6 +217,12 @@ class TestInvoices:
         assert invoice.invNumber == invoice_model.invNumber
         assert invoice.isDraft is False
         assert isinstance(invoice.path, Url)
+
+        # Check that the items were created and attached to the invoice
+        assert invoice.id
+        items = ev_connection.invoice_item.get_all(search=InvoiceItemFilter(relatedInvoice=invoice.id))
+        assert sorted(i.title for i in items if i.title) == ["First Invoice Item", "Second Invoice Item"]
+        assert sum(i.totalPrice or 0 for i in items) == pytest.approx(102.90)
 
         # Delete invoice again
         ev_connection.invoice.delete(invoice, delete_from_recycle_bin=True)

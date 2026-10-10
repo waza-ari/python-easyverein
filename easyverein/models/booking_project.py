@@ -1,7 +1,5 @@
-from pydantic import BaseModel
-
 from easyverein.core.types import FilterIntList, HexColor
-from easyverein.models.base import EasyVereinBase
+from easyverein.models.base import EasyVereinBase, EasyVereinFilter
 from easyverein.models.mixins.empty_strings_mixin import EmptyStringsToNone
 
 from .mixins.required_attributes import required_mixin
@@ -42,7 +40,7 @@ class BookingProjectCreate(BookingProjectUpdate, required_mixin(["name", "short"
     """
 
 
-class BookingProjectFilter(BaseModel):
+class BookingProjectFilter(EasyVereinFilter):
     """
     Pydantic model used to filter booking project
     """

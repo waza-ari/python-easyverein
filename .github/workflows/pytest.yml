@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   test:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v6
@@ -19,7 +19,14 @@ jobs:
           poetry-version: latest
       - name: Install dependencies
         run: poetry install --with dev
-      - name: Run pytest
+      # Both API versions share the same test tenant, so they must run sequentially
+      - name: Run pytest (API v2.0)
         env:
           EV_API_KEY: ${{ secrets.EV_API_KEY }}
-        run: poetry run pytest --junitxml=junit/test-results.xml --cov=easyverein --cov-report=xml --cov-report=html
+          EV_API_VERSION: v2.0
+        run: poetry run pytest --junitxml=junit/test-results-v2.xml --cov=easyverein
+      - name: Run pytest (API v3.0)
+        env:
+          EV_API_KEY: ${{ secrets.EV_API_KEY }}
+          EV_API_VERSION: v3.0
+        run: poetry run pytest --junitxml=junit/test-results-v3.xml --cov=easyverein --cov-append --cov-report=xml --cov-report=html

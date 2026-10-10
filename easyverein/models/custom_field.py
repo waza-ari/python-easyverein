@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import Field
 
 from ..core.types import EasyVereinReference, FilterIntList, HexColor, PositiveIntWithZero
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
 
@@ -90,7 +90,7 @@ class CustomFieldUpdate(CustomFieldBase):
     pass
 
 
-class CustomFieldFilter(BaseModel):
+class CustomFieldFilter(EasyVereinFilter):
     """
     Pydantic model used to filter custom fields
     """

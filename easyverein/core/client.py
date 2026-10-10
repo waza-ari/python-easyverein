@@ -16,6 +16,7 @@ import requests
 from pydantic import BaseModel
 from requests.structures import CaseInsensitiveDict
 
+from .api_version import API_VERSION_CONTEXT_KEY, COUNT_PARAM, TOKEN_REFRESH_HEADER, translate_query
 from .exceptions import (
     EasyvereinAPIException,
     EasyvereinAPINotFoundException,
@@ -50,6 +51,45 @@ class EasyvereinClient:
         self.logger = logger
         self.api_instance = instance
         self.auto_retry = auto_retry
+        # Pydantic validation / serialization context, used by the models to translate field names
+        self.context: dict[str, Any] = {API_VERSION_CONTEXT_KEY: api_version}
+
+    def serialize(self, data: BaseModel, exclude_none: bool = True) -> dict[str, Any]:
+        """
+        Serializes a model into the JSON payload expected by the configured API version
+        """
+        return data.model_dump(exclude_none=exclude_none, exclude_unset=True, by_alias=True, context=self.context)
+
+    def list_params(
+        self,
+        query: str = "",
+        search: BaseModel | None = None,
+        limit: int | None = None,
+        page: int | None = None,
+        scope: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """
+        URL parameters for list requests, translated to the naming of the configured API version.
+
+        Args:
+            query: Query selecting the fields to return
+            search: Filter model
+            limit: Page size
+            page: Page to return
+            scope: Additional parameters (already using the API naming), used to scope endpoints to a parent object
+        """
+        params: dict[str, Any] = {
+            "limit": limit,
+            "page": page,
+            "query": translate_query(query, self.api_version),
+            COUNT_PARAM[self.api_version]: True,
+        }
+        params |= scope or {}
+        if search:
+            params |= search.model_dump(exclude_unset=True, exclude_none=True, by_alias=True, context=self.context)
+        if isinstance(params.get("ordering"), str):
+            params["ordering"] = translate_query(params["ordering"], self.api_version)
+        return params
 
     def _get_header(self):
         """
@@ -139,8 +179,8 @@ class EasyvereinClient:
                     retry_after=retry_after,
                 )
 
-        # If API version is v2.0, check if token refresh is required
-        if self.api_version == "v2.0" and res.headers.get("tokenRefreshNeeded", "false") == "True":
+        # Check if token refresh is required
+        if res.headers.get(TOKEN_REFRESH_HEADER[self.api_version], "false") == "True":
             self.logger.info("Token refresh required")
             self.api_instance.handle_token_refresh()
 
@@ -169,17 +209,17 @@ class EasyvereinClient:
     def create(
         self,
         url,
-        data: BaseModel,
+        data: BaseModel | dict[str, Any],
         status_code: int = 201,
     ) -> ResponseSchema:
         """
-        Method to create an object in the API
+        Method to create an object in the API. Accepts a model or an already serialized payload.
         """
         return self._handle_response(
             self._do_request(
                 "post",
                 url,
-                data=data.model_dump(exclude_none=True, exclude_unset=True, by_alias=True),
+                data=data if isinstance(data, dict) else self.serialize(data),
             ),
             status_code,
         )
@@ -198,7 +238,7 @@ class EasyvereinClient:
             self._do_request(
                 "patch",
                 url,
-                data=data.model_dump(exclude_none=exclude_none, exclude_unset=True, by_alias=True),
+                data=self.serialize(data, exclude_none=exclude_none),
             ),
             expected_status_code=status_code,
         )
@@ -211,7 +251,7 @@ class EasyvereinClient:
             self._do_request(
                 "post",
                 url,
-                data={"entries": [d.model_dump(exclude_none=True, exclude_unset=True, by_alias=True) for d in data]},
+                data={"entries": [self.serialize(d) for d in data]},
             ),
             expected_status_code=status_code,
         )
@@ -226,11 +266,7 @@ class EasyvereinClient:
             self._do_request(
                 "patch",
                 url,
-                data={
-                    "entries": [
-                        d.model_dump(exclude_none=exclude_none, exclude_unset=True, by_alias=True) for d in data
-                    ]
-                },
+                data={"entries": [self.serialize(d, exclude_none=exclude_none) for d in data]},
             ),
             expected_status_code=status_code,
         )

@@ -31,3 +31,4 @@ None
             - "!^logger$"
             - "!^endpoint_name"
             - "!^return_type"
+            - "!^scope_params"

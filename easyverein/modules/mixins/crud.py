@@ -2,10 +2,11 @@
 This module provides general CRUD operations for all endpoints.
 """
 
-from typing import Callable, Generic, TypeVar
+from typing import Any, Callable, Generic, TypeVar
 
 from pydantic import BaseModel
 
+from easyverein.core.api_version import translate_query
 from easyverein.core.protocol import EVClientProtocol
 
 from .helper import get_id, parse_models
@@ -17,6 +18,14 @@ FilterType = TypeVar("FilterType", bound=BaseModel)
 
 
 class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]):
+    @property
+    def scope_params(self) -> dict[str, Any]:
+        """
+        URL parameters added to every list request. Used by endpoints that are scoped to a parent object
+        (e.g. the custom fields of a member), which API v3.0 exposes as top level endpoints with a filter.
+        """
+        return {}
+
     def get(
         self: EVClientProtocol[ModelType],
         query: str = "",
@@ -38,15 +47,13 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url_params = {"limit": limit, "query": query, "page": page, "showCount": True}
-        if search:
-            url_params |= search.model_dump(exclude_unset=True, exclude_none=True, by_alias=True)
+        url_params = self.c.list_params(query=query, search=search, limit=limit, page=page, scope=self.scope_params)
 
         self.logger.debug(f"Computed URL params for this request: {url_params}")
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
         response = self.c.fetch(url)
-        parsed_objects = parse_models(response.result, self.return_type)
+        parsed_objects = parse_models(response.result, self.return_type, self.c.context)
         assert isinstance(parsed_objects, list)
         return parsed_objects, response.count or 0
 
@@ -71,13 +78,11 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         """
         self.logger.info(f"Fetching selected {self.endpoint_name} objects from API")
 
-        url_params = {"limit": limit_per_page, "query": query, "showCount": True}
-        if search:
-            url_params |= search.model_dump(exclude_unset=True, exclude_none=True, by_alias=True)
+        url_params = self.c.list_params(query=query, search=search, limit=limit_per_page, scope=self.scope_params)
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
         response = self.c.fetch_paginated(url)
-        parsed_objects = parse_models(response.result, self.return_type)
+        parsed_objects = parse_models(response.result, self.return_type, self.c.context)
         assert isinstance(parsed_objects, list)
         return parsed_objects
 
@@ -92,9 +97,9 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         """
         self.logger.info(f"Fetching {self.endpoint_name} object with id {obj_id} from API")
 
-        url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}", {"query": query})
+        url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}", {"query": translate_query(query, self.c.api_version)})
         response = self.c.fetch_one(url)
-        parsed_object = parse_models(response.result, self.return_type)
+        parsed_object = parse_models(response.result, self.return_type, self.c.context)
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
@@ -126,7 +131,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         url = self.c.get_url(f"/{self.endpoint_name}/")
         response = self.c.create(url, data)
         assert isinstance(response.result, dict)
-        parsed_object = parse_models(response.result, self.return_type)
+        parsed_object = parse_models(response.result, self.return_type, self.c.context)
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 
@@ -150,7 +155,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
         url = self.c.get_url(f"/{self.endpoint_name}/{obj_id}")
         response = self.c.update(url, data, exclude_none=exclude_none)
         assert isinstance(response.result, dict)
-        parsed_object = parse_models(response.result, self.return_type)
+        parsed_object = parse_models(response.result, self.return_type, self.c.context)
         assert isinstance(parsed_object, self.return_type)
         return parsed_object
 

@@ -1,5 +1,5 @@
 import logging
-from typing import Protocol, Type, TypeVar
+from typing import Any, Protocol, Type, TypeVar
 
 from .client import EasyvereinClient
 
@@ -19,3 +19,6 @@ class EVClientProtocol(Protocol[T]):
 
     @property
     def return_type(self) -> Type[T]: ...
+
+    @property
+    def scope_params(self) -> dict[str, Any]: ...

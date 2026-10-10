@@ -54,28 +54,32 @@ the hood, so you get auto-completion and a guaranteed interface for these models
 
 ## API Versions
 
-The library version 1.x supports version v1.7 of the EasyVerein API, while the 2.x releases only support the v2.0 version
-of the EasyVerein API. Note that EasyVerein is often doing breaking changes within an API version, so if you encounter
+The library supports the v2.0 and v3.0 versions of the EasyVerein API. It defaults to v2.0, but you can select
+v3.0 by passing `api_version="v3.0"` when creating the `EasyvereinAPI` object. The models and methods of this library
+are identical for both versions, the differences between the versions (most notably the snake_case field names of
+v3.0) are handled by the library. See [API v3.0](usage.md#api-v30) in the usage section for details.
+
+API v1.7 is deprecated and not supported by the 2.x releases of this library. If you still need it, pin the library
+to version 1.x.
+
+Note that EasyVerein is often doing breaking changes within an API version, so if you encounter
 any issues when using this library in a supported configuration (e.g. library 2.x with EV API v2.0), please raise an issue
 here.
 
-The library defaults to v2.0, but you can change the version by setting the `api_version` attribute
-of the `EasyvereinAPI` object.
-
-Version 2.0 introduces a change to authentication, it does not allow the ephemeral API keys anymore. Instead,
+Version 2.0 introduced a change to authentication, it does not allow the ephemeral API keys anymore. Instead,
 a new type of token is used, which expires after 30 days. Please check the usage section on details how to handle
 token expiration.
 
 ## State of the API
 
-This client was written against and tested against the 2.0 API version of EasyVerein. It may or may not work
-with newer / older API versions, so please use them at your own risk. As the EasyVerein API does not expose model
+This client was written against and is tested against the v2.0 and v3.0 API versions of EasyVerein. It does not
+work with older API versions. As the EasyVerein API does not expose model
 information, the models used as part of this library are specific to this library and are based on information obtained
 from the API responses (e.g. required fields when creating an item).
 
 In addition to the official endpoints, the client provides some convenience functions that are not included in the 
 official API (e.g. setting a custom field of a member to certain value, no matter if it has been set before or not
-or create an invoice with items in one go) which makes it much simpler to work with the API.
+or create an invoice with an attachment) which makes it much simpler to work with the API.
 
 Not all endpoints offered by the EasyVerein API are supported. For now, only the following endpoints are implemented.
 When saying CRUD, it means the library supports various methods to **C**reate, **R**ead, **U**pdate and **D**elete objects. See the API
@@ -87,13 +91,13 @@ reference for details on supported CRUD operations.
 * `contact-details`: CRUD, Bulk Create and Update, Soft-Delete
 * `contact-details-group`: CRUD, Soft-Delete
 * `custom-fields`: CRUD, Soft-Delete
-* `custom-fields/<id>/select-options`: CRUD
+* `custom-fields/<id>/select-options` (v3.0: `select-option`): CRUD
 * `invoice`: CRUD, Bulk Create and Update, Soft-Delete, plus some convenience methods
 * `invoice-item`: CRUD
 * `member`: CRUD, Bulk Create and Update, Soft-Delete
 * `member-groups`: CRUD, Soft-Delete
-* `member/<id>/custom-fields`: CRUD, plus some convenience methods
-* `member/<id>/member-groups`: CRUD, plus some convenience methods
+* `member/<id>/custom-fields` (v3.0: `member-custom-field-assignment`): CRUD, plus some convenience methods
+* `member/<id>/member-groups` (v3.0: `member-group-assignment`): CRUD, plus some convenience methods
 * `wastebasket` (its the official name used by the EasyVerein API to reference soft-deleted objects)
 
 In addition to that, the library supports nested queries using the query syntax, included nested model validation.
@@ -108,6 +112,9 @@ your API token and simply run `pytest`:
 ```
 EV_API_KEY=<your-api-key>
 ```
+
+The tests run against API v2.0 by default. Set `EV_API_VERSION=v3.0` to run them against API v3.0. Do not run
+both versions in parallel against the same account, as the tests rely on the number of existing objects.
 
 ## Contributing
 

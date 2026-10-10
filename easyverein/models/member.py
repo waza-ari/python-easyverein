@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import Field, PositiveInt
 
 from ..core.types import (
     AnyHttpURL,
@@ -15,9 +15,10 @@ from ..core.types import (
     FilterIntList,
     FilterStrList,
 )
-from .base import EasyVereinBase
+from .base import EasyVereinBase, EasyVereinFilter
 from .mixins.empty_strings_mixin import EmptyStringsToNone
 from .mixins.required_attributes import required_mixin
+from .mixins.versioned import VersionedModel
 
 
 class MemberBase(EasyVereinBase):
@@ -118,10 +119,15 @@ class MemberCreate(MemberUpdate, required_mixin(["contactDetails"])):  # type: i
     emailOrUserName: str
 
 
-class MemberFilter(BaseModel):
+class MemberFilter(EasyVereinFilter):
     """
     Pydantic model used to filter members
     """
+
+    __v3_names__ = {
+        "memberGroups__not": "member_groups__ne",
+        "hasCopyInOrg__not": "has_copy_in_org__ne",
+    }
 
     id__in: FilterIntList | None = None
     paymentAmount__gt: float | None = None
@@ -190,7 +196,7 @@ class MemberFilter(BaseModel):
     search: str | None = None
 
 
-class MemberSetLsb(BaseModel):
+class MemberSetLsb(VersionedModel):
     """
     Pydantic model used to set LSB sports for a member
 
@@ -200,7 +206,7 @@ class MemberSetLsb(BaseModel):
     lsbSport: list[str]
 
 
-class MemberSetDosb(BaseModel):
+class MemberSetDosb(VersionedModel):
     """
     Pydantic model used to set DOSB sports for a member
 

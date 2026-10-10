@@ -1,5 +1,7 @@
 import logging
+from typing import Any
 
+from ..core.api_version import API_V3
 from ..core.client import EasyvereinClient
 from ..models import (
     CustomField,
@@ -28,4 +30,22 @@ class CustomFieldSelectOptionMixin(
 
     @property
     def endpoint_name(self) -> str:
+        if self.c.api_version == API_V3:
+            return "select-option"
         return f"custom-field/{self.custom_field_id}/select-options"
+
+    @property
+    def scope_params(self) -> dict[str, Any]:
+        return {"custom_field": self.custom_field_id} if self.c.api_version == API_V3 else {}
+
+    def create(self, data: CustomFieldSelectOptionCreate) -> CustomFieldSelectOption:
+        """
+        Creates a select option for this custom field and returns the created object.
+
+        Args:
+            data: Object to be created. `customField` is set to this custom field if not given
+                (required by API v3.0).
+        """
+        if self.c.api_version == API_V3 and data.customField is None:
+            data = data.model_copy(update={"customField": self.custom_field_id})
+        return super().create(data)
