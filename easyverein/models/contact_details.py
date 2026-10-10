@@ -87,7 +87,6 @@ class ContactDetailsBase(EasyVereinBase):
     - 3: cash
     - 4: other
     """
-    # TODO: Actual get method returns a string, f.e. "Lastschrift" (in german)
     datevAccountNumber: int | None = None
     # TODO: Refine once available from API description
     copiedFromParent: Any | None = Field(default=None, alias="_copiedFromParent")

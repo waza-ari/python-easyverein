@@ -27,13 +27,20 @@ class TestContactDetails:
         for contact_detail in contact_details:
             assert isinstance(contact_detail, ContactDetails)
 
-    def test_get_contact_details_with_non_ascii(self, ev_connection: EasyvereinAPI):
-        contact_details = ev_connection.contact_details.get(
-            search=ContactDetailsFilter(companyName="Mustermann & Co. KG")
-        )[0]
+    def test_get_contact_details_with_reserved_url_characters(self, ev_connection: EasyvereinAPI, random_string: str):
+        # '&' and spaces must be URL-encoded in filter values, otherwise the filter is cut off
+        company_name = f"Test & Co. KG {random_string}"
+        created = ev_connection.contact_details.create(ContactDetailsCreate(isCompany=True, companyName=company_name))
 
-        assert len(contact_details) == 1
-        assert contact_details[0].companyName == "Mustermann & Co. KG"
+        try:
+            contact_details, _ = ev_connection.contact_details.get(
+                search=ContactDetailsFilter(companyName=company_name)
+            )
+
+            assert len(contact_details) == 1
+            assert contact_details[0].companyName == company_name
+        finally:
+            ev_connection.contact_details.delete(created, delete_from_recycle_bin=True)
 
     def test_create_minimal_company_contact_details(self, ev_connection: EasyvereinAPI):
         contact_details = ev_connection.contact_details.create(

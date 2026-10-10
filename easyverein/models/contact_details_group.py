@@ -1,5 +1,5 @@
 """
-ContactDetails related models
+ContactDetailsGroup related models
 """
 
 from __future__ import annotations
@@ -21,12 +21,12 @@ class ContactDetailsGroupBase(EasyVereinBase):
     | --- | --- | --- |
     | `ContactDetailsGroup` | `ContactDetailsGroupUpdate` | `ContactDetailsGroupCreate` |
 
-    ContactDetails groups are used to categorize members into different groups.
-    They can then be used to manage the members permissions, their membersip fee
-    or to send out messages to specific groups of members.
+    Contact details groups are used to categorize contact details (addresses) into different groups.
+    Contact details are assigned to groups via the `contactDetailsGroups` field of `ContactDetails`.
 
-    !!! info "ContactDetails Groups vs associations"
-        This endpoint is used to manage the member groups themselves, not the assignment of members to groups.
+    !!! info "Contact details groups vs. assignments"
+        This endpoint is used to manage the contact details groups themselves, not the assignment of
+        contact details to groups.
     """
 
     name: str | None = Field(default=None, max_length=200)
