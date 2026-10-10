@@ -1,4 +1,4 @@
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel
 
 from easyverein.core.types import FilterIntList, HexColor
 from easyverein.models.base import EasyVereinBase
@@ -48,8 +48,8 @@ class BookingProjectFilter(BaseModel):
     """
 
     id__in: FilterIntList | None = None
-    budget__lt: PositiveInt | None = None
-    budget__gt: PositiveInt | None = None
+    budget__lt: float | None = None
+    budget__gt: float | None = None
     completed: bool | None = None
     name: str | None = None
     short: str | None = None

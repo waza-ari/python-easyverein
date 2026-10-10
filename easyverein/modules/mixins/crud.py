@@ -73,7 +73,7 @@ class CRUDMixin(Generic[ModelType, CreateModelType, UpdateModelType, FilterType]
 
         url_params = {"limit": limit_per_page, "query": query, "showCount": True}
         if search:
-            url_params |= search.model_dump(exclude_unset=True, exclude_defaults=True, by_alias=True)
+            url_params |= search.model_dump(exclude_unset=True, exclude_none=True, by_alias=True)
 
         url = self.c.get_url(f"/{self.endpoint_name}", url_params)
         response = self.c.fetch_paginated(url)
@@ -230,7 +230,7 @@ class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]
         self.logger.info(f"Creating object of type {self.endpoint_name}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/bulk-create")
-        response = self.c.bulk_create(url, data)  # type: ignore[arg-type]
+        response = self.c.bulk_create(url, data)
         return [r["data"]["success"] for r in response.result]  # type: ignore
 
     def bulk_update(
@@ -261,5 +261,5 @@ class BulkUpdateCreateMixin(Generic[ModelType, CreateModelType, UpdateModelType]
         self.logger.info(f"Bulk updating objects of type {self.endpoint_name}")
 
         url = self.c.get_url(f"/{self.endpoint_name}/bulk-update")
-        response = self.c.bulk_update(url, data, exclude_none=exclude_none)  # type: ignore[arg-type]
+        response = self.c.bulk_update(url, data, exclude_none=exclude_none)
         return [r["data"]["success"] for r in response.result]  # type: ignore
