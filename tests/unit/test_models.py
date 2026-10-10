@@ -1,6 +1,7 @@
 """Unit tests for Pydantic model validation (no API connection required)."""
 
 import pytest
+from easyverein.models import BillingAccount, Booking, InvoiceItem
 from easyverein.models.member_group import MemberGroup
 from pydantic import ValidationError
 
@@ -33,3 +34,21 @@ class TestMemberGroupModel:
         """Test that paymentInterval rejects zero."""
         with pytest.raises(ValidationError):
             MemberGroup(paymentInterval=0)
+
+
+class TestSphere:
+    """Unit tests for the SKR 42 sphere values."""
+
+    @pytest.mark.parametrize("sphere", [1, 4, 9, 11, 31, 49])
+    def test_valid_spheres(self, sphere: int):
+        """Test that main spheres, Sammelposten and sub-spheres are accepted."""
+        assert BillingAccount(defaultSphere=sphere).defaultSphere == sphere
+        assert Booking(sphere=sphere).sphere == sphere
+        assert InvoiceItem(sphere=sphere).sphere == sphere
+        assert MemberGroup(sphere=sphere).sphere == sphere
+
+    @pytest.mark.parametrize("sphere", [0, 5, 10, 20, 50])
+    def test_invalid_spheres(self, sphere: int):
+        """Test that values unknown to the API are rejected."""
+        with pytest.raises(ValidationError):
+            Booking(sphere=sphere)
